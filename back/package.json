@@ -1,0 +1,33 @@
+{
+  "name": "back",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "set DEBUG= && node . --server-start",
+    "debug:dorg": "set DEBUG=Dorg-gallery:* && node . --server-start",
+    "debug:*": "set DEBUG=* && node . --server-start",
+    "db:clear": "set DEBUG=Dorg-gallery:action && node . --db-clear"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@ronomon/base64": "^2.4.1",
+    "bcrypt": "^3.0.6",
+    "cloudinary": "^1.14.0",
+    "debug": "^4.1.1",
+    "express": "^4.17.1",
+    "mongoose": "^5.6.8",
+    "node-gyp": "^5.0.3",
+    "pretty-error": "^2.1.1",
+    "redis": "^2.8.0",
+    "sharp": "^0.23.0",
+    "socket.io": "^2.2.0"
+  },
+  "devDependencies": {
+    "chalk": "^2.4.2",
+    "os-utils": "0.0.14",
+    "supports-color": "^7.0.0",
+    "yargs": "^13.3.0"
+  }
+}

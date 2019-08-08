@@ -1,0 +1,16 @@
+@import '../../mixins/colorToClass';
+@import '../../functions/color';
+@import './variables';
+
+// loop over all the colorThemes and over all their colors to make classes for the colors
+@each $themeName, $theme in $colors {
+  @each $colorType, $color in $theme {
+    $className: $themeName;
+
+    @if($colorType != 'base') {
+      $className: '#{$themeName}-#{$colorType}';
+    }
+
+    @include colorToClass($className, color($colors, $themeName, $colorType));
+  }
+}

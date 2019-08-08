@@ -1,0 +1,28 @@
+.no-hover-decoration:hover {
+  text-decoration: none;
+}
+
+.upper {
+  text-transform: uppercase;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.fw-normal {
+  font-weight: normal !important;
+}
+
+.lh-100 {
+  line-height: 100%;
+}
+
+.text-ellipsis {
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.text-center {
+  text-align: center;
+}

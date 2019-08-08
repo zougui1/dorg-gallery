@@ -1,0 +1,18 @@
+.p-relative {
+  position: relative;
+}
+
+.p-absolute {
+  position: absolute !important;
+}
+
+.p-sticky {
+  position: sticky !important;
+}
+
+.absolute-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translateX(-50%) translateY(-50%);
+}

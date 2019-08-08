@@ -1,0 +1,72 @@
+$spacing: (
+  1: .25,
+  2: .5,
+  3: 1,
+  4: 1.5,
+  5: 3,
+);
+
+@each $number, $value in $spacing {
+  // margin
+  .m-#{$number} {
+    margin: unquote('#{$value}rem') !important;
+  }
+
+  .mt-#{$number} {
+    margin-top: unquote('#{$value}rem') !important;
+  }
+
+  .mb-#{$number} {
+    margin-bottom: unquote('#{$value}rem') !important;
+  }
+
+  .ml-#{$number} {
+    margin-left: unquote('#{$value}rem') !important;
+  }
+
+  .mr-#{$number} {
+    margin-right: unquote('#{$value}rem') !important;
+  }
+
+  .my-#{$number} {
+    margin-top: unquote('#{$value}rem') !important;
+    margin-bottom: unquote('#{$value}rem') !important;
+  }
+
+  .mx-#{$number} {
+    margin-left: unquote('#{$value}rem') !important;
+    margin-right: unquote('#{$value}rem') !important;
+  }
+
+
+  // padding
+  .p-#{$number} {
+    padding: unquote('#{$value}rem') !important;
+  }
+
+  .pt-#{$number} {
+    padding-top: unquote('#{$value}rem') !important;
+  }
+
+  .pb-#{$number} {
+    padding-bottom: unquote('#{$value}rem') !important;
+  }
+
+  .pl-#{$number} {
+    padding-left: unquote('#{$value}rem') !important;
+  }
+
+  .pr-#{$number} {
+    padding-right: unquote('#{$value}rem') !important;
+  }
+
+  .py-#{$number} {
+    padding-top: unquote('#{$value}rem') !important;
+    padding-bottom: unquote('#{$value}rem') !important;
+  }
+
+  .px-#{$number} {
+    padding-left: unquote('#{$value}rem') !important;
+    padding-right: unquote('#{$value}rem') !important;
+  }
+}

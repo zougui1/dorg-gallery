@@ -1,0 +1,41 @@
+// use a name with a color to make a class for
+// - the font color
+// - the background color
+// - the border color
+@mixin colorToClass($name, $color) {
+  .color-#{$name} {
+    color: $color !important;
+
+    &-and-hover {
+      color: $color !important;
+
+      &:hover {
+        color: $color !important;
+      }
+    }
+  }
+
+  .bg-color-#{$name} {
+    background-color: $color !important;
+
+    &-and-hover {
+      background-color: $color !important;
+
+      &:hover {
+        background-color: $color !important;
+      }
+    }
+  }
+
+  .b-#{$name} {
+    border-color: $color !important;
+
+    &-and-hover {
+      background-color: $color !important;
+
+      &:hover {
+        background-color: $color !important;
+      }
+    }
+  }
+}

@@ -1,0 +1,45 @@
+$i: 0;
+
+// make a class in an interval of 10 for the width and height in percent and in viewport
+@while $i <= 100 {
+  $percent: '#{$i}%';
+  $viewport: '#{$i}v';
+
+  // height in percent
+  .h-#{$i} {
+    height: unquote($percent);
+
+    &-i {
+      height: unquote($percent) !important;
+    }
+  }
+
+  // height in viewport
+  .vh-#{$i} {
+    height: unquote('#{$viewport}h');
+
+    &-i {
+      height: unquote('#{$viewport}h') !important;
+    }
+  }
+
+  // width in percent
+  .w-#{$i} {
+    width: unquote($percent);
+
+    &-i {
+      width: unquote($percent) !important;
+    }
+  }
+
+  // width in viewport
+  .vw-#{$i} {
+    width: unquote('#{$viewport}w');
+
+    &-i {
+      width: unquote('#{$viewport}w') !important;
+    }
+  }
+
+  $i: $i + 10;
+}

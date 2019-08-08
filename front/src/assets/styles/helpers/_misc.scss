@@ -1,0 +1,18 @@
+.pointer {
+  cursor: pointer;
+}
+
+.underline {
+  border-bottom: solid 2px currentColor;
+}
+
+hr.gradient {
+  width: 100%;
+  border-image-source: linear-gradient(to right, transparent, currentColor, transparent);
+  border-image-slice: 1;
+  border-image-width: 1;
+}
+
+.overflow-auto {
+  overflow: auto;
+}
