@@ -4,10 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "set DEBUG= && node . --server-start",
-    "debug:dorg": "set DEBUG=Dorg-gallery:* && node . --server-start",
-    "debug:*": "set DEBUG=* && node . --server-start",
-    "db:clear": "set DEBUG=Dorg-gallery:action && node . --db-clear"
+    "start": "cross-env DEBUG= node . --server-start",
+    "prod": "cross-env NODE_ENV=production node . --server-start",
+    "debug:dorg": "cross-env DEBUG=Dorg-gallery:* node . --server-start",
+    "debug:*": "cross-env DEBUG=* node . --server-start",
+    "db:clear": "cross-env DEBUG=Dorg-gallery:action node . --db-clear"
   },
   "author": "",
   "license": "ISC",
@@ -26,6 +27,7 @@
   },
   "devDependencies": {
     "chalk": "^2.4.2",
+    "cross-env": "^5.2.0",
     "os-utils": "0.0.14",
     "supports-color": "^7.0.0",
     "yargs": "^13.3.0"

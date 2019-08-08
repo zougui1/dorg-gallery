@@ -2,6 +2,9 @@ const { User } = require('../Models/User');
 
 const userController = {
 
+  /**
+   * create a new user
+   */
   signup: ({ name, password }) => {
     debug.mongoose('%o has been called', 'userController.signup');
 
@@ -13,12 +16,18 @@ const userController = {
     return user.save();
   },
 
+  /**
+   * get a user by its name
+   */
   findByName: name => {
     debug.mongoose('%o has been called', 'userController.findByName');
 
     return User.findOne({ name });
   },
 
+  /**
+   * get a user if its name and password matches
+   */
   login: user => new Promise((resolve, reject) => {
     debug.mongoose('%o has been called', 'userController.login');
 
@@ -46,6 +55,9 @@ const userController = {
       .catch(reject);
   }),
 
+  /**
+   * get the amount of users
+   */
   getCount: () => {
     debug.mongoose('%o has been called', 'userController.getCount');
 

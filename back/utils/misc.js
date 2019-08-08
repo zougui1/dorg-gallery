@@ -1,5 +1,8 @@
 const bcrypt = require('bcrypt');
 
+/**
+ * hash a string using bcrypt
+ */
 const hasher = (salt, clearString) => new Promise((resolve, reject) => {
   bcrypt.genSalt(salt, function (err, salt) {
     if (err) return reject(err);

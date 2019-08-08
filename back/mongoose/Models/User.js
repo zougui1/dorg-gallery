@@ -18,11 +18,14 @@ const userSchema = mongoose.Schema({
   }
 });
 
+// is called before a document is saved
 userSchema.pre('save', function (next) {
+  // if the password is not modified we don't want to do anything
   if (!this.isModified('password')) {
     return next();
   }
 
+  // hash the password then replace the old one with the hash
   hasher(salt, this.password)
     .then(hash => {
       this.password = hash;
@@ -31,6 +34,7 @@ userSchema.pre('save', function (next) {
     .catch(next);
 });
 
+// compare the password in the current document with another
 userSchema.methods.comparePassword = function (candidatePassword, callback) {
   bcrypt.compare(candidatePassword, this.password, (err, isMatch) => {
     if (err) return callback(err);

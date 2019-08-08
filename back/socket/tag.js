@@ -22,6 +22,7 @@ const handlers = {
   },
 
   emit: {
+    // used to send a response to the client
     private: {
       sendTags: function sendTags(socket, tags) {
         debug.socket.emit('sendTags');

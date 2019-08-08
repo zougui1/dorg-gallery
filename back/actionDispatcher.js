@@ -1,8 +1,8 @@
 const chalk = require('chalk');
-const mongoose = require('mongoose');
 const argv = require('yargs').argv;
 const mongooseActions = require('./mongoose/Actions');
 
+// clear the DB
 if (argv['db-clear']) {
   require('./config/mongoose');
 
@@ -18,7 +18,7 @@ if (argv['db-clear']) {
       process.exit(1);
     });
 
-} else if (argv['server-start']) {
+} else if (argv['server-start']) { // start the server
   debug.action('Starting the server...');
 
   require('./express');

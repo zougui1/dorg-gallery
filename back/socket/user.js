@@ -52,6 +52,7 @@ const handlers = {
   },
 
   emit: {
+    // used to send a response to the client
     private: {
       userCreated: function userCreated(socket, user) {
         debug.socket.emit('userCreated');

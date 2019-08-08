@@ -2,12 +2,18 @@ const { Tag } = require('../Models/Tag');
 
 const tagController = {
 
+  /**
+   * add a tag only if it doesn't already exists
+   */
   add: ({ name }) => {
     debug.mongoose('%o has been called', 'tagController.add');
 
     return Tag.findOneAndUpdate({ name }, {}, { upsert: true, new: true, setDefaultsOnInsert: true });
   },
 
+  /**
+   * add several tags if they doesn't already exists
+   */
   addMultiple: tags => new Promise((resolve, reject) => {
     debug.mongoose('%o has been called', 'tagController.addMultiple');
 
