@@ -15,17 +15,24 @@ class InputCreator extends React.Component {
     inputId: 0,
   };
 
+  /**
+   * update the variable 'canvasData' in the store
+   */
   updateCanvasData = () => {
     const { canvasData, setCanvasData } = this.props;
 
     setCanvasData(canvasData);
   }
 
+  /**
+   * create an input on the canvas
+   */
   createInput = () => {
     const { inputId } = this.state;
     let { inputs, canvasData, labels, setCanvasLabel, setCanvasField } = this.props;
     const client = { x: 10, y: 10 };
 
+    // avoid to use the references to their source (the store)
     inputs = [...inputs];
     labels = [...labels];
 

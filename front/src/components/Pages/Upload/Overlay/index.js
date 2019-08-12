@@ -7,7 +7,7 @@ import Canvas from './Canvas';
 import Panel from './Panel';
 
 const mapStateToProps = mapDynamicState('uploader: imageData canvasSize canvasData imagesToUpload inputs');
-const mapDispatchToProps = mapDynamicDispatch(uploaderState.actions, 'setImageData setCanvasData');
+const mapDispatchToProps = mapDynamicDispatch(uploaderState.actions, 'setImageData setCanvasData resetReducer');
 
 class Overlay extends React.Component {
 
@@ -25,6 +25,14 @@ class Overlay extends React.Component {
     this.setImageSize();
 
     document.body.addEventListener('click', this.handleModalClose);
+  }
+
+  /**
+   * reset the reducer once the user is done with the overlay
+   */
+  componentWillUnmount() {
+    const { resetReducer } = this.props;
+    resetReducer();
   }
 
   setImageSize = () => {

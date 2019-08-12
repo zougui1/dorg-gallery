@@ -48,7 +48,9 @@ class Uploader extends React.Component {
     socket.remove.uploadFail(this.uploadFail);
   }
 
-
+  /**
+   * is called when the user select one file or more
+   */
   handleFiles = e => {
     const files = e.target.files;
 
@@ -60,6 +62,9 @@ class Uploader extends React.Component {
     });
   }
 
+  /**
+   * is called when the user submit the form
+   */
   submit = e => {
     e.preventDefault();
     const { setImageData, setFormView } = this.props;
@@ -72,6 +77,9 @@ class Uploader extends React.Component {
 
     this.transformFormData()
       .then(formData => {
+        // if the user want to draw an overlay we don't upload the image but display the
+        // view to draw an overlay
+        // other we upload the image
         if (formData.withOverlay) {
           setImageData(formData);
           setFormView('Overlay');
@@ -120,6 +128,9 @@ class Uploader extends React.Component {
     return true;
   }
 
+  /**
+   * is used to transform the data from the form before we upload them
+   */
   transformFormData = () => new Promise(resolve => {
     const { formData } = this.state;
 
@@ -136,32 +147,46 @@ class Uploader extends React.Component {
       transformedFormData.artistLink = 'http://' + transformedFormData.artistLink;
     }
 
+    // we change the structure of the artist data
+    // to match the model used in the database
     transformedFormData.artist = {
       name: formData.artistName,
       link: formData.artistLink,
     };
 
+    // those 2 values or now useless so we delete them
     delete transformedFormData.artistName;
     delete transformedFormData.artistLink;
 
     const reader = new FileReader();
 
+    // we want the image as a base64 string
     reader.readAsDataURL(transformedFormData.image);
     reader.addEventListener('load', () => {
       transformedFormData.image = formData.image;
       transformedFormData.imageBase64 = reader.result;
+
       resolve(transformedFormData);
     });
   });
 
+  /**
+   * is called if the upload succeeded
+   */
   uploadSuccess = () => {
     this.setState({ loader: { success: true } });
   }
 
+  /**
+   * is called if the upload failed
+   */
   uploadFail = data => {
     this.setState({ loader: { error: true, errorMessage: data.error } });
   }
 
+  /**
+   * change the data inside the formData variable in the state
+   */
   changeFormData = data => {
     this.setState({
       formData: {
@@ -171,16 +196,25 @@ class Uploader extends React.Component {
     });
   }
 
+  /**
+   * is called when the value of an input change
+   */
   handleInputChange = e => {
     this.changeFormData({
       [e.target.name]: e.target.value
     });
   }
 
+  /**
+   * is called when the value of the 'tagsInput' field change
+   */
   handleTagsInputChange = tags => {
     this.changeFormData({ tagList: tags });
   }
 
+  /**
+   * is called when the state of a checkbox change
+   */
   handleCheckboxChange = e => {
     this.changeFormData({
       [e.target.name]: e.target.checked

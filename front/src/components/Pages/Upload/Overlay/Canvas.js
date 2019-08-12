@@ -33,7 +33,7 @@ class Canvas extends React.Component {
   }
 
   /**
-   * make an action on the canvas depending to the context action
+   * do an action on the canvas depending to the context action
    */
   canvasAction = (x0, y0, x1, y1) => {
     const { canvasData } = this.props;
@@ -89,47 +89,63 @@ class Canvas extends React.Component {
 
   /**
    * set the client position in the canvas data
+   * and specify in the data that the user is drawing
    */
   mouseDownHandler = e => {
     const { setCanvasData, canvasData } = this.props;
 
-    //const newColor = canvasData.color.replace(/[0-1]+([.][0-9]*)?\)$/, current.alpha + ')');
-    //canvasData.color = newColor;
-
     canvasData.x = e.clientX;
     canvasData.y = e.clientY;
     canvasData.drawing = true;
+
+    // update the canvasData
     setCanvasData(canvasData);
   }
 
+  /**
+   * is called when the user release the mouse
+   */
   mouseUpHandler = e => {
     const { setCanvasData, canvasData } = this.props;
 
+    // if the user isn't drawing we don't want to do anything
     if (!canvasData.drawing) {
       return;
     }
 
+    // update the canvasData
     setCanvasData({
       ...canvasData,
       drawing: false,
     });
 
+    // do an action on the canvas
     this.canvasAction(canvasData.x, canvasData.y, e.clientX, e.clientY);
   }
 
+  /**
+   * is called when the mouse move
+   */
   mouseMoveHandler = e => {
     const { setCanvasData, canvasData } = this.props;
 
+    // if the user isn't drawing we don't want to do anything
     if (!canvasData.drawing) {
       return;
     }
 
+    // do an action on the canvas
     this.canvasAction(canvasData.x, canvasData.y, e.clientX, e.clientY);
     canvasData.x = e.clientX;
     canvasData.y = e.clientY;
+
+    // update the canvasData
     setCanvasData(canvasData);
   }
 
+  /**
+   * is called to put a cooldown on the call of a function
+   */
   throttle = (callback, delay) => {
     let previousCall = new Date().getTime();
 
@@ -143,6 +159,9 @@ class Canvas extends React.Component {
     };
   }
 
+  /**
+   * is called when an input is dragged over the canvas
+   */
   dragOverHandler = (e, preventUpdate) => {
     e.preventDefault();
     const { setCanvasData, canvasData } = this.props;
@@ -155,6 +174,9 @@ class Canvas extends React.Component {
     }
   }
 
+  /**
+   * is called when an input is dragged outside of the canvas
+   */
   dragLeaveHandler = () => {
     const { setCanvasData, canvasData } = this.props;
 
@@ -164,12 +186,17 @@ class Canvas extends React.Component {
     });
   }
 
+  /**
+   * is called when an input is dropped
+   */
   dropHandler = e => {
     let { inputs, labels, setCanvasField, setCanvasLabel, canvasData } = this.props;
     const id = +e.dataTransfer.getData('id');
 
+    // if the input is not dragged outside of the canvas
+    // we want to change its position
+    // otherwise we want to delete it
     if (!canvasData.draggingOut) {
-      console.log('update field position');
       for (let i = 0; i < inputs.length; i++) {
         const input = inputs[i];
 
@@ -178,20 +205,20 @@ class Canvas extends React.Component {
         }
 
         const { x, y } = this.calculateRelativePosition(e.clientX, e.clientY);
-        //const label = input.label;
         const label = labels[i];
-        console.log('labels', labels);
-        console.log('inputs', inputs);
 
         label.style.top = y + 'px';
         label.style.left = x + 'px';
+
+        // update the inputs and labels
         setCanvasField(inputs);
+        setCanvasLabel(labels);
         break;
       }
     } else {
-      console.log('delete field');
       const inputsUpdate = inputs.filter(input => input.id !== id);
       const labelsUpdate = labels.filter((_, i) => i !== id);
+
       setCanvasField(inputsUpdate);
       setCanvasLabel(labelsUpdate);
     }

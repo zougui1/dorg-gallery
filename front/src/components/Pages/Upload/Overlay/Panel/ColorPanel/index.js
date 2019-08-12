@@ -21,6 +21,7 @@ class ColorPanel extends React.Component {
     alpha: this.props.canvasData.alpha
   };
 
+  // update the variable 'canvasData' in the store
   updateCanvasData = newData => {
     const { canvasData, setCanvasData } = this.props;
 
@@ -30,11 +31,15 @@ class ColorPanel extends React.Component {
     });
   }
 
+  /**
+   * is called each time the color is changed
+   */
   onColorUpdate = (e, color) => {
     const { canvasData } = this.props;
     const { alpha } = this.state;
 
     if (e) {
+      // erase isn't a color but the context action
       if (color !== 'erase') {
         canvasData.color = color;
         canvasData.contextAction = 'draw';
@@ -43,11 +48,16 @@ class ColorPanel extends React.Component {
       }
     }
 
+    // change the alpha
     let newColor = canvasData.color.replace(/[0-1]+([.][0-9]*)?\)$/, alpha + ')');
     canvasData.color = newColor;
+
     this.updateCanvasData(canvasData);
   }
 
+  /**
+   * is called each time the alpha is changed, then update the color
+   */
   onAlphaChange = (e, value) => {
     const { canvasData } = this.props;
 

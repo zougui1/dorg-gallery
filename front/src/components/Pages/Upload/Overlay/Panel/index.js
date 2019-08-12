@@ -9,26 +9,16 @@ import DisplayPanel from './DisplayPanel';
 import InputCreator from './InputCreator';
 import Uploader from './Uploader';
 
-const mapDispatchToProps = mapDynamicDispatch(uploaderState.actions, 'setCanvasData resetReducer');
+const mapDispatchToProps = mapDynamicDispatch(uploaderState.actions, 'setCanvasData');
 
-class Panel extends React.Component {
-
-  componentWillUnmount() {
-    const { resetReducer } = this.props;
-    resetReducer();
-  }
-
-  render() {
-    return (
-      <div className="ColorPanel colors color-picker-panel color-white text-center">
-        <ColorPanel />
-        <SizesPanel />
-        <DisplayPanel />
-        <InputCreator />
-        <Uploader />
-      </div>
-    );
-  }
-}
+const Panel = () => (
+  <div className="ColorPanel colors color-picker-panel color-white text-center">
+    <ColorPanel />
+    <SizesPanel />
+    <DisplayPanel />
+    <InputCreator />
+    <Uploader />
+  </div>
+);
 
 export default connect(null, mapDispatchToProps)(Panel);

@@ -15,12 +15,18 @@ class SizesPanel extends React.Component {
     eraseSize: this.props.canvasData.eraseSize,
   }
 
+  /**
+   * update the variable 'canvasData' in the store
+   */
   updateCanvasData = () => {
     const { canvasData, setCanvasData } = this.props;
 
     setCanvasData(canvasData);
   }
 
+  /**
+   * is called each time a slider is changed
+   */
   onSlideChange = (slider, asPx) => (e, value) => {
     const { canvasData } = this.props;
 
@@ -30,6 +36,7 @@ class SizesPanel extends React.Component {
       value = value + 'px';
     }
 
+    // we want to update the canvasData
     canvasData[slider] = value;
     this.updateCanvasData();
   }

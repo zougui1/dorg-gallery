@@ -6,10 +6,11 @@ import InputChips from '../InputChips';
 
 const mapStateToProps = mapDynamicState('misc: tags');
 const TagsInput = ({ tags, onChange, tagList, onFocus, onBlur }) => {
+  console.warn('The default value for the suggestions for the "TagsInput" must be deleted when in production')
   tags = [{ name: 'test' }, { name: 'tag' }, { name: 'something' }];
   return (
     <InputChips
-      suggestions={tags.map(t => ({ label: t.name }))}
+      suggestions={tags.map(t => ({ label: t.name, value: t.name }))}
       value={tagList}
       onChange={onChange}
       onFocus={onFocus}

@@ -11,6 +11,9 @@ const mapDispatchToProps = mapDynamicDispatch(uploaderState.actions, 'setCanvasD
 
 class DisplayPanel extends React.Component {
 
+  /**
+   * update the variable 'canvasData' in the store
+   */
   updateCanvasData = newData => {
     const { canvasData, setCanvasData } = this.props;
 
