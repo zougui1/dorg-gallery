@@ -106,7 +106,7 @@ class Uploader extends React.Component {
       return false;
     }
 
-    if (formData.artist.name.length > 60) {
+    if (formData.artistName.length > 60) {
       this.setState({ loader: { error: true, errorMessage: 'The artist name\'s length must be lower or equal to 60' } });
       return false;
     }
@@ -128,10 +128,12 @@ class Uploader extends React.Component {
       property: formData.isNsfw ? 'nsfw' : 'general',
     };
 
-    transformedFormData.artist.link = transformedFormData.artist.link.trim();
+    if (transformedFormData.artistLink) {
+      transformedFormData.artistLink = transformedFormData.artistLink.trim();
+    }
 
-    if (!/^https?:\/\//.test(formData.artist.link)) {
-      transformedFormData.artist.link = 'http://' + transformedFormData.artist.link;
+    if (!/^https?:\/\//.test(formData.artistLink)) {
+      transformedFormData.artistLink = 'http://' + transformedFormData.artistLink;
     }
 
     transformedFormData.artist = {
@@ -144,7 +146,7 @@ class Uploader extends React.Component {
 
     const reader = new FileReader();
 
-    reader.readAsDataURL();
+    reader.readAsDataURL(transformedFormData.image);
     reader.addEventListener('load', () => {
       transformedFormData.image = formData.image;
       transformedFormData.imageBase64 = reader.result;
@@ -157,7 +159,7 @@ class Uploader extends React.Component {
   }
 
   uploadFail = data => {
-    this.setState({ loader: { error: true, error: data.error } });
+    this.setState({ loader: { error: true, errorMessage: data.error } });
   }
 
   changeFormData = data => {

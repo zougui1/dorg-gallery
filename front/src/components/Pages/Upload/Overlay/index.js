@@ -1,122 +1,74 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { mapDynamicState, mapDynamicDispatch } from 'dynamic-redux';
-
 import uploaderState from '../../../../store/states/uploader';
 
-const mapStateToProps = mapDynamicState('uploader: imageData canvasSize currentCanvasData imagesToUpload inputs');
-const mapDispatchToProps = mapDynamicDispatch(uploaderState.actions, 'setImageToUpload setImageData setCurrentCanvasData');
+import Canvas from './Canvas';
+import Panel from './Panel';
+
+const mapStateToProps = mapDynamicState('uploader: imageData canvasSize canvasData imagesToUpload inputs');
+const mapDispatchToProps = mapDynamicDispatch(uploaderState.actions, 'setImageData setCanvasData');
 
 class Overlay extends React.Component {
 
-  imgRef = React.createRef();
   canvas = null;
+  img = React.createRef();
 
   state = {
     modalOpen: false,
-  };
+    imageBounds: {},
+  }
 
   componentDidMount() {
-    this.props.setCurrentCanvasData({
-      ...this.props.currentCanvasData,
-      context: this.canvas.getContext('2d'),
+    this.canvas = document.getElementById('canvas');
+
+    this.setImageSize();
+
+    document.body.addEventListener('click', this.handleModalClose);
+  }
+
+  setImageSize = () => {
+    const { imageData, setImageData, canvasData, setCanvasData } = this.props;
+
+    this.img.addEventListener('load', () => {
+      const imageBounds = this.img.getBoundingClientRect();
+      this.setState({ imageBounds });
+
+      setImageData({
+        ...imageData,
+        width: imageBounds.width,
+        height: imageBounds.height,
+      });
+
+      setCanvasData({
+        ...canvasData,
+        context: this.canvas.getContext('2d'),
+        imageBounds: imageBounds,
+        canvas: this.canvas,
+        img: this.img,
+      });
+
+      this.setCanvasPosition(imageBounds);
     });
-
-    this.setSize();
-    const positions = getPosition(this.imgRef.current);
-    this.setState({ canvasPositions: positions });
-
-    this.canvas.style.top = positions.top + 'px';
-    this.canvas.style.left = positions.left + 'px';
-
-    const htmlElement = document.getElementsByTagName('html')[0];
-    htmlElement.addEventListener('click', this.handleModalClose);
   }
 
-  setSize = () => {
-    const img = this.imgRef.current;
-
-    img.addEventListener('load', () => {
-      const height = img.offsetHeight;
-      const width = img.offsetWidth;
-      this.props.setImageData({
-        ...this.props.imageData,
-        width,
-        height
-      });
-    });
+  setCanvasPosition = position => {
+    this.canvas.style.top = position.top + 'px';
+    this.canvas.style.left = position.left + 'px';
   }
 
-  onCreateInput = e => {
-    let { inputKey, labels } = this.state;
-    let { currentCanvasData } = this.props;
-
-    labels.push(React.createRef());
-    this.setState({ labels });
-    let label;
-
-    const element = (
-      <label key={inputKey} data-key={inputKey} htmlFor={'input-' + inputKey} ref={labels[inputKey]} style={{top: e.clientY, left: e.clientX, color: currentCanvasData.color}} className="canvas-label" onClick={this.onInputClick}>
-        Input
-        <input id={'input-' + inputKey} data-key={inputKey} className="canvas-input" />
-      </label>
-    );
-
-    const input = {
-      element,
-      inputKey,
-      label: this.state.labels[inputKey]
-    };
-
-    inputKey++;
-    const inputs = this.state.inputs.concat(input);
-    this.setState({ inputs, inputKey });
-  }
-
-  setRef = ref => this.canvas = ref;
-
-  eraseChangeHandler = checked => {
-    if (checked) {
-      this.props.setCurrentCanvasData({
-        ...this.props.currentCanvasData,
-        contextAction: 'erase',
-      });
-    } else {
-      this.props.setCurrentCanvasData({
-        ...this.props.currentCanvasData,
-        contextAction: 'draw',
-      });
-    }
-  }
-
-  handleModalClose = () => this.setState({ modalOpen: false });
-  handleModalOpen = () => this.setState({ modalOpen: true });
+  modalClose = () => this.setState({ modalOpen: false });
+  modalOpen = () => this.setState({ modalOpen: true });
 
   render() {
     const { imageData } = this.props;
-    const { canvasPositions, lastFocused } = this.state;
-
-    const canvasDatas = {
-      canvasPositions,
-      canvas: this.canvas,
-      imgRef: this.imgRef
-    };
-
-    const overlayContainer = document.getElementsByClassName('overlay-container')[0];
 
     return (
-      <div className="overlay-container">
-        <Canvas canvasDatas={canvasDatas} setRef={this.setRef} />
-        <img className="draw-on" ref={this.imgRef} src={imageData.imageTemp64} alt=""/>
+      <div id="overlay-container">
+        <img className="draw-on" src={imageData.imageBase64} ref={e => this.img = e} />
+        <Canvas />
 
-        <Swatches
-          canvasDatas={canvasDatas}
-          overlayContainer={overlayContainer}
-          eraseChangeHandler={this.eraseChangeHandler}
-          lastFocused={lastFocused}
-          handleModalOpen={this.handleModalOpen}
-        />
-        <CanvasHelper open={this.state.modalOpen} onClose={this.handleModalClose} />
+        <Panel />
       </div>
     );
   }

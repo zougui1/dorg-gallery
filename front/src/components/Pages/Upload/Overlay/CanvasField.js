@@ -1,27 +1,28 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { mapDynamicState, mapDynamicDispatch } from 'dynamic-redux';
-
-import '../form.scss';
 import uploaderState from '../../../../store/states/uploader';
 
-const mapStateToProps = mapDynamicState('uploader: currentCanvasData imageData imagesToUpload inputs labels');
-const mapDispatchToProps = mapDynamicDispatch(uploaderState.actions, 'editCanvasLabel editCanvasField');
-/*const mapDispatchToProps = dispatch => ({
-  editCanvasLabel: (label, id) => dispatch(editCanvasLabel(label, id)),
-  editCanvasField: (field, id) => dispatch(editCanvasField(field, id)),
-});*/
+const mapStateToProps = mapDynamicState('uploader: imageData canvasSize canvasData imagesToUpload inputs labels');
+const mapDispatchToProps = mapDynamicDispatch(uploaderState.actions, 'setCanvasLabel setCanvasField setImageData setCanvasData');
+
 class CanvasField extends React.Component {
 
-  componentDidMount = () => {
-    const { editCanvasLabel, labels } = this.props;
+  componentDidMount() {
+    let { setCanvasLabel, inputs, setCanvasField } = this.props;
 
-    const updatedLabels = labels.map((label, i) => {
-      if (i === this.props._key) label.current = document.getElementById('label-' + this.props._key);
+    const updatedLabels = inputs.map((label, i) => {
+      if (i === this.props.id) label = document.getElementById('label-' + this.props.id);
       return label;
     });
-    //this.props.editCanvasLabel(document.getElementById('label-' + this.props._key), this.props._key);
-    editCanvasLabel(updatedLabels);
+
+    const updatedFields = inputs.map((field, i) => {
+      if (i === this.props.id) field.label = document.getElementById('label-' + this.props.id);
+      return field;
+    });
+
+    setCanvasLabel(updatedLabels);
+    setCanvasField(updatedFields);
   }
 
   shouldComponentUpdate = nextProps => {
@@ -29,73 +30,80 @@ class CanvasField extends React.Component {
   }
 
   onInputClick = e => {
-    let { inputs, editCanvasField, currentCanvasData: current } = this.props;
-    const key = Number(e.target.getAttribute('data-key'));
+    const { inputs, setCanvasField, canvasData } = this.props;
+    const id = +e.target.getAttribute('data-id');
 
-    inputs.forEach(input => {
-      if(input.inputKey === key) {
-        let currentLabel = input.label.current;
-        let currentInput = currentLabel.childNodes[1];
-
-        currentInput.style.color = current.color;
-        currentInput.style.borderColor = current.color;
-        currentInput.style.fontSize = current.fontSize;
-        currentLabel.style.color = current.color;
-
-        //editCanvasField(input, key)
-        editCanvasField(inputs)
+    for (let i = 0; i < inputs.length; i++) {
+      if (inputs[i].id !== id) {
+        continue;
       }
-      return input;
-    });
+
+      const label = inputs[i].label;
+      const input = label.childNodes[1];
+
+      input.style.color = canvasData.color;
+      input.style.borderColor = canvasData.color;
+      label.style.borderColor = canvasData.color;
+
+      input.style.fontSize = canvasData.fontSize;
+
+      setCanvasField(inputs);
+      break;
+    }
   }
 
   inputChangeHandler = e => {
-    let { inputs } = this.props;
-    const self = e.target;
-    const value = self.value.trim();
-    const key = Number(self.getAttribute('data-key'));
+    const { inputs } = this.props;
+    let { value } = e.target;
+    value = value.trim();
 
-    inputs.forEach(input => {
-      if(input.inputKey === key) {
-        let labelContent = input.label.current.childNodes[0];
-        if (value.length > 0) {
-          labelContent.textContent = '';
-        } else {
-          labelContent.textContent = 'Input';
-        }
+    const id = +e.target.getAttribute('data-id');
+
+    for (let i = 0; i < inputs.length; i++) {
+      if (inputs[i].id !== id) {
+        continue;
       }
-    });
+
+      let labelContent = inputs[i].label.childNodes[0];
+
+      if (value.length > 0) {
+        labelContent.textContent = '';
+      } else {
+        labelContent.textContent = 'Input';
+      }
+    }
   }
 
   dragStartHandler = e => {
-    const id = e.target.getAttribute('data-key');
-    e.dataTransfer.setData('key', id);
+    const id = e.target.getAttribute('data-id');
+    e.dataTransfer.setData('id', id);
   }
 
   render() {
-    const { _key, client, current } = this.props;
+    const { id, client, currentCanvasData } = this.props;
 
     return (
       <label
+        htmlFor={'input-' + id}
         draggable
-        htmlFor={'input-' + _key}
-        id={'label-' + _key}
-        style={{top: client.y, left: client.x, color: current.color}}
+        id={'label-' + id}
+        style={{ top: client.y, left: client.x, color: currentCanvasData.color }}
         className="canvas-label draggable"
-        data-key={_key}
+        data-id={id}
         onClick={this.onInputClick}
         onDragStart={this.dragStartHandler}
-        onDrop={this.dropHandler}>
-          <span>Input</span>
-          <input
-            id={'input-' + _key}
-            data-key={_key}
-            style={{borderColor: current.color, color: current.color, fontSize: '16px'}}
-            className="canvas-input"
-            onChange={this.inputChangeHandler}
-            onFocus={this.focusInputHandler}
-            onBlur={this.blurInputHandler}
-          />
+        //onDrop={this.dropHandler}
+      >
+        <span>Input</span>
+        <input
+          id={'input-' + id}
+          data-id={id}
+          style={{ borderColor: currentCanvasData.color, color: currentCanvasData.color, fontSize: currentCanvasData.fontSize }}
+          className="canvas-input"
+          onChange={this.inputChangeHandler}
+          //onFocus={this.focusInputHandler}
+          //onBlur={this.blurInputHandler}
+        />
       </label>
     );
   }

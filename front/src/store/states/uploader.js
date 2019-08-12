@@ -3,18 +3,22 @@ import { DynamicState } from 'dynamic-redux';
 const uploaderState = new DynamicState({
   formView: 'Uploader',
   imageData: {},
-  currentCanvasData: {
+  canvasData: {
     color: 'rgba(0,0,0,0.5)',
     eraseSize: 10,
     fontSize: 16,
     displayMainLayer: true,
     displayInputs: true,
     alpha: 0.5,
+    lineWidth: 3,
     contextAction: 'draw',
     drawing: false,
     context: null,
     hasTextCanvas: true,
     draggingOut: false,
+    imageBounds: {},
+    canvas: null,
+    img: null,
   },
   imagesToUpload: {},
   inputs: [],
@@ -24,13 +28,10 @@ const uploaderState = new DynamicState({
 uploaderState.createState({
   setFormView: 'SET_FORM_VIEW',
   setImageData: 'SET_IMAGE_DATA',
-  setCurrentCanvasData: 'SET_CURRENT_CANVAS_DATA',
-  setImageToUpload: 'SET_IMAGE_TO_UPLOAD',
-  addCanvasField: { type: 'ADD_CANVAS_FIELD', prop: 'inputs' },
-  editCanvasField: { type: 'EDIT_CANVAS_FIELD', prop: 'labels' },
+  setCanvasData: 'SET_CANVAS_DATA',
+  setImagesToUpload: 'SET_IMAGES_TO_UPLOAD',
   setCanvasField: { type: 'SET_CANVAS_FIELD', prop: 'inputs' },
-  addCanvasLabel: { type: 'ADD_CANVAS_LABEL', prop: 'labels' },
-  editCanvasLabel: { type: 'EDIT_CANVAS_LABEL', prop: 'labels' },
+  setCanvasLabel: { type: 'SET_CANVAS_LABEL', prop: 'labels' },
   resetReducer: 'RESET_REDUCER'
 });
 

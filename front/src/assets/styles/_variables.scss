@@ -30,19 +30,21 @@
 //  24. Collections
 //  25. Progress Bar
 
+@import './functions/color';
+@import './helpers/colors/variables';
 
 
 // 1. Colors
 // ==========================================================================
 
-$primary-color: color("materialize-red", "lighten-2") !default;
+$primary-color: #ee6e73 !default;
 $primary-color-light: lighten($primary-color, 15%) !default;
 $primary-color-dark: darken($primary-color, 15%) !default;
 
-$secondary-color: color("teal", "lighten-1") !default;
-$success-color: color("green", "base") !default;
-$error-color: color("red", "base") !default;
-$link-color: color("light-blue", "darken-1") !default;
+$secondary-color: #26a69a !default;
+$success-color: #4CAF50 !default;
+$error-color: #F44336 !default;
+$link-color: #039be5 !default;
 
 
 // 2. Badges
@@ -95,7 +97,7 @@ $button-floating-radius: 50% !default;
 
 $card-padding: 24px !default;
 $card-bg-color: #fff !default;
-$card-link-color: color("orange", "accent-2") !default;
+$card-link-color: #ffab40 !default;
 $card-link-color-light: lighten($card-link-color, 20%) !default;
 
 
@@ -161,7 +163,7 @@ $roboto-font-path: "../fonts/roboto/" !default;
 
 // Text Inputs + Textarea
 $input-height: 3rem !default;
-$input-border-color: color("grey", "base") !default;
+$input-border-color: #9e9e9e !default;
 $input-border: 1px solid $input-border-color !default;
 $input-background: #fff !default;
 $input-error-color: $error-color !default;
@@ -260,9 +262,9 @@ $sidenav-line-height: $sidenav-item-height !default;
 // 16. Photo Slider
 // ==========================================================================
 
-$slider-bg-color: color('grey', 'base') !default;
-$slider-bg-color-light: color('grey', 'lighten-2') !default;
-$slider-indicator-color: color('green', 'base') !default;
+$slider-bg-color: #9e9e9e !default;
+$slider-bg-color-light: #e0e0e0 !default;
+$slider-indicator-color: #4CAF50 !default;
 
 
 // 17. Spinners | Loaders

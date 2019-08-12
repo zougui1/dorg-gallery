@@ -1,102 +1,138 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { mapDynamicState, mapDynamicDispatch } from 'dynamic-redux';
+import uploaderState from '../../../../store/states/uploader';
 
 import './Canvas.scss';
 
-import uploaderState from '../../../../store/states/uploader';
+const mapStateToProps = mapDynamicState('uploader: canvasData imageData inputs labels');
+const mapDispatchToProps = mapDynamicDispatch(uploaderState.actions, 'setCanvasData setCanvasField setCanvasLabel');
 
-
-const mapStateToProps = mapDynamicState('uploader: currentCanvasData imageData inputs');
-const mapDispatchToProps = mapDynamicDispatch(uploaderState.actions, 'setCurrentCanvasData setCanvasField editCanvasField');
-/*dispatch => ({
-  changeCurrentCanvasData: contextAction => dispatch(changeCurrentCanvasData(contextAction)),
-  setCanvasField: field => dispatch(setCanvasField(field)),
-  editCanvasField: (field, id) => dispatch(editCanvasField(field, id)),
-});*/
 class Canvas extends React.Component {
 
   state = {
-    inputKey: 0,
-    lineSize: 3,
+    inputId: 0,
   }
 
-  componentDidMount = () => {
-    this.props.setRef(document.getElementById('canvas'));
-    const htmlElement = document.getElementsByTagName('html')[0];
-
-    htmlElement.addEventListener('dragover', e => this.dragOverHandler(e, 'html'));
-    htmlElement.addEventListener('drop', this.dropHandler);
-    htmlElement.addEventListener('mouseup', this.mouseUpHandler);
+  componentDidMount() {
+    document.body.addEventListener('dragover', e => this.dragOverHandler(e, true));
+    document.body.addEventListener('drop', this.dropHandler);
+    document.body.addEventListener('mouseup', this.mouseUpHandler);
   }
 
+  /**
+   * calculate a position relative to the canvas from an absolute position
+   */
+  calculateRelativePosition = (x, y) => {
+    const { top, left } = this.props.canvasData.imageBounds;
 
-  drawLine = (x0, y0, x1, y1) => {
-    const { canvasPositions } = this.props.canvasDatas;
-    const current = this.props.currentCanvasData;
+    return {
+      x: x - left - window.pageXOffset,
+      y: y - top - window.pageYOffset,
+    };
+  }
 
-    const { context, contextAction, } = current;
+  /**
+   * make an action on the canvas depending to the context action
+   */
+  canvasAction = (x0, y0, x1, y1) => {
+    const { canvasData } = this.props;
 
-    // calculate the position of the cursor relative to the canvas position
-    let { top, left } = canvasPositions;
-    left -= window.pageYOffset;
-    top -= window.pageXOffset;
-    x0 -= left;
-    y0 -= top;
-    x1 -= left;
-    y1 -= top;
+    let pos = this.calculateRelativePosition(x0, y0);
+    x0 = pos.x;
+    y0 = pos.y;
 
-    if(contextAction === 'draw') {
-      context.beginPath();
-      context.moveTo(x0, y0);
-      context.lineTo(x1, y1);
-      context.strokeStyle = current.color;
-      context.lineWidth = this.state.lineSize || 3;
-      context.lineCap = 'butt';
-      context.stroke();
-      context.closePath();
-    } else if(contextAction === 'erase') {
-      const eraseSize = current.eraseSize;
+    pos = this.calculateRelativePosition(x1, y1);
+    x1 = pos.x;
+    y1 = pos.y;
 
-      x0 = x0 - (eraseSize / 2);
-      y0 = y0 - (eraseSize / 2);
-      context.clearRect(x0, y0, eraseSize, eraseSize);
+    if (canvasData.contextAction === 'draw') {
+      this.drawLine(x0, y0, x1, y1);
+    } else if (canvasData.contextAction === 'erase') {
+      this.eraseArea(x0, y0);
     }
   }
 
+  /**
+   * draw a line on the canvas
+   */
+  drawLine = (x0, y0, x1, y1) => {
+    const { canvasData } = this.props;
+    const { context, lineWidth, color } = canvasData;
+
+    context.beginPath();
+
+    // draw the line
+    context.moveTo(x0, y0);
+    context.lineTo(x1, y1);
+
+    context.strokeStyle = color;
+    context.lineWidth = lineWidth;
+    context.lineCap = 'butt';
+    context.stroke();
+
+    context.closePath();
+  }
+
+  /**
+   * erase an area on the canvas
+   */
+  eraseArea = (x, y) => {
+    const { canvasData } = this.props;
+    const { context, eraseSize } = canvasData;
+
+    x -= eraseSize / 2;
+    y -= eraseSize / 2;
+
+    context.clearRect(x, y, eraseSize, eraseSize);
+  }
+
+  /**
+   * set the client position in the canvas data
+   */
   mouseDownHandler = e => {
-    const { setCurrentCanvasData, currentCanvasData: current } = this.props;
+    const { setCanvasData, canvasData } = this.props;
 
-    // if you change the color the alpha isn't set, so we change again the color to set the alpha
-    let newColor = current.color.replace(/[0-1]+([.][0-9]*)?\)$/, current.alpha + ')');
-    current.color = newColor;
+    //const newColor = canvasData.color.replace(/[0-1]+([.][0-9]*)?\)$/, current.alpha + ')');
+    //canvasData.color = newColor;
 
-    current.x = e.clientX;
-    current.y = e.clientY;
-    current.drawing = true;
-    setCurrentCanvasData(current)
+    canvasData.x = e.clientX;
+    canvasData.y = e.clientY;
+    canvasData.drawing = true;
+    setCanvasData(canvasData);
   }
 
   mouseUpHandler = e => {
-    const { setCurrentCanvasData, currentCanvasData: current } = this.props;
+    const { setCanvasData, canvasData } = this.props;
 
-    if (!current.drawing) {return};
-    setCurrentCanvasData(current.drawing = false)
-    this.drawLine(current.x, current.y, e.clientX, e.clientY, current.color, true);
+    if (!canvasData.drawing) {
+      return;
+    }
+
+    setCanvasData({
+      ...canvasData,
+      drawing: false,
+    });
+
+    this.canvasAction(canvasData.x, canvasData.y, e.clientX, e.clientY);
   }
 
   mouseMoveHandler = e => {
-    const { setCurrentCanvasData, currentCanvasData: current } = this.props;
+    const { setCanvasData, canvasData } = this.props;
 
-    if (!current.drawing) {return};
-    this.drawLine(current.x, current.y, e.clientX, e.clientY, current.color, true);
-    current.x = e.clientX;
-    current.y = e.clientY;
-    setCurrentCanvasData(current)
+    if (!canvasData.drawing) {
+      return;
+    }
+
+    this.canvasAction(canvasData.x, canvasData.y, e.clientX, e.clientY);
+    canvasData.x = e.clientX;
+    canvasData.y = e.clientY;
+    setCanvasData(canvasData);
   }
 
   throttle = (callback, delay) => {
     let previousCall = new Date().getTime();
+
     return function() {
       let time = new Date().getTime();
 
@@ -107,71 +143,84 @@ class Canvas extends React.Component {
     };
   }
 
-  dragOverHandler = (e, type) => {
+  dragOverHandler = (e, preventUpdate) => {
     e.preventDefault();
-    if(type !== 'html')
-      this.props.setCurrentCanvasData({ ...this.props.currentCanvasData, draggingOut: false });
+    const { setCanvasData, canvasData } = this.props;
+
+    if (!preventUpdate) {
+      setCanvasData({
+        ...canvasData,
+        draggingOut: false,
+      });
+    }
   }
 
-  dragLeaveHandler = () =>
-    this.props.setCurrentCanvasData({ ...this.props.currentCanvasData, draggingOut: true });
+  dragLeaveHandler = () => {
+    const { setCanvasData, canvasData } = this.props;
+
+    setCanvasData({
+      ...canvasData,
+      draggingOut: true,
+    });
+  }
 
   dropHandler = e => {
-    let { inputs, editCanvasField, setCanvasField, currentCanvasData, canvasDatas } = this.props;
-    const key = Number(e.dataTransfer.getData('key'));
-    let inputsUpdate;
+    let { inputs, labels, setCanvasField, setCanvasLabel, canvasData } = this.props;
+    const id = +e.dataTransfer.getData('id');
 
-    if(!currentCanvasData.draggingOut) {
-      inputs.forEach(input => {
-        if(input.inputKey === key) {
-          let { top, left } = canvasDatas.canvasPositions;
-          let x = e.clientX;
-          let y = e.clientY;
+    if (!canvasData.draggingOut) {
+      console.log('update field position');
+      for (let i = 0; i < inputs.length; i++) {
+        const input = inputs[i];
 
-          left -= window.pageYOffset;
-          top -= window.pageXOffset;
-          x -= left;
-          y -= top;
-          let currentLabel = input.label.current;
-
-          currentLabel.style.top = y + 'px';
-          currentLabel.style.left = x + 'px';
-          //editCanvasField(input, key);
-          editCanvasField(inputs);
+        if (input.id !== id) {
+          continue;
         }
-      });
+
+        const { x, y } = this.calculateRelativePosition(e.clientX, e.clientY);
+        //const label = input.label;
+        const label = labels[i];
+        console.log('labels', labels);
+        console.log('inputs', inputs);
+
+        label.style.top = y + 'px';
+        label.style.left = x + 'px';
+        setCanvasField(inputs);
+        break;
+      }
     } else {
-      inputsUpdate = inputs.filter(input => {
-        return input.inputKey !== key;
-      });
+      console.log('delete field');
+      const inputsUpdate = inputs.filter(input => input.id !== id);
+      const labelsUpdate = labels.filter((_, i) => i !== id);
       setCanvasField(inputsUpdate);
+      setCanvasLabel(labelsUpdate);
     }
   }
 
   render() {
-    const { imageData, inputs } = this.props;
-    let { width, height } = imageData;
+    const { canvasData, inputs: _inputs } = this.props;
+    const { width, height } = canvasData.imageBounds;
 
-    const inputsElement = inputs.map(input => input.element);
+    const inputs = _inputs.map(input => input.element);
 
     return (
       <div>
         <div
-          style={{ userSelect: 'none' }}
-          className="canvas-container"
+          className="select-none canvas-container"
           onDragLeave={this.dragLeaveHandler}
           onDragOver={this.dragOverHandler}
         >
           <canvas
-            style={{userSelect: 'none'}}
-            className="canvas droppable"
+            className="select-none canvas droppable"
             id="canvas"
             width={width && width - 300}
-            height={height && height}
+            height={height}
             onMouseDown={this.mouseDownHandler}
             onMouseMove={this.throttle(this.mouseMoveHandler, 10)}
-          ></canvas>
-          {inputsElement}
+          >
+
+          </canvas>
+          {inputs}
         </div>
       </div>
     );

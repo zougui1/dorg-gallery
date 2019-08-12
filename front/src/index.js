@@ -7,7 +7,6 @@ import './index.scss';
 import store from "./store";
 //import Navbar from './components/Navbar';
 import Router from './Router';
-import socket from './socket/config';
 
 class Root extends React.Component {
 
