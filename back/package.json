@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "compile": "webpack --mode-development --watch",
     "start": "cross-env DEBUG= node . --server-start",
     "prod": "cross-env NODE_ENV=production node . --server-start",
     "debug:dorg": "cross-env DEBUG=Dorg-gallery:* node . --server-start",
@@ -16,6 +17,7 @@
     "@ronomon/base64": "^2.4.1",
     "bcrypt": "^3.0.6",
     "cloudinary": "^1.14.0",
+    "cloudinary-core": "^2.7.3",
     "debug": "^4.1.1",
     "express": "^4.17.1",
     "mongoose": "^5.6.8",
@@ -26,10 +28,21 @@
     "socket.io": "^2.2.0"
   },
   "devDependencies": {
+    "@types/bcrypt": "^3.0.0",
+    "@types/debug": "^4.1.5",
+    "@types/express": "^4.17.0",
+    "@types/mongoose": "^5.5.12",
+    "@types/sharp": "^0.22.2",
+    "@types/socket.io": "^2.1.2",
+    "@types/yargs": "^13.0.2",
     "chalk": "^2.4.2",
     "cross-env": "^5.2.0",
     "os-utils": "0.0.14",
     "supports-color": "^7.0.0",
+    "ts-loader": "^6.0.4",
+    "typescript": "^3.5.3",
+    "webpack": "^4.39.1",
+    "webpack-cli": "^3.3.6",
     "yargs": "^13.3.0"
   }
 }
