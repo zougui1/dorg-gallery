@@ -5,6 +5,7 @@ import { mapDynamicState, mapDynamicDispatch } from 'dynamic-redux';
 
 import uploaderState from '../../../../../store/states/uploader';
 import show from '../../../../../containers/show';
+import socket from '../../Uploader/socket';
 
 const Button = show(_Button);
 
@@ -23,6 +24,11 @@ class Uploader extends React.Component {
 
     uploading: false
   };
+
+  componentWillUnmount() {
+    socket.Remove.uploadSuccess(this.uploadSuccess);
+    socket.Remove.uploadFail(this.uploadFail);
+  }
 
   /**
    * update the variable 'canvasData' in the store
@@ -137,12 +143,15 @@ class Uploader extends React.Component {
         const { imageData } = this.props;
         const images = { ...imageData, ...imagesToUpload };
 
-        //emit.uploadImage(imageDataWithCanvas);
-        //on.uploaded(() => this.setState({ loader: { success: true } }));
-        //on.uploadError(() => this.setState({ loader: { error: true } }));
+        socket.Emit.uploadImage(images);
+        socket.On.uploadSuccess(this.uploadSuccess);
+        socket.On.uploadFail(this.uploadFail);
       }
     }, 0);
   }
+
+  uploadSuccess = () => this.setState({ loader: { success: true } });
+  uploadFail = () => this.setState({ loader: { error: true } });
 
   render() {
     const { uploading, loader } = this.state;
