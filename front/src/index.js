@@ -5,13 +5,14 @@ import { Provider } from 'react-redux';
 
 import './index.scss';
 import store from "./store";
-//import Navbar from './components/Navbar';
+import Navbar from './components/Globals/Navbar';
 import Router from './Router';
+import Auth from './services/Auth';
 
 class Root extends React.Component {
 
   componentDidMount() {
-
+    //Auth.login();
   }
 
   render() {
@@ -19,7 +20,7 @@ class Root extends React.Component {
       <Provider store={store}>
         <BrowserRouter>
          <React.Fragment>
-           {/*<Navbar />*/}
+            <Navbar />
             <Router />
           </React.Fragment>
         </BrowserRouter>

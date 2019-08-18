@@ -35,7 +35,7 @@ export const UserController: IUserController = class UserController {
   public static login: Login = user => new Promise((resolve, reject) => {
     debug.mongoose('%o has been called', 'UserController.login');
 
-    UserController.findByName(user.name)
+    UserController.findByName(user.name).populate('roles')
       .then(_userDb => {
         // avoid the conflict of type due to the methods associated to user documents
         const userDb: any = _userDb;
@@ -51,6 +51,7 @@ export const UserController: IUserController = class UserController {
             const userObj: UserModel = {
               _id: userDb._id,
               name: userDb.name,
+              roles: userDb.roles,
               password: ''
             };
 

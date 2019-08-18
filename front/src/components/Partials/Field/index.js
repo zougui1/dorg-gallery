@@ -13,7 +13,7 @@ class Field extends React.Component {
 
     return (
       <Field
-        fullWidth
+        fullWidth={false}
         onChange={onChange}
         name={name}
         label={label}

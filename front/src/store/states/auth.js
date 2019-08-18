@@ -1,7 +1,7 @@
 import { DynamicState } from 'dynamic-redux';
 
 const authState = new DynamicState({
-  user: ''
+  user: {}
 });
 
 authState.createState({
