@@ -12,3 +12,9 @@ export interface AddMultipleResolve {
 export type Add = (tag: TagModel) => Query;
 export type AddMultiple = (tags: TagModel[]) => Promise<AddMultipleResolve>;
 export type GetAll = () => ArrayQuery;
+
+export interface ITagController {
+  add: Add;
+  addMultiple: AddMultiple;
+  getAll: GetAll;
+}

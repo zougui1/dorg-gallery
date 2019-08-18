@@ -1,10 +1,10 @@
 import { debug } from '../../../config';
 import { Image } from '../../Models/Image';
-import { Add, GetByPage, GetByUser, GetById, GetCount } from './image.types';
+import { Add, GetByPage, GetByUser, GetById, GetCount, IImageController } from './image.types';
 
 const imagePerPage = 30;
 
-export class ImageController {
+export const ImageController: IImageController = class ImageController {
 
   /**
    * add an image in the DB

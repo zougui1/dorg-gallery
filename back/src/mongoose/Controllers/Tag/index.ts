@@ -1,9 +1,9 @@
 import { debug } from '../../../config';
 import { Tag } from '../../Models/Tag';
-import { Add, AddMultiple, GetAll } from '../Tag/tag.types';
+import { Add, AddMultiple, GetAll, ITagController } from '../Tag/tag.types';
 import { TagModel } from '../../Models/Tag/tag.types';
 
-export class TagController {
+export const TagController: ITagController = class TagController {
 
   /**
    * add a tag only if it doesn't already exists

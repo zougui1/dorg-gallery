@@ -1,9 +1,10 @@
 import { debug } from '../../config';
 import { controllers } from '../../mongoose';
 import { upload } from '../../services/cloudinary';
-import { SocketListener, SocketErrorListener, SocketAndNumber, SendImage } from './image.types';
+import { SocketListener, SocketErrorListener } from '../socket.types';
+import { SocketAndNumber, SendImage } from './image.types';
 
-class On {
+export class On {
   // is called when a user upload an image
   public static uploadImage: SocketListener = function uploadImage(socket) {
     socket.on('uploadImage', data => {
@@ -121,9 +122,9 @@ class On {
         });
     });
   }
-};
+}
 
-class Emit {
+export class Emit {
   public static imageUploaded: SocketListener = function imageUploaded(socket) {
     debug.socket.emit('imageUploaded');
 
@@ -163,6 +164,4 @@ class Emit {
 
     socket.emit('getImagesCountFailed', { success: false, error: error });
   }
-};
-
-export { On, Emit };
+}

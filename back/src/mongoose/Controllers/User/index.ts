@@ -1,9 +1,9 @@
 import { debug } from '../../../config';
 import { User } from '../../Models/User';
-import { Signup, FindByName, Login, GetCount } from './user.types';
+import { Signup, FindByName, Login, GetCount, IUserController } from './user.types';
 import { UserModel } from '../../Models/User/user.types';
 
-export class UserController {
+export const UserController: IUserController = class UserController {
 
   /**
    * create a new user

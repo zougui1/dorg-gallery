@@ -1,10 +1,13 @@
-import { io } from '../config';
+import { io, debug } from '../config';
+import * as UserHandlers from './User';
+import * as ImageHandlers from './Image';
+import * as TagHandlers from './Tag';
 
-let socketHandlers = [];
+let socketHandlers: any[] = [];
 
-socketHandlers.push(require('./user'));
-socketHandlers.push(require('./tag'));
-socketHandlers.push(require('./image'));
+socketHandlers.push(UserHandlers);
+socketHandlers.push(ImageHandlers);
+socketHandlers.push(TagHandlers);
 
 io.on('connection', socket => {
   debug.socket('connection');
