@@ -1,5 +1,6 @@
 import { debug } from '../../../config';
 import { User } from '../../Models/User';
+import { controllers } from '../';
 import { Signup, FindByName, Login, GetCount, IUserController } from './user.types';
 import { UserModel } from '../../Models/User/user.types';
 
@@ -8,17 +9,26 @@ export const UserController: IUserController = class UserController {
   /**
    * create a new user
    */
-  public static signup: Signup = ({ name, password }) => {
+  public static signup: Signup = ({ name, password }) => new Promise((resolve, reject) => {
     debug.mongoose('%o has been called', 'UserController.signup');
 
-    const user = new User({
-      // @ts-ignore
-      name,
-      password,
-    });
+    controllers.Role.findByName('user')
+      .then(role => {
+        if (!role) {
+          return reject('The role "user" couldn\'t be found');
+        }
 
-    return user.save();
-  }
+        const user = new User({
+          // @ts-ignore
+          name,
+          password,
+          roles: [role._id],
+        });
+
+        resolve(user.save());
+      })
+      .catch(reject);
+  });
 
   /**
    * get a user by its name

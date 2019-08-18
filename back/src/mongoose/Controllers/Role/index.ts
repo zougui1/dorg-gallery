@@ -1,6 +1,6 @@
 import { debug } from '../../../config';
 import { Role } from '../../Models/Role';
-import { IRoleController, Add, GetAll } from './role.types';
+import { IRoleController, Add, FindByName, GetAll } from './role.types';
 import { RoleModel } from '../../Models/Role/role.types';
 
 export const RoleController: IRoleController = class RoleController {
@@ -17,6 +17,15 @@ export const RoleController: IRoleController = class RoleController {
     });
 
     return role.save();
+  }
+
+  /**
+   * get a role by name
+   */
+  public static findByName: FindByName = name => {
+    debug.mongoose('%o has been called', 'RoleController.findByName');
+
+    return Role.findOne({ name: name.toLowerCase() });
   }
 
   /**
