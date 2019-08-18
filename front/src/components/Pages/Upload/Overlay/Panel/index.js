@@ -8,6 +8,7 @@ import SizesPanel from './SizesPanel';
 import DisplayPanel from './DisplayPanel';
 import InputCreator from './InputCreator';
 import Uploader from './Uploader';
+import HelperPanel from './HelperPanel';
 
 const mapDispatchToProps = mapDynamicDispatch(uploaderState.actions, 'setCanvasData');
 
@@ -18,6 +19,7 @@ const Panel = () => (
     <DisplayPanel />
     <InputCreator />
     <Uploader />
+    <HelperPanel />
   </div>
 );
 

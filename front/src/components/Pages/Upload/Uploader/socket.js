@@ -1,33 +1,33 @@
 import socket from '../../../../socket/config';
 
-const on = {
-  uploadSuccess: callback => {
+class On {
+  static uploadSuccess = callback => {
     return socket.on('uploadSuccess', callback);
-  },
+  }
 
-  uploadFail: callback => {
+  static uploadFail = callback => {
     return socket.on('uploadFail', callback);
-  },
-};
+  }
+}
 
-const emit = {
-  uploadImage: data => {
+class Emit {
+  static uploadImage = data => {
     return socket.emit('uploadImage', data);
-  },
-};
+  }
+}
 
-const remove = {
-  uploadSuccess: callback => {
+class Remove {
+  static uploadSuccess = callback => {
     return socket.removeListener('uploadSuccess', callback);
-  },
+  }
 
-  uploadFail: callback => {
+  static uploadFail = callback => {
     return socket.removeListener('uploadFail', callback);
-  },
-};
+  }
+}
 
 export default {
-  on,
-  emit,
-  remove
+  On,
+  Emit,
+  Remove
 };

@@ -13,6 +13,10 @@ class Loader extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     const { redirection, completed, timeout } = this.props;
 
+    /**
+     * if there is a redirection and the loading is completed
+     * we make the redirection after a timeout
+     */
     if (redirection && completed && completed !== prevProps.completed) {
       setTimeout(() => this.setState({ canRedirect: true }), timeout == null ? 1500 : timeout);
     }

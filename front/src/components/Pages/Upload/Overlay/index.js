@@ -15,7 +15,6 @@ class Overlay extends React.Component {
   img = React.createRef();
 
   state = {
-    modalOpen: false,
     imageBounds: {},
   }
 
@@ -65,9 +64,6 @@ class Overlay extends React.Component {
     this.canvas.style.left = position.left + 'px';
   }
 
-  modalClose = () => this.setState({ modalOpen: false });
-  modalOpen = () => this.setState({ modalOpen: true });
-
   render() {
     const { imageData } = this.props;
 
@@ -76,7 +72,7 @@ class Overlay extends React.Component {
         <img className="draw-on" src={imageData.imageBase64} ref={e => this.img = e} />
         <Canvas />
 
-        <Panel />
+        <Panel modalOpen={this.modalOpen} />
       </div>
     );
   }

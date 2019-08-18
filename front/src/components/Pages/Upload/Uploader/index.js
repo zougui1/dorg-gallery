@@ -44,8 +44,8 @@ class Uploader extends React.Component {
   }
 
   componentWillUnmount() {
-    socket.remove.uploadSuccess(this.uploadSuccess);
-    socket.remove.uploadFail(this.uploadFail);
+    socket.Remove.uploadSuccess(this.uploadSuccess);
+    socket.Remove.uploadFail(this.uploadFail);
   }
 
   /**
@@ -85,9 +85,9 @@ class Uploader extends React.Component {
           setFormView('Overlay');
         } else {
 
-          socket.emit.uploadImage(formData);
-          socket.on.uploadSuccess(this.uploadSuccess);
-          socket.on.uploadFail(this.uploadFail);
+          socket.Emit.uploadImage(formData);
+          socket.On.uploadSuccess(this.uploadSuccess);
+          socket.On.uploadFail(this.uploadFail);
         }
       })
       .catch(err => {

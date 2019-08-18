@@ -5,11 +5,12 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 
-const CanvasHelper = ({ handleModalClose, open }) => (
+const CanvasHelper = ({ onClose, open }) => (
   <Dialog
     style={{ zIndex: 99999999999 }}
     aria-labelledby="simple-dialog-title"
     open={open}
+    onClose={onClose}
   >
     <DialogTitle>Tutorial</DialogTitle>
     <DialogContent>
