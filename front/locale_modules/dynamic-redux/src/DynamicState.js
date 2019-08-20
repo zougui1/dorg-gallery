@@ -5,8 +5,15 @@ class DynamicState {
 
   actions = {};
   reducerConditions = [];
+  stateName = '';
 
-  constructor(initialState) {
+  constructor(stateName, initialState) {
+    if (typeof stateName === 'string') {
+      this.stateName = stateName;
+    } else {
+      initialState = stateName;
+    }
+
     this.initialState = initialState;
     this.reducer = (state = initialState, action) => this.dynamicReducer(state, action, this.reducerConditions);
   }
@@ -21,7 +28,7 @@ class DynamicState {
   }
 
   dynamicReducer = (state, action, typesAndProps) => {
-    if(action.type === 'RESET_REDUCER') return this.initialState;
+    if(action.type === 'RESET_' + this.stateName.toUpperCase() + '_REDUCER') return this.initialState;
 
     const tempState = {};
     for(const key in state) if(state.hasOwnProperty(key)) tempState[key] = state[key];
@@ -65,7 +72,7 @@ class DynamicState {
   }
 
   createState = options => {
-    options.resetReducer = 'RESET_REDUCER';
+    options.resetReducer = 'RESET_' + this.stateName.toUpperCase() + '_REDUCER';
     const actions = {};
     let reducerConditions = [];
     for (const actionName in options) {

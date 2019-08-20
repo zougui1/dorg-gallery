@@ -1,6 +1,41 @@
-.b-2 {
-  border-style: solid;
-  border-width: 2px;
+$i: 0;
+$maxBorder: 5;
+
+@while $i <= $maxBorder {
+  $pxStr: '#{$i}px';
+  $px: unquote($pxStr);
+
+  .b-#{$i} {
+    border: solid $px;
+  }
+
+  .bt-#{$i} {
+    border-top: solid $px;
+  }
+
+  .bb-#{$i} {
+    border-bottom: solid $px;
+  }
+
+  .bl-#{$i} {
+    border-left: solid $px;
+  }
+
+  .br-#{$i} {
+    border-right: solid $px;
+  }
+
+  .bx-#{$i} {
+    border-right: solid $px;
+    border-left: solid $px;
+  }
+
+  .by-#{$i} {
+    border-bottom: solid $px;
+    border-top: solid $px;
+  }
+
+  $i: $i + 1;
 }
 
 .b-none {

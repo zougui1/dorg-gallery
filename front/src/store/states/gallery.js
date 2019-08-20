@@ -1,6 +1,6 @@
 import { DynamicState } from 'dynamic-redux';
 
-const galleryState = new DynamicState({
+const galleryState = new DynamicState('gallery', {
   showOverlay: {
     all: true,
     draw: true,

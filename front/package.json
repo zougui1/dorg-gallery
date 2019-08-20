@@ -5,7 +5,6 @@
   "dependencies": {
     "@material-ui/core": "^4.3.1",
     "@material-ui/icons": "^4.2.1",
-    "@material-ui/lab": "^4.0.0-alpha.22",
     "classnames": "^2.2.6",
     "clsx": "^1.0.4",
     "crypto-js": "^3.1.9-1",
@@ -16,10 +15,11 @@
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-icons": "^3.7.0",
+    "react-paginate": "^6.3.0",
     "react-redux": "^7.1.0",
     "react-router": "^5.0.1",
     "react-router-dom": "^5.0.1",
-    "react-scripts": "3.0.1",
+    "react-scripts": "3.1.1",
     "react-select": "^3.0.4",
     "redux": "^4.0.4",
     "socket.io-client": "^2.2.0"
@@ -44,5 +44,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "ansi-styles": "^4.0.0",
+    "chalk": "^2.4.2",
+    "supports-color": "^7.0.0"
   }
 }

@@ -1,6 +1,6 @@
 import { DynamicState } from 'dynamic-redux';
 
-const uploaderState = new DynamicState({
+const uploaderState = new DynamicState('uploader', {
   formView: 'Uploader',
   imageData: {},
   canvasData: {

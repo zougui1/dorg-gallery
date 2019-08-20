@@ -11,12 +11,6 @@ const mapDispatchToProps = mapDynamicDispatch(uploaderState.actions, 'resetReduc
 
 class Upload extends React.Component {
 
-  state = {
-    object: {
-      prop: 'value'
-    }
-  }
-
   components = {
     Uploader,
     Overlay,
@@ -24,7 +18,6 @@ class Upload extends React.Component {
 
   componentDidMount() {
     this.props.resetReducer();
-    this.setState({ 'object.prop': 'new value' });
   }
 
   render() {

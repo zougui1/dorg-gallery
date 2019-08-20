@@ -1,6 +1,7 @@
 import { Chalk } from 'chalk';
 import { Debugger } from 'debug';
 
+export type NamespaceCreator = (namespaceName: string) => (name: string) => string;
 
 namespace Dorg {
   export interface Debug {

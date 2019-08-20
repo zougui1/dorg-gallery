@@ -8,7 +8,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var DynamicState = function DynamicState(initialState) {
+var DynamicState = function DynamicState(stateName, initialState) {
   var _this = this;
 
   _classCallCheck(this, DynamicState);
@@ -16,6 +16,8 @@ var DynamicState = function DynamicState(initialState) {
   _defineProperty(this, "actions", {});
 
   _defineProperty(this, "reducerConditions", []);
+
+  _defineProperty(this, "stateName", '');
 
   _defineProperty(this, "capitalize", function (str) {
     return str.charAt(0).toUpperCase() + str.substring(1);
@@ -30,7 +32,7 @@ var DynamicState = function DynamicState(initialState) {
   });
 
   _defineProperty(this, "dynamicReducer", function (state, action, typesAndProps) {
-    if (action.type === 'RESET_REDUCER') return _this.initialState;
+    if (action.type === 'RESET_' + _this.stateName.toUpperCase() + '_REDUCER') return _this.initialState;
     var tempState = {};
 
     for (var key in state) {
@@ -82,7 +84,7 @@ var DynamicState = function DynamicState(initialState) {
   });
 
   _defineProperty(this, "createState", function (options) {
-    options.resetReducer = 'RESET_REDUCER';
+    options.resetReducer = 'RESET_' + _this.stateName.toUpperCase() + '_REDUCER';
     var actions = {};
     var reducerConditions = [];
 
@@ -112,6 +114,12 @@ var DynamicState = function DynamicState(initialState) {
 
     _this.dynamicActions(actions);
   });
+
+  if (typeof stateName === 'string') {
+    this.stateName = stateName;
+  } else {
+    initialState = stateName;
+  }
 
   this.initialState = initialState;
 

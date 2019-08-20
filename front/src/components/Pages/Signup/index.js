@@ -1,8 +1,6 @@
 import React from 'react';
 import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
 import Form from 'dynamic-form';
-import { Link } from 'react-router-dom';
 
 import './Signup.scss';
 
@@ -37,7 +35,7 @@ class Signup extends React.Component {
 
     socket.Emit.signup(formData);
     socket.On.signupSuccess(this.signupSuccess(formData));
-    socket.On.uploadFail(this.uploadFail);
+    socket.On.signupFail(this.signupFail);
   }
 
   signupSuccess = formData => () => {
@@ -45,12 +43,12 @@ class Signup extends React.Component {
     Auth.signup(formData);
   }
 
-  uploadFail = err => {
+  signupFail = err => {
     this.changeLoader({ error: true, errorMessage: err });
   }
 
   render() {
-    const { errorMessage, loader } = this.state;
+    const { loader } = this.state;
 
     return (
       <Grid container className="text-center Signup" justify="center">
@@ -60,7 +58,7 @@ class Signup extends React.Component {
           title="Signup"
           fields={['username', 'password', 'confirmPassword']}
           submitText="Signup"
-          errorMessage={errorMessage}
+          errorMessage=""
         >
           <Grid container className="mt-2" justify="center">
             <Loader {...loader} successMessage="Your account has been created" />

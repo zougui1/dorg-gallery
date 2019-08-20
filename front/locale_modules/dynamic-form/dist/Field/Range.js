@@ -3,15 +3,15 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports["default"] = void 0;
+exports.default = void 0;
 
 var _react = _interopRequireDefault(require("react"));
 
-var _Slider = _interopRequireDefault(require("@material-ui/lab/Slider"));
+var _Slider = _interopRequireDefault(require("@material-ui/core/Slider"));
 
 var _Typography = _interopRequireDefault(require("@material-ui/core/Typography"));
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
@@ -27,16 +27,16 @@ var Range = function Range(props) {
       min = props.min,
       max = props.max,
       value = props.value;
-  var Range = rangeField || _Slider["default"];
+  var Range = rangeField || _Slider.default;
 
   var htmlAttributes = _objectSpread({}, props);
 
   delete htmlAttributes.rangeField;
   delete htmlAttributes.elementType;
   delete htmlAttributes.selectField;
-  return _react["default"].createElement(_react["default"].Fragment, null, _react["default"].createElement(_Typography["default"], {
+  return _react.default.createElement(_react.default.Fragment, null, _react.default.createElement(_Typography.default, {
     id: "label-".concat(name)
-  }, label), _react["default"].createElement(Range, _extends({}, htmlAttributes, {
+  }, label), _react.default.createElement(Range, _extends({}, htmlAttributes, {
     min: min || 0,
     max: max || 100,
     value: value || 0,
@@ -51,4 +51,4 @@ var Range = function Range(props) {
 };
 
 var _default = Range;
-exports["default"] = _default;
+exports.default = _default;

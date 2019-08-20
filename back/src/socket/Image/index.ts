@@ -7,7 +7,7 @@ import { SocketAndNumber, SendImage } from './image.types';
 export class On {
   // is called when a user upload an image
   public static uploadImage: SocketListener = function uploadImage(socket) {
-    socket.on('uploadImage', data => {
+    socket.on('uploadImage', (data: any) => {
       debug.socket.on('uploadImage');
 
       let { img, imgB64, imageTemp64, text, draw, tags } = data;
@@ -69,7 +69,7 @@ export class On {
 
   // is called when a user want to see images
   public static getImagesPage: SocketListener = function getImagesPage(socket) {
-    socket.on('getImagesPage', data => {
+    socket.on('getImagesPage', (data: any) => {
       debug.socket.on('getImagesPage');
 
       controllers.Image.getByPage(data.tags, data.page, data.property)
@@ -88,7 +88,7 @@ export class On {
 
   // is called when a user is in the page of a single image
   public static getImageById: SocketListener = function getImageById(socket) {
-    socket.on('getImageById', data => {
+    socket.on('getImageById', (data: any) => {
       debug.socket.on('getImageById');
 
       controllers.Image.getById(data.id)
@@ -106,7 +106,7 @@ export class On {
   }
 
   public static getImagesCount: SocketListener = function getImagesCount(socket) {
-    socket.on('getImagesCount', data => {
+    socket.on('getImagesCount', (data: any) => {
       debug.socket.on('getImagesCount');
 
       controllers.Image.getCount(data.user, data.tags)

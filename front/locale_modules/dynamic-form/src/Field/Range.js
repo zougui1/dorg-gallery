@@ -1,5 +1,5 @@
 import React from 'react';
-import Slider from '@material-ui/lab/Slider';
+import Slider from '@material-ui/core/Slider';
 import Typography from '@material-ui/core/Typography';
 
 const Range = props => {

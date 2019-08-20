@@ -3,11 +3,11 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports["default"] = void 0;
+exports.default = void 0;
 
 var _react = _interopRequireDefault(require("react"));
 
-var _FormValidator = _interopRequireDefault(require("form-validator"));
+var _formValidator = _interopRequireDefault(require("form-validator"));
 
 var _Field = _interopRequireDefault(require("./Field"));
 
@@ -21,7 +21,7 @@ var _validations2 = require("./validations");
 
 var _utils = require("./utils");
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
@@ -100,7 +100,7 @@ function (_React$Component) {
           }
         }
       });
-      _this.validator = new _FormValidator["default"](_validations);
+      _this.validator = new _formValidator.default(_validations);
       _this.submitted = false;
     });
 
@@ -162,10 +162,10 @@ function (_React$Component) {
           onFocus = _this$props.onFocus,
           onBlur = _this$props.onBlur;
       var validation = this.submitted ? this.validator.validate(this.state) : this.state.validation;
-      return _react["default"].createElement("form", {
+      return _react.default.createElement("form", {
         onSubmit: this.handleSubmit
-      }, _react["default"].createElement("h1", null, title), this.fields.map(function (field) {
-        return _react["default"].createElement(_Field["default"], {
+      }, _react.default.createElement("h1", null, title), this.fields.map(function (field) {
+        return _react.default.createElement(_Field.default, {
           key: field.name,
           value: _this2.state[field.name],
           name: field.name,
@@ -187,20 +187,20 @@ function (_React$Component) {
           minlength: field.minlength,
           maxlength: field.maxlength
         });
-      }), _react["default"].createElement(_Button["default"], {
+      }), _react.default.createElement(_Button.default, {
         variant: "contained",
         color: "primary",
         type: "submit"
-      }, submitText || 'Submit'), _react["default"].createElement("br", null), _react["default"].createElement("span", {
+      }, submitText || 'Submit'), _react.default.createElement("br", null), _react.default.createElement("span", {
         className: "externalError"
-      }, errorMessage), redirect && redirection && _react["default"].createElement(_reactRouter.Redirect, {
+      }, errorMessage), redirect && redirection && _react.default.createElement(_reactRouter.Redirect, {
         to: redirection
       }), children);
     }
   }]);
 
   return Form;
-}(_react["default"].Component);
+}(_react.default.Component);
 
 _defineProperty(Form, "validations", function (label, validationsArr) {
   // temp object for validations
@@ -249,4 +249,4 @@ _defineProperty(Form, "validations", function (label, validationsArr) {
 });
 
 var _default = Form;
-exports["default"] = _default;
+exports.default = _default;

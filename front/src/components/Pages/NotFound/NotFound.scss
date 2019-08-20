@@ -1,0 +1,6 @@
+.NotFound {
+  .border-gradient {
+    border-image: linear-gradient(90deg, transparent, currentcolor, transparent);
+    border-image-slice: 1;
+  }
+}

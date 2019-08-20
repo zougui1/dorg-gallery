@@ -1,6 +1,6 @@
 import { DynamicState } from 'dynamic-redux';
 
-const miscState = new DynamicState({
+const miscState = new DynamicState('misc', {
   tags: []
 });
 

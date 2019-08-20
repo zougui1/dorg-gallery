@@ -24,7 +24,7 @@ if(process.env.NODE_ENV === 'production') {
   https = require('https').createServer(options, app);
   https.listen(port, debug.https(`server listening on port %o`, port));
 } else {
-  const http = require('http').Server(app);
+  http = require('http').Server(app);
   http.listen(port, debug.http(`server listening on port %o`, port));
 }
 
