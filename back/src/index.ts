@@ -1,2 +1,2 @@
-import './config/debug';
+import './config/init';
 import './actionDispatcher';

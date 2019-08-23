@@ -13,6 +13,15 @@ const userSchema = new mongoose.Schema({
     maxlength: 50,
     trim: true
   },
+  slug: {
+    type: String,
+    required: true,
+    unique: true,
+    minlength: 3,
+    maxlength: 50,
+    trim: true,
+    lowercase: true
+  },
   password: {
     type: String,
     required: true

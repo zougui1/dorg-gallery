@@ -1,10 +1,25 @@
+import urlSlug from 'url-slug';
 import { debug } from '../../../config';
 import { User } from '../../Models/User';
 import { controllers } from '../';
-import { Signup, FindByName, Login, GetCount, IUserController } from './user.types';
+import { Signup, FindByName, Login, GetCount, IUserController, GetById, Slugify, FindBySlug } from './user.types';
 import { UserModel } from '../../Models/User/user.types';
 
 export const UserController: IUserController = class UserController {
+
+  public static slugify: Slugify = name => new Promise((resolve, reject) => {
+    debug.mongoose('%o has been called', 'UserController.slugify');
+
+    let slug = urlSlug(name).toLowerCase();
+    User.countDocuments({ slug })
+      .then(count => {
+        if (count > 0) {
+          slug += '_' + count;
+        }
+        resolve(slug);
+      })
+      .catch(reject);
+  });
 
   /**
    * create a new user
@@ -18,14 +33,20 @@ export const UserController: IUserController = class UserController {
           return reject('The role "user" couldn\'t be found');
         }
 
-        const user = new User({
-          // @ts-ignore
-          name,
-          password,
-          roles: [role._id],
-        });
+        UserController.slugify(name)
+          .then(slug => {
 
-        resolve(user.save());
+            const user = new User({
+              // @ts-ignore
+              name,
+              slug,
+              password,
+              roles: [role._id],
+            });
+
+            resolve(user.save());
+          })
+          .catch(reject);
       })
       .catch(reject);
   });
@@ -37,6 +58,15 @@ export const UserController: IUserController = class UserController {
     debug.mongoose('%o has been called', 'UserController.findByName');
 
     return User.findOne({ name });
+  }
+
+  /**
+   * get a user by its slug
+   */
+  public static findBySlug: FindBySlug = slug => {
+    debug.mongoose('%o has been called', 'UserController.findBySlug');
+
+    return User.findOne({ slug });
   }
 
   /**
@@ -61,6 +91,7 @@ export const UserController: IUserController = class UserController {
             const userObj: UserModel = {
               _id: userDb._id,
               name: userDb.name,
+              slug: userDb.slug,
               roles: userDb.roles,
               password: ''
             };
@@ -72,7 +103,13 @@ export const UserController: IUserController = class UserController {
         });
       })
       .catch(reject);
-  })
+  });
+
+  public static getById: GetById = id => {
+    debug.mongoose('%o has been called', 'UserController.getById');
+
+    return User.findById(id).select('-password').populate('roles');
+  }
 
   /**
    * get the amount of users
@@ -84,5 +121,3 @@ export const UserController: IUserController = class UserController {
   }
 
 };
-
-module.exports = UserController;

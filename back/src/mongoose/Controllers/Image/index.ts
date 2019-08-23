@@ -9,7 +9,7 @@ export const ImageController: IImageController = class ImageController {
   /**
    * add an image in the DB
    */
-  public static add: Add = ({ link, thumb, canvas, tags, property, artist, characterName, user, description }) => {
+  public static add: Add = ({ link, thumb, canvas, tags, rate, artist, characterName, user, description }) => {
     debug.mongoose('%o has been called', 'ImageController.add');
 
     const image = new Image({
@@ -21,7 +21,7 @@ export const ImageController: IImageController = class ImageController {
         text: canvas.text,
       },
       tags: tags.map(t => t._id),
-      property: property,
+      rate: rate,
       artist: {
         name: artist.name,
         link: artist.link,
@@ -35,9 +35,9 @@ export const ImageController: IImageController = class ImageController {
   }
 
   /**
-   * get images in a page depending of the tags, the page and the property
+   * get images in a page depending of the tags, the page and the rate
    */
-  public static getByPage: GetByPage = (tags, page, property) => {
+  public static getByPage: GetByPage = (tags, page, user, searchOptions) => {
     debug.mongoose('%o has been called', 'ImageController.getByPage');
 
     tags = tags.length > 0 ? tags : ['*'];
@@ -45,8 +45,10 @@ export const ImageController: IImageController = class ImageController {
     let query;
 
     if (tags.length === 1 && tags[0] === '*') {
+      query = Image.find();
+    } else {
       query = Image.find({
-        property: { $in: property },
+        //rate: { $in: searchOptions.rating },
         /**
          *  perform a query using the tags for
          *  - the name of all tags linked to the image
@@ -55,7 +57,8 @@ export const ImageController: IImageController = class ImageController {
          *  - the link to the artist who made the image
          *  - the character's name who is represented in the image
          */
-        $and: [
+        'property': 'general',
+        /*$and: [
           { $or: [
             { 'tags.$[].name': inTags },
             { 'user.name': inTags },
@@ -98,10 +101,8 @@ export const ImageController: IImageController = class ImageController {
             { 'user.name': inTags },
             { 'tags.$[].name': inTags },
           ]},
-        ]
+        ]*/
       });
-    } else {
-      query = Image.find();
     }
 
     return query

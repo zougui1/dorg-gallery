@@ -12,19 +12,21 @@ interface Artist {
   link: string;
 }
 
-enum Property {
+declare enum Rate {
   general,
+  suggestive,
   nsfw
-};
+}
 
 export interface ImageModel extends CoreModel {
   link: string;
   thumb: string;
   canvas: Canvas;
   tags: TagModel[];
-  property: Property;
+  rate: Rate;
   artist: Artist;
   characterName: string;
   user: UserModel;
   description: string;
+  createdOn: Date;
 }

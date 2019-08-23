@@ -1,3 +1,4 @@
+import { Document } from 'mongoose';
 import { UserModel } from '../../mongoose/Models/User/user.types';
 
 interface UserObject {
@@ -5,5 +6,5 @@ interface UserObject {
   name: string
 }
 
-export type EmitUserObject = (socket: SocketIO.Socket, user: UserObject) => void;
+export type EmitUserObject = (socket: SocketIO.Socket, user: Document | null) => void;
 export type EmitLogged = (socket: SocketIO.Socket, user: UserModel) => void;

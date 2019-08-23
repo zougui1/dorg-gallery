@@ -1,12 +1,12 @@
 import socket from '../../../../socket/config';
 
 class On {
-  static uploadSuccess = callback => {
-    return socket.on('uploadSuccess', callback);
+  static imageUploaded = callback => {
+    return socket.on('imageUploaded', callback);
   }
 
-  static uploadFail = callback => {
-    return socket.on('uploadFail', callback);
+  static imageUploadFailed = callback => {
+    return socket.on('imageUploadFailed', callback);
   }
 }
 
@@ -17,12 +17,12 @@ class Emit {
 }
 
 class Remove {
-  static uploadSuccess = callback => {
-    return socket.removeListener('uploadSuccess', callback);
+  static imageUploaded = callback => {
+    return socket.removeListener('imageUploaded', callback);
   }
 
-  static uploadFail = callback => {
-    return socket.removeListener('uploadFail', callback);
+  static imageUploadFailed = callback => {
+    return socket.removeListener('imageUploadFailed', callback);
   }
 }
 

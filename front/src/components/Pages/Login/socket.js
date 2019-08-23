@@ -5,8 +5,8 @@ export class On {
     return socket.on('loginSuccess', callback);
   }
 
-  static loginFail = callback => {
-    return socket.on('loginFail', callback);
+  static loginFailed = callback => {
+    return socket.on('loginFailed', callback);
   }
 }
 
@@ -21,7 +21,7 @@ export class Remove {
     return socket.removeListener('loginSuccess', callback);
   }
 
-  static loginFail = callback => {
-    return socket.removeListener('loginFail', callback);
+  static loginFailed = callback => {
+    return socket.removeListener('loginFailed', callback);
   }
 }

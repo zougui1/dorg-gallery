@@ -4,22 +4,30 @@ import { SocketListener, SocketErrorListener, SocketSendDocument } from '../sock
 import { EmitLogged, EmitUserObject } from './user.types';
 
 export class On {
+
   public static signup: SocketListener = function signup(socket) {
     socket.on('signup', user => {
       debug.socket.on('signup');
 
+      if (!user.name && user.username) {
+        user.name = user.username;
+        delete user.username;
+      }
+
       controllers.User.signup(user)
         .then(user => {
-
-          // used to avoid to send the user's password
-          const userObject = {
-            _id: user._id,
-            name: user.name
-          };
-
           debug.socket.on(debug.chalk.green('signup success'));
 
-          Emit.userCreated(socket, userObject);
+          controllers.User.getById(user._id)
+            .then(user => {
+              Emit.signupSuccess(socket, user);
+            })
+            .catch(err => {
+              console.error(err);
+
+              Emit.signupFailed(socket, 'An error occured');
+            });
+
         })
         .catch(err => {
           console.error(err);
@@ -56,11 +64,10 @@ export class On {
 };
 
 export class Emit {
+  public static signupSuccess: EmitUserObject = function signupSuccess(socket, user) {
+    debug.socket.emit('signupSuccess');
 
-  public static userCreated: EmitUserObject = function userCreated(socket, user) {
-    debug.socket.emit('userCreated');
-
-    socket.emit('userCreated', { success: true, user: user });
+    socket.emit('signupSuccess', { success: true, user: user });
   }
 
   public static signupFailed: SocketErrorListener = function signupFailed(socket, error) {

@@ -5,8 +5,8 @@ import { connect } from 'react-redux';
 import { mapDynamicState, mapDynamicDispatch } from 'dynamic-redux';
 
 import authState from '../../../store/states/auth';
+import Auth from '../../../services/Auth';
 
-const mapStateToProps = mapDynamicState('auth: user');
 const mapDispatchToProps = mapDynamicDispatch(authState.actions, 'setDeniedPage');
 
 class ProtectedRoute extends React.Component {
@@ -31,11 +31,11 @@ class ProtectedRoute extends React.Component {
 
   render() {
     const { redirect } = this.state;
-    const { user, role, ...rest } = this.props;
+    const { role, ...rest } = this.props;
 
-    // if the user have the required role, they can access the route
+    // if the client have the required role, they can access the route
     // otherwise we redirect them to the login page
-    if (user.roles && user.roles.includes(role)) {
+    if (Auth.hasRole(role)) {
       return <Route {...rest} />;
     } else {
       return redirect && <Redirect to="/login" />;
@@ -43,4 +43,4 @@ class ProtectedRoute extends React.Component {
   }
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ProtectedRoute));
+export default withRouter(connect(null, mapDispatchToProps)(ProtectedRoute));

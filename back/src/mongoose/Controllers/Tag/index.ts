@@ -8,7 +8,7 @@ export const TagController: ITagController = class TagController {
   /**
    * add a tag only if it doesn't already exists
    */
-  public static add: Add = ({ name }) => {
+  public static add: Add = name => {
     debug.mongoose('%o has been called', 'TagController.add');
 
     return Tag.findOneAndUpdate({ name }, {}, { upsert: true, new: true, setDefaultsOnInsert: true });
@@ -17,7 +17,7 @@ export const TagController: ITagController = class TagController {
   /**
    * add several tags if they doesn't already exists
    */
-  public static addMultiple: AddMultiple = tags => new Promise((resolve, reject) => {
+  public static addMultiple: AddMultiple = (tags = []) => new Promise((resolve, reject) => {
     debug.mongoose('%o has been called', 'TagController.addMultiple');
 
     // @ts-ignore

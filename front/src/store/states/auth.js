@@ -2,10 +2,7 @@ import { DynamicState } from 'dynamic-redux';
 
 const authState = new DynamicState('auth', {
   user: {},
-  deniedPage: {
-    path: 'http://localhost:3000/upload',
-    require: 'ROLE_USER'
-  },
+  deniedPage: {},
 });
 
 authState.createState({

@@ -1,9 +1,10 @@
 import CryptoJS from 'crypto-js';
 import Cookies from 'js-cookie';
-import { mapDynamicDispatch } from 'dynamic-redux';
+import { mapDynamicState, mapDynamicDispatch } from 'dynamic-redux';
 
 import store from '../store';
 import authState from '../store/states/auth';
+import roles from '../data/roles';
 
 const actions = mapDynamicDispatch(authState.actions, 'login')(store.dispatch);
 
@@ -13,6 +14,48 @@ class Auth {
   static cookieName = 'cookieSession-Dorg-Gallery';
   // the secret key to encrypt/decrypt data
   static secretKey = 'draconity.org gallery; secret key';
+
+  /**
+   * get the user data from the state
+   */
+  static getUser = () => {
+    return mapDynamicState('auth: user')(store.getState()).user;
+  }
+
+  /**
+   * get the roles of the client
+   */
+  static getUserRoles = user => {
+    if (Array.isArray(user.roles)) {
+      return user.roles.map(role => role.value);
+    }
+
+    return [];
+  }
+
+  /**
+   * get if the client is logged
+   */
+  static isLogged = () => {
+    const user = Auth.getUser();
+    return user.logged;
+  }
+
+  /**
+   * get if the client is a user
+   */
+  static isUser = () => {
+    const user = Auth.getUser();
+    return Auth.getUserRoles(user).includes(roles.user);
+  }
+
+  /**
+   * get if the client has given role
+   */
+  static hasRole = role => {
+    const user = Auth.getUser();
+    return Auth.getUserRoles(user).includes(role);
+  }
 
   /**
    * encrypt data
@@ -31,6 +74,15 @@ class Auth {
 
     const bytes = CryptoJS.AES.decrypt(data.toString(), Auth.secretKey);
     return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+  }
+
+  /**
+   * add the 'role value' to each role the user have
+   */
+  static addRolesValue = user => {
+    user.roles.forEach(role => {
+      role.value = roles[role.name];
+    });
   }
 
   /** used to signup the client
@@ -70,6 +122,8 @@ class Auth {
    */
   static saveUser = user => {
     user.logged = true;
+
+    Auth.addRolesValue(user);
 
     actions.login(user);
     Auth.setCookieSession(user);

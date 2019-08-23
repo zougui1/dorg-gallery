@@ -1,0 +1,30 @@
+.Gallery {
+  *::-webkit-scrollbar {
+    width: 5px;
+    background-color: transparent !important;
+
+    &-thumb {
+      background-color: #aaa;
+      border-radius: 10px;
+    }
+  }
+
+  .Images {
+    .images-container {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .image-container {
+        margin: 5px;
+        height: 150px;
+        width: 100px;
+        position: relative;
+
+        .image {
+            height: 150px;
+            position: absolute;
+        }
+    }
+  }
+}

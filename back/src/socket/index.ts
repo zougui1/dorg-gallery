@@ -1,46 +1,23 @@
 import { io, debug } from '../config';
-import * as UserHandlers from './User';
-import * as ImageHandlers from './Image';
-import * as TagHandlers from './Tag';
+import { On as UserOn } from './User';
+import { On as ImageOn } from './Image';
+import { On as TagOn } from './Tag';
 
-let socketHandlers: any[] = [];
-
-socketHandlers.push(UserHandlers);
-socketHandlers.push(ImageHandlers);
-socketHandlers.push(TagHandlers);
 
 io.on('connection', socket => {
   debug.socket('connection');
 
-  for (let i = 0; i < socketHandlers.length; i++) {
-    const handler = socketHandlers[i];
+  // User listeners
+  UserOn.signup(socket);
+  UserOn.login(socket);
 
-    if (typeof handler !== 'object') {
-      continue;
-    }
+  // Tag listeners
+  TagOn.getAllTags(socket);
 
-    if (typeof handler.on === 'object') {
-      for (const methodName in handler.on) {
-        const method = handler.on[methodName];
+  // Image listeners
+  ImageOn.uploadImage(socket);
+  ImageOn.getImagesPage(socket);
+  ImageOn.getImageById(socket);
+  ImageOn.getImagesCount(socket);
 
-        if (typeof method !== 'function') {
-          continue;
-        }
-
-        method(socket);
-      }
-    }
-
-    if (typeof handler.emit === 'object') {
-      for (const methodName in handler.emit) {
-        const method = handler.emit[methodName];
-
-        if (typeof method !== 'function') {
-          continue;
-        }
-
-        method(socket);
-      }
-    }
-  }
 });

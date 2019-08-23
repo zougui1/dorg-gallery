@@ -3,6 +3,7 @@ import { RoleModel } from '../Role/role.types';
 
 export interface UserModel extends CoreModel {
   name: string;
+  slug: string;
   password: string;
   roles: RoleModel[];
 }

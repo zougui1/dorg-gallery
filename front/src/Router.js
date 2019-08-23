@@ -8,7 +8,7 @@ import Home from './components/Pages/Home';
 import Upload from './components/Pages/Upload';
 import Signup from './components/Pages/Signup';
 import Login from './components/Pages/Login';
-import Gallery from './components/Partials/Gallery';
+import Gallery from './components/Pages/Gallery';
 //import Image from './components/Pages/Image';
 import NotFound from './components/Pages/NotFound';
 
@@ -19,8 +19,8 @@ const Router = () => (
     <ProtectedRoute exact path="/upload" role={roles.user} component={Upload} />
     <Route exact path="/signup" component={Signup} />
     <Route exact path="/login" component={Login} />
-    <Route exact path="/gallery/:username" component={Gallery} />
-    <Route exact path="/gallery/:username/:page" component={Gallery} />
+    <Route exact path="/gallery/:user_slug/:page?" component={Gallery} />
+    {/*<Route exact path="/gallery/:user_slug/:page" component={Gallery} />*/}
     {/*<Route exact path="/user/:username" component={User} />
     <Route exact path="/user/:username/:page" component={User} />
     <Route exact path="/image/:id" component={Image} />*/}

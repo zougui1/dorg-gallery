@@ -1,7 +1,7 @@
-import * as models from '../Models';
+import { models } from '../';
 
 // clear the whole DB
-const clear = () => new Promise((resolve, reject) => {
+export const clear = () => new Promise((resolve, reject) => {
   const modelsAmount = Object.keys(models).length;
   let i = 0;
 
@@ -22,5 +22,3 @@ const clear = () => new Promise((resolve, reject) => {
     }
   }
 });
-
-export { clear };

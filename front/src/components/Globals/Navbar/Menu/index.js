@@ -4,6 +4,7 @@ import MuiMenu from '@material-ui/core/Menu';
 import MenuIcon from '@material-ui/icons/Menu';
 import { Link } from 'react-router-dom';
 
+import Auth from '../../../../services/Auth';
 import * as data from './data';
 import MenuItem from './MenuItem';
 
@@ -27,16 +28,15 @@ class Menu extends React.Component {
    * get the data links depending on the user data
    */
   getDataLinks = () => {
-    const { user } = this.props;
     let dataLinks = [];
 
-    if (!user.logged) {
+    if (!Auth.isLogged()) {
       dataLinks = [...data.guest];
 
       return dataLinks;
     }
 
-    if (user.roles.includes('ROLE_USER')) {
+    if (Auth.isUser()) {
       dataLinks = [...data.user];
     }
 

@@ -5,19 +5,26 @@ import { SocketListener, SocketErrorListener } from '../socket.types';
 import { SocketAndNumber, SendImage } from './image.types';
 
 export class On {
+  public static methods: string[] = [
+    'uploadImage',
+    'getImagesPage',
+    'getImageById',
+    'getImagesCount',
+  ];
+
   // is called when a user upload an image
   public static uploadImage: SocketListener = function uploadImage(socket) {
     socket.on('uploadImage', (data: any) => {
       debug.socket.on('uploadImage');
 
-      let { img, imgB64, imageTemp64, text, draw, tags } = data;
+      let { img, imgB64, imageBase64, text, draw, tags } = data;
 
       img = img
         ? img
-        : Buffer.from(imageTemp64.split(',')[1], 'base64');
+        : Buffer.from(imageBase64.split(',')[1], 'base64');
 
       // upload all the necessary images into cloudinary
-      upload.withItsThumb(img, imgB64 || imageTemp64, draw, text)
+      upload.withItsThumb(img, imgB64 || imageBase64, draw, text)
         .then(images => {
           // delete useless data
           delete data.imgB64;
@@ -33,6 +40,11 @@ export class On {
               const dataToUpload = {
                 ...data,
                 ...images,
+                canvas: {
+                  draw: images.draw,
+                  text: images.text,
+                },
+                link: images.image,
                 tags: [...tagsData.tags],
               };
 
@@ -72,9 +84,11 @@ export class On {
     socket.on('getImagesPage', (data: any) => {
       debug.socket.on('getImagesPage');
 
-      controllers.Image.getByPage(data.tags, data.page, data.property)
+      console.log(data);
+      controllers.Image.getByPage(data.tags, data.page, data.user, data.searchOptions)
         .then(images => {
           debug.socket.on(debug.chalk.green('getImagesPage success'));
+          console.log(images);
 
           Emit.sendImage(socket, images);
         })

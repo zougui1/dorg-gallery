@@ -1,0 +1,30 @@
+@import './variables';
+
+.color-picker-panel {
+  z-index: 999;
+  background: $color-ui-panel;
+  width: $window-width - 40;
+  border-radius: 8px;
+  border: 2px solid $color-ui-border;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .4);
+  position: fixed;
+  top: 80px;
+  right: 1%;
+  margin-bottom: 10px;
+}
+
+.panel-row {
+  position: relative;
+  margin: 0 10px 10px;
+
+  &:first-child {
+    margin-top: 10px;
+    margin-bottom: $spacer - $swatch-space;
+  }
+
+  &:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}

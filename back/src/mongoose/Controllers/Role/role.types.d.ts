@@ -1,4 +1,4 @@
-import { RoleModel } from '../../Models/Role/role.types';
+import { RoleModel } from '../../Models/Role/role.types.d';
 import { Document, Query as MQuery } from 'mongoose';
 import { ArrayQuery, NullableQuery } from '../controller.types';
 

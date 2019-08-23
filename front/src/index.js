@@ -18,15 +18,11 @@ const actions = mapDynamicDispatch(miscState.actions, 'setTags')(store.dispatch)
 class Root extends React.Component {
 
   componentDidMount() {
-    //Auth.login();
-    /*Auth.signup({
-      name: 'zougui',
-      roles: ['ROLE_USER']
-    })*/
+    Auth.login();
 
     socket.emit('getAllTags');
-    socket.on('sendTags', tags => {
-      actions.setTags(tags);
+    socket.on('sendTags', data => {
+      actions.setTags(data.tags);
     });
   }
 

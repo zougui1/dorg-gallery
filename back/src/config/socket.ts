@@ -1,4 +1,4 @@
 import socket from 'socket.io';
-import { http, https } from './server';
+import { server } from './server';
 
-export const io = socket(https || http);
+export const io = socket(server);

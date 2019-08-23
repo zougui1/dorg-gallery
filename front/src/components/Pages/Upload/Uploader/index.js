@@ -44,8 +44,8 @@ class Uploader extends React.Component {
   }
 
   componentWillUnmount() {
-    socket.Remove.uploadSuccess(this.uploadSuccess);
-    socket.Remove.uploadFail(this.uploadFail);
+    socket.Remove.imageUploaded(this.imageUploaded);
+    socket.Remove.imageUploadFailed(this.imageUploadFailed);
   }
 
   /**
@@ -67,7 +67,7 @@ class Uploader extends React.Component {
    */
   submit = e => {
     e.preventDefault();
-    const { setImageData, setFormView } = this.props;
+    const { setImageData, setFormView, user } = this.props;
 
     if (!this.validate()) {
       return;
@@ -85,9 +85,9 @@ class Uploader extends React.Component {
           setFormView('Overlay');
         } else {
 
-          socket.Emit.uploadImage(formData);
-          socket.On.uploadSuccess(this.uploadSuccess);
-          socket.On.uploadFail(this.uploadFail);
+          socket.Emit.uploadImage({ ...formData, user });
+          socket.On.imageUploaded(this.imageUploaded);
+          socket.On.imageUploadFailed(this.imageUploadFailed);
         }
       })
       .catch(err => {
@@ -173,14 +173,14 @@ class Uploader extends React.Component {
   /**
    * is called if the upload succeeded
    */
-  uploadSuccess = () => {
+  imageUploaded = () => {
     this.setState({ loader: { success: true } });
   }
 
   /**
    * is called if the upload failed
    */
-  uploadFail = data => {
+  imageUploadFailed = data => {
     this.setState({ loader: { error: true, errorMessage: data.error } });
   }
 
@@ -294,7 +294,7 @@ class Uploader extends React.Component {
             </Button>
           </FormGroup>
           <FormGroup row className="d-flex justify-content-center mt-3">
-            <Loader {...loader} redirect="/" errorMessage={error || loader.errorMessage} successMessage="The image has been uploaded" />
+            <Loader {...loader} redirection="/" errorMessage={error || loader.errorMessage} successMessage="The image has been uploaded" />
           </FormGroup>
         </form>
       </div>

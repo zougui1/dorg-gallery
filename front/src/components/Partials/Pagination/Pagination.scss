@@ -16,4 +16,9 @@
     border: solid 1px #ccc;
     color: #0167ff;
   }
+
+  &.disabled > * {
+    color: #777;
+    cursor: auto;
+  }
 }

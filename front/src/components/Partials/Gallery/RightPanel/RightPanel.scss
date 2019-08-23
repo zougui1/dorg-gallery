@@ -1,0 +1,31 @@
+@import '../../../../assets/styles/variables';
+
+.RightPanel {
+  border: 2px solid $color-ui-border;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .4);
+  background-color: $color-ui-panel;
+  height: 100% !important;
+
+  .panel-row {
+    margin-top: 10px;
+    margin-left: 8 px;
+    margin-right: 8 px;
+  }
+
+  .field > * {
+    color: #fff !important;
+
+    &::before,
+    &::after {
+      border-bottom: 1px solid #fff7 !important;
+    }
+  }
+
+  .resize {
+    transform: scale(0.9);
+
+    & > *:first-child {
+      padding: 0px !important;
+    }
+  }
+}

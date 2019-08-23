@@ -1,22 +1,27 @@
 import { DynamicState } from 'dynamic-redux';
 
 const galleryState = new DynamicState('gallery', {
-  showOverlay: {
-    all: true,
-    draw: true,
-    text: true,
-  },
+  showOverlay: ['text', 'draw'],
   images: [],
   filteredImages: [],
-  filter: ['everything'],
+  filter: ['*'],
   currentPage: 1,
   currentUser: '',
   requestReceived: false,
+  searchOptions: {
+    search: '',
+    haveOverlays: ['*'],
+    rating: ['general', 'suggestive', 'nsfw'],
+    sort: {
+      criteria: 'date',
+      order: 'ASC'
+    }
+  },
 });
 
 galleryState.createState({
-  displayOverlay: {
-    type: 'SHOW_OVERLAY_ON_IMAGES',
+  setShowOverlay: {
+    type: 'SET_SHOW_OVERLAY_ON_IMAGES',
     prop: 'showOverlay'
   },
   setImages: 'SET_IMAGES',
@@ -25,6 +30,7 @@ galleryState.createState({
   setCurrentPage: 'SET_CURRENT_PAGE',
   setCurrentUser: 'SET_CURRENT_USER',
   setRequestReceived: 'SET_REQUEST_RECEIVED',
+  setSearchOptions: 'SET_SEARCH_OPTIONS',
 });
 
 export default galleryState;

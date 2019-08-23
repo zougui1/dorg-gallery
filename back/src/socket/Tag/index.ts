@@ -3,6 +3,7 @@ import { controllers } from '../../mongoose';
 import { SocketListener, SocketErrorListener, SocketSendDocuments } from '../socket.types';
 
 export class On {
+
   // is called when a user connect to the site
   public static getAllTags: SocketListener = function getAllTags(socket) {
     socket.on('getAllTags', () => {

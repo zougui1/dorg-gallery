@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { mapDynamicState } from 'dynamic-redux';
 
+import Auth from '../../../services/Auth';
 import Menu from './Menu';
 
 const mapStateToProps = mapDynamicState('auth: user');
@@ -18,7 +19,7 @@ class Navbar extends React.Component {
     const { user } = this.props;
 
     return (
-      <AppBar position="fixed" className="bg-color-blue">
+      <AppBar position="fixed" className="bg-color-blue" id="Navbar">
         <ToolBar>
           <Grid container justify="space-between" alignItems="center">
             <Grid item>
@@ -28,6 +29,9 @@ class Navbar extends React.Component {
             </Grid>
 
             <Grid item>
+              {
+                Auth.isLogged() && <Link to="/upload"></Link>
+              }
               <Menu user={user} />
             </Grid>
           </Grid>

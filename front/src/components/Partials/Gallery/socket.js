@@ -2,7 +2,10 @@ import socket from '../../../socket/config';
 
 export class On {
   static sendImage = callback => {
-    return socket.on('sendImage', callback);
+    return socket.on('sendImage', d => {
+      console.log('sentImage triggered');
+      callback(d);
+    });
   }
 
   static getImageFailed = callback => {

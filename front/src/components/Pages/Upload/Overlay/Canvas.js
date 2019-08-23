@@ -10,6 +10,8 @@ const mapDispatchToProps = mapDynamicDispatch(uploaderState.actions, 'setCanvasD
 
 class Canvas extends React.Component {
 
+  draggingOut = false;
+
   state = {
     inputId: 0,
   }
@@ -27,8 +29,8 @@ class Canvas extends React.Component {
     const { top, left } = this.props.canvasData.imageBounds;
 
     return {
-      x: x - left - window.pageXOffset,
-      y: y - top - window.pageYOffset,
+      x: x - left + window.pageXOffset,
+      y: y - top + window.pageYOffset,
     };
   }
 
@@ -160,17 +162,20 @@ class Canvas extends React.Component {
   }
 
   /**
+   * cast a pixel string into a number
+   */
+  pixelToNumber = str => {
+    return +str.replace('px', '');
+  }
+
+  /**
    * is called when an input is dragged over the canvas
    */
   dragOverHandler = (e, preventUpdate) => {
     e.preventDefault();
-    const { setCanvasData, canvasData } = this.props;
 
-    if (!preventUpdate) {
-      setCanvasData({
-        ...canvasData,
-        draggingOut: false,
-      });
+    if (!preventUpdate && this.draggingOut) {
+      this.draggingOut = false;
     }
   }
 
@@ -178,12 +183,9 @@ class Canvas extends React.Component {
    * is called when an input is dragged outside of the canvas
    */
   dragLeaveHandler = () => {
-    const { setCanvasData, canvasData } = this.props;
-
-    setCanvasData({
-      ...canvasData,
-      draggingOut: true,
-    });
+    if (!this.draggingOut) {
+      this.draggingOut = true;
+    }
   }
 
   /**
@@ -196,7 +198,7 @@ class Canvas extends React.Component {
     // if the input is not dragged outside of the canvas
     // we want to change its position
     // otherwise we want to delete it
-    if (!canvasData.draggingOut) {
+    if (!this.draggingOut) {
       for (let i = 0; i < inputs.length; i++) {
         const input = inputs[i];
 
@@ -207,8 +209,12 @@ class Canvas extends React.Component {
         const { x, y } = this.calculateRelativePosition(e.clientX, e.clientY);
         const label = labels[i];
 
-        label.style.top = y + 'px';
-        label.style.left = x + 'px';
+        const prevY = this.pixelToNumber(label.style.top);
+        const prevX = this.pixelToNumber(label.style.left);
+
+        // calculate the new position of the label
+        label.style.top = (prevY + (y - prevY) + 82) + 'px';
+        label.style.left = (prevX + (x - prevX)) + 'px';
 
         // update the inputs and labels
         setCanvasField(inputs);
@@ -249,6 +255,7 @@ class Canvas extends React.Component {
           </canvas>
           {inputs}
         </div>
+        <div style={{ height: '1000px', width: '100px' }}></div>
       </div>
     );
   }

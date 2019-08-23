@@ -1,4 +1,4 @@
-import { TagModel } from '../../Models/Tag/tag.types';
+import { TagModel } from '../../Models/Tag/tag.types.d';
 import { Query, ArrayQuery } from '../controller.types';
 
 export interface AddMultipleResolve {

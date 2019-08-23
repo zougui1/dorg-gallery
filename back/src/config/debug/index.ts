@@ -14,11 +14,11 @@ const debugs: Dorg.Debug = {
   // debug for the CLI actions
   action: debug(namespace('action')),
   // debug for the http server
-  http: debug(namespace('http')),
-  // debug for the https server
-  https: debug(namespace('https')),
+  server: debug(namespace('server')),
   // debug for things related to mongoose
   mongoose: debug(namespace('mongoose')),
+  // debug for things related to cloudinary
+  cloudinary: debug(namespace('cloudinary')),
   // debug for things related to socket.io
   socket: {
     ...debug(namespace('socket')),
@@ -28,5 +28,9 @@ const debugs: Dorg.Debug = {
     emit: debug(namespace('socket:emit')),
   },
 };
+
+debugs.socket = debug(namespace('socket'));
+debugs.socket.on = debug(namespace('socket:on'));
+debugs.socket.emit = debug(namespace('socket:emit'));
 
 export { debugs as debug };

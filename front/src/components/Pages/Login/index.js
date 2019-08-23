@@ -39,6 +39,8 @@ class Login extends React.Component {
 
   componentWillUnmount() {
     this.handleClose();
+    socket.Remove.loginSuccess(data => this.loginSuccess(data.user));
+    socket.Remove.loginFailed(this.loginFailed);
   }
 
 
@@ -55,17 +57,17 @@ class Login extends React.Component {
     this.changeLoader({ loading: true });
 
     socket.Emit.login(formData);
-    socket.On.loginSuccess(this.loginSuccess(formData));
-    socket.On.loginFail(this.loginFail);
+    socket.On.loginSuccess(data => this.loginSuccess(data.user));
+    socket.On.loginFailed(this.loginFailed);
   }
 
-  loginSuccess = formData => () => {
+  loginSuccess = userData => () => {
     this.changeLoader({ success: true });
-    Auth.login(formData);
+    Auth.login(userData);
   }
 
-  loginFail = err => {
-    this.changeLoader({ error: true, errorMessage: err });
+  loginFailed = data => {
+    this.changeLoader({ error: true, errorMessage: data.error });
   }
 
   handleClose = () => {

@@ -21,6 +21,12 @@ class Signup extends React.Component {
     }
   }
 
+  componentWillUnmount() {
+    socket.Remove.signupSuccess(data => this.signupSuccess(data.user));
+    socket.Remove.signupFailed(this.signupFailed);
+  }
+
+
   changeLoader = data => {
     this.setState({
       loader: {
@@ -34,17 +40,17 @@ class Signup extends React.Component {
     this.changeLoader({ loading: true });
 
     socket.Emit.signup(formData);
-    socket.On.signupSuccess(this.signupSuccess(formData));
-    socket.On.signupFail(this.signupFail);
+    socket.On.signupSuccess(data => this.signupSuccess(data.user));
+    socket.On.signupFailed(this.signupFailed);
   }
 
-  signupSuccess = formData => () => {
+  signupSuccess = userData => {
     this.changeLoader({ success: true });
-    Auth.signup(formData);
+    Auth.signup(userData);
   }
 
-  signupFail = err => {
-    this.changeLoader({ error: true, errorMessage: err });
+  signupFailed = data => {
+    this.changeLoader({ error: true, errorMessage: data.error });
   }
 
   render() {

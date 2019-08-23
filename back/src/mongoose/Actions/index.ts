@@ -1,3 +1,2 @@
-import { clear } from './clear';
-
-export { clear };
+export * from './clear';
+export * from './populate';

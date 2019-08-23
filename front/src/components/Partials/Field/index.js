@@ -8,7 +8,7 @@ class Field extends React.Component {
   }
 
   render() {
-    let { name, type, label, onChange, field } = this.props;
+    let { name, type, label, onChange, field, className = '' } = this.props;
     let Field = field || TextField;
 
     return (
@@ -18,7 +18,7 @@ class Field extends React.Component {
         name={name}
         label={label}
         id={name}
-        className={name}
+        className={name + ' ' + className}
         type={type}
       />
     );

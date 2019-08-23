@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import autopopulate from 'mongoose-autopopulate';
 
 const imageSchema = new mongoose.Schema({
   link: {
@@ -28,12 +29,12 @@ const imageSchema = new mongoose.Schema({
     }],
     default: []
   },
-  property: {
+  rate: {
     type: String,
     trim: true,
     lowercase: true,
     default: 'general',
-    enum: ['general', 'nsfw'],
+    enum: ['general', 'suggestive', 'nsfw'],
   },
   artist: {
     name: {
@@ -61,9 +62,15 @@ const imageSchema = new mongoose.Schema({
   description: {
     type: String,
     maxlength: 5000
+  },
+  createdOn: {
+    type: Date,
+    default: () => Date.now(), // set the current date as default
+    required: true
   }
 });
 
+//imageSchema.plugin(autopopulate);
 const Image = mongoose.model('Image', imageSchema);
 
 export {
