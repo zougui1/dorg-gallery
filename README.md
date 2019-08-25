@@ -17,7 +17,7 @@ then
 
 ```
 cd ./back
-npm run i
+npm i
 ```
 
 to compile the code (to execute only once)
