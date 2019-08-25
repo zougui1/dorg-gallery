@@ -32,9 +32,9 @@ class SizesPanel extends React.Component {
 
     this.setState({ [slider]: value });
 
-    if (asPx) {
+    /*if (asPx) {
       value = value + 'px';
-    }
+    }*/
 
     // we want to update the canvasData
     canvasData[slider] = value;

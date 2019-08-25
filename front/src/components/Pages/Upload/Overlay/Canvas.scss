@@ -20,7 +20,7 @@
 }
 
 .canvas {
-  z-index: 999;
+  z-index: 997;
   position: absolute;
   //border: 1px solid #ccc;
 }
@@ -43,6 +43,10 @@
   box-sizing: border-box;
   border: none;
   cursor: pointer;
+
+  &.active {
+    border: 2px solid #0058ff;
+  }
 }
 
 .default-swatches {
@@ -99,7 +103,7 @@
 
 .canvas-label {
   position: absolute;
-  z-index: 1000;
+  z-index: 998;
   color: #000;
   font-size: 1.3rem;
   font-weight: 600;

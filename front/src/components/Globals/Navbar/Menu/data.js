@@ -27,6 +27,10 @@ export const user = [
     label: 'home'
   },
   {
+    to: '/gallery/zougui',
+    label: 'my gallery'
+  },
+  {
     to: '/upload',
     label: 'upload'
   },

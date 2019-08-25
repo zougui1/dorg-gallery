@@ -17,24 +17,9 @@ const mapDispatchToProps = mapDynamicDispatch(galleryState.actions, 'setFilter s
 class SearchRow extends React.Component {
 
   handleClick = () => {
-    let { search, user, currentPage, searchOptions, setSearchOptions } = this.props;
-
-    if (typeof search === 'string') {
-      // avoid spaces
-      search = search.trim().split(' ').filter(str => str);
-    }
-
-    // emit to get the images
-    const emitData = {
-      tags: [...search, user.name],
-      page: currentPage,
-      searchOptions: searchOptions,
-      user: user,
-    }
+    const { search, searchOptions, setSearchOptions } = this.props;
 
     setSearchOptions({ ...searchOptions, search });
-    /*socket.Emit.getImagesPage(emitData);
-    socket.On.sendImage(this.setImages);*/
   }
 
   setImages = images => {
@@ -43,9 +28,9 @@ class SearchRow extends React.Component {
   }
 
   handleChange = e => {
-    const { name, value } = e;
+    const { value } = e.target;
 
-    this.props.setState({ [name]: value });
+    this.props.setState({ search: value });
   }
 
   handleChangeSearchOption = prop => value => {

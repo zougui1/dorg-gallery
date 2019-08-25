@@ -26,7 +26,7 @@ class Uploader extends React.Component {
       artistName: '',
       artistLink: '',
       characterName: '',
-      tagList: [],
+      tags: [],
       withOverlay: false,
       isNsfw: false,
       image: null
@@ -85,7 +85,11 @@ class Uploader extends React.Component {
           setFormView('Overlay');
         } else {
 
-          socket.Emit.uploadImage({ ...formData, user });
+          socket.Emit.uploadImage({
+            ...formData,
+            tags: formData.tags.map(t => t.label),
+            user
+          });
           socket.On.imageUploaded(this.imageUploaded);
           socket.On.imageUploadFailed(this.imageUploadFailed);
         }
@@ -209,7 +213,7 @@ class Uploader extends React.Component {
    * is called when the value of the 'tagsInput' field change
    */
   handleTagsInputChange = tags => {
-    this.changeFormData({ tagList: tags });
+    this.changeFormData({ tags: tags });
   }
 
   /**
@@ -258,7 +262,7 @@ class Uploader extends React.Component {
 
           <FormGroup row>
             <TagsInput
-              tagList={formData.tagList}
+              tagList={formData.tags}
               onChange={this.handleTagsInputChange}
               onFocus={this.handleTagsInputChange}
               onBlue={this.handleTagsInputChange}

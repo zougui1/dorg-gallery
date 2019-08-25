@@ -57,9 +57,16 @@ class Images extends React.Component {
 
     // emit to get the images
     const emitData = {
-      tags: [...searchOptions.search, currentUser],
+      tags: [...searchOptions.search],
       page: currentPage,
-      searchOptions: searchOptions,
+      searchOptions: {
+        ...searchOptions,
+        match: {
+          user: {
+            slug: currentUser
+          }
+        },
+      },
       user: user,
     }
 
@@ -74,11 +81,15 @@ class Images extends React.Component {
   renderOverlays = image => {
     const { showOverlay } = this.props;
 
-    if(showOverlay.all && image.canvas) {
+    if(image.canvas) {
       const { canvas } = image;
       let overlays = [];
 
       for (const key in canvas) {
+        if (!showOverlay.includes(key) || !canvas[key]) {
+          continue;
+        }
+
         const imageElement = (
           <img key={canvas[key]} className={'image overlay ' + key} src={canvas[key]} alt="" />
         );

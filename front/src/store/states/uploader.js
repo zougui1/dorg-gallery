@@ -15,6 +15,7 @@ const uploaderState = new DynamicState('uploader', {
     drawing: false,
     context: null,
     hasTextCanvas: true,
+    hasDrawingCanvas: true,
     draggingOut: false,
     imageBounds: {},
     canvas: null,

@@ -33,6 +33,23 @@ class CanvasField extends React.Component {
   }
 
   /**
+   * cast a pixel string into a number
+   */
+  pixelToNumber = str => {
+    return +str.replace('px', '');
+  }
+
+  getHeight = fontSize => {
+    if (fontSize >= 35) {
+      fontSize -= 10;
+
+      return fontSize;
+    } else {
+      return 25;
+    }
+  }
+
+  /**
    * is called when the user click on a input
    * is used to change the input's style with the style saved in the canvasData
    */
@@ -50,9 +67,11 @@ class CanvasField extends React.Component {
 
       // change the style of the field
       input.style.color = canvasData.color;
+      label.style.color = canvasData.color;
       input.style.borderColor = canvasData.color;
-      label.style.borderColor = canvasData.color;
-      input.style.fontSize = canvasData.fontSize;
+      input.style.fontSize = canvasData.fontSize + 'px';
+      label.style.fontSize = canvasData.fontSize + 'px';
+      input.style.height = this.getHeight(canvasData.fontSize) + 'px';
 
       // update the fields
       setCanvasField(inputs);
@@ -102,7 +121,7 @@ class CanvasField extends React.Component {
         htmlFor={'input-' + id}
         draggable
         id={'label-' + id}
-        style={{ top: client.y, left: client.x, color: currentCanvasData.color }}
+        style={{ top: client.y, left: client.x, color: currentCanvasData.color, fontSize: currentCanvasData.fontSize + 'px' }}
         className="canvas-label draggable"
         data-id={id}
         onClick={this.onInputClick}
@@ -113,7 +132,12 @@ class CanvasField extends React.Component {
         <input
           id={'input-' + id}
           data-id={id}
-          style={{ borderColor: currentCanvasData.color, color: currentCanvasData.color, fontSize: currentCanvasData.fontSize }}
+          style={{
+            borderColor: currentCanvasData.color,
+            color: currentCanvasData.color,
+            fontSize: currentCanvasData.fontSize + 'px',
+            height: this.getHeight(currentCanvasData.fontSize) + 'px'
+          }}
           className="canvas-input"
           onChange={this.inputChangeHandler}
           //onFocus={this.focusInputHandler}

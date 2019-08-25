@@ -29,9 +29,11 @@ export class On {
           // delete useless data
           delete data.imgB64;
           delete data.imageTemp64;
+          delete data.imageBase64;
           delete data.text;
           delete data.draw;
           delete data.img;
+          console.log(data)
 
           // add the tags in the database
           controllers.Tag.addMultiple(tags)
@@ -88,7 +90,6 @@ export class On {
       controllers.Image.getByPage(data.tags, data.page, data.user, data.searchOptions)
         .then(images => {
           debug.socket.on(debug.chalk.green('getImagesPage success'));
-          console.log(images);
 
           Emit.sendImage(socket, images);
         })

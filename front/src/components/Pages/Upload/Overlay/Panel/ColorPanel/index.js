@@ -67,8 +67,26 @@ class ColorPanel extends React.Component {
     this.onColorUpdate();
   }
 
+  getUnifiedColor = color => {
+    const { canvasData } = this.props;
+
+    if (canvasData.contextAction === 'draw') {
+      if (color.indexOf('rgba') >= 0) {
+        color = color.replace(/ /g, '').substring(0, color.lastIndexOf(','));
+        color += ',1)';
+      }
+    } else {
+      color = canvasData.contextAction;
+    }
+
+    return color;
+  }
+
   render() {
+    const { canvasData } = this.props;
     const { alpha } = this.state;
+
+    const color = this.getUnifiedColor(canvasData.color, true);
 
     return (
       <React.Fragment>
@@ -76,7 +94,7 @@ class ColorPanel extends React.Component {
           {swatches.map(swatch => (
             <div
               key={swatch.color}
-              className={`c${swatch.id} swatch color`}
+              className={`c${swatch.id} swatch color ${color === swatch.color ? 'active' : ''}`}
               onClick={e => this.onColorUpdate(e, swatch.color)}
             >
               <FaEraser
