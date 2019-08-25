@@ -30,6 +30,9 @@ to run the code (to execute after each compilation)
 npm run debug:dorg
 ```
 
+the file to edit for querying the images: `./back/src/mongoose/controllers/Image/index.ts`
+the object in the `Image.find` function at line 84
+
 # ideas
 
 ## user
