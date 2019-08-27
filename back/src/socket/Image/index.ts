@@ -1,6 +1,6 @@
 import { debug } from '../../config';
 import { controllers } from '../../mongoose';
-import { upload } from '../../services/Cloudinary';
+import { Upload } from '../../services/Cloudinary';
 import { SocketListener, SocketErrorListener } from '../socket.types';
 import { SocketAndNumber, SendImage } from './image.types';
 
@@ -25,7 +25,7 @@ export class On {
           : Buffer.from(imageBase64.split(',')[1], 'base64');
 
         // upload all the necessary images into cloudinary
-        const images = await upload.withItsThumb(img, imgB64 || imageBase64, draw, text);
+        const images = await Upload.withItsThumb(img, imgB64 || imageBase64, draw, text);
 
         // delete useless data
         delete data.imgB64;
