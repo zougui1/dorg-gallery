@@ -1,4 +1,11 @@
+export interface ImagesStore {
+  image: string;
+  thumb: string;
+  draw: string;
+  text: string;
 
+  [key: string]: string;
+}
 
 export interface CloudinaryUploadResolve {
   secure_url: string;
