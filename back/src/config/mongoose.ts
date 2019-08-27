@@ -12,6 +12,6 @@ mongoose.connect(api.monngoURI, { useNewUrlParser: true })
     process.exit(1);
   });
 
-mongoose.set('debug', true);
+//mongoose.set('debug', true);
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);

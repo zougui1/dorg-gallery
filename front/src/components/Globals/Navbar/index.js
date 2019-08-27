@@ -1,6 +1,6 @@
 import React from 'react';
 import AppBar from '@material-ui/core/AppBar';
-import ToolBar from '@material-ui/core/ToolBar';
+import Toolbar from '@material-ui/core/Toolbar';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
@@ -20,7 +20,7 @@ class Navbar extends React.Component {
 
     return (
       <AppBar position="fixed" className="bg-color-blue" id="Navbar">
-        <ToolBar>
+        <Toolbar>
           <Grid container justify="space-between" alignItems="center">
             <Grid item>
               <Typography variant="h6">
@@ -35,7 +35,7 @@ class Navbar extends React.Component {
               <Menu user={user} />
             </Grid>
           </Grid>
-        </ToolBar>
+        </Toolbar>
       </AppBar>
     );
   }

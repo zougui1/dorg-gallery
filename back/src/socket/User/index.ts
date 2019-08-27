@@ -45,7 +45,7 @@ export class On {
         .then(user => {
           debug.socket.on(debug.chalk.green('login success'));
 
-          Emit.logged(socket, user.user);
+          Emit.logged(socket, user);
         })
         .catch(err => {
           console.error(err);

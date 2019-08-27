@@ -1,7 +1,8 @@
 import { debug } from '../../../config';
 import { Tag } from '../../Models/Tag';
-import { Add, AddMultiple, GetAll, ITagController } from '../Tag/tag.types';
+import { Add, AddMultiple, GetAll, ITagController, GetByName, GetMultipleByName } from '../Tag/tag.types';
 import { TagModel } from '../../Models/Tag/tag.types';
+import { multipleQueriesHandler } from '../../../utils/requestHelpers';
 
 export const TagController: ITagController = class TagController {
 
@@ -17,36 +18,27 @@ export const TagController: ITagController = class TagController {
   /**
    * add several tags if they doesn't already exists
    */
-  public static addMultiple: AddMultiple = (tags = []) => new Promise((resolve, reject) => {
+  public static addMultiple: AddMultiple = (tags = [])  => {
     debug.mongoose('%o has been called', 'TagController.addMultiple');
 
-    // @ts-ignore
     tags.push('*');
-    let requestsDone = 0;
-    let requestsFailed = 0;
-    let length = tags.length;
-    let tagDocuments: TagModel[] = [];
 
-    tags.forEach(tag => {
-      TagController.add(tag)
-        .then(tag => {
-          // @ts-ignore
-          tagDocuments[tagDocuments.length] = tag;
-          if ((++requestsDone + requestsFailed) === length) {
-            resolve({ success: true, succeeded: requestsDone, failed: requestsFailed, tags: tagDocuments });
-          }
-        })
-        .catch(err => {
-          if ((requestsDone + (++requestsFailed)) === length) {
-            if (requestsDone === 0) {
-              resolve({ success: false, succeeded: 0, failed: requestsFailed, tags: tagDocuments });
-            } else {
-              reject({ success: true, succeeded: requestsDone, failed: requestsFailed, error: err });
-            }
-          }
-        });
-    });
-  })
+    return multipleQueriesHandler(TagController.add, tags);
+  };
+
+  public static getByName: GetByName = tag => {
+    debug.mongoose('%o has been called', 'TagController.getByName');
+
+    return Tag.findOne({ name: tag });
+  }
+
+  public static getMultipleByName: GetMultipleByName = (tags = []) => {
+    debug.mongoose('%o has been called', 'TagController.getMultipleByName');
+
+    tags.push('*');
+
+    return multipleQueriesHandler(TagController.getByName, tags);
+  };
 
   public static getAll: GetAll = () => {
     return Tag.find();

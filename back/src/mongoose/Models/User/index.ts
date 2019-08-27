@@ -32,6 +32,10 @@ const userSchema = new mongoose.Schema({
       ref: 'Role'
     }],
     default: []
+  },
+  createdAt: {
+    type: Date,
+    default: () => new Date()
   }
 });
 
@@ -56,11 +60,13 @@ userSchema.pre('save', function (next) {
 });
 
 // compare the password in the current document with another
-userSchema.methods.comparePassword = function (candidatePassword: string, callback: ComparePasswordCallback) {
-  bcrypt.compare(candidatePassword, this.password, (err, isMatch) => {
-    if (err) return callback(err);
+userSchema.methods.comparePassword = function (candidatePassword: string) {
+  return new Promise((resolve, reject) => {
+    bcrypt.compare(candidatePassword, this.password, (err, isMatch) => {
+      if (err) throw err;
 
-    callback(null, isMatch);
+      resolve(isMatch);
+    });
   });
 }
 

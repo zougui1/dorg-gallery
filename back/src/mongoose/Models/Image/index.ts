@@ -63,10 +63,9 @@ const imageSchema = new mongoose.Schema({
     type: String,
     maxlength: 5000
   },
-  createdOn: {
+  createdAt: {
     type: Date,
-    default: () => Date.now(), // set the current date as default
-    required: true
+    default: () => new Date() // set the current date as default
   }
 });
 

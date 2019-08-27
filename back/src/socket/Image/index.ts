@@ -1,6 +1,6 @@
 import { debug } from '../../config';
 import { controllers } from '../../mongoose';
-import { upload } from '../../services/cloudinary';
+import { upload } from '../../services/Cloudinary';
 import { SocketListener, SocketErrorListener } from '../socket.types';
 import { SocketAndNumber, SendImage } from './image.types';
 
@@ -14,127 +14,128 @@ export class On {
 
   // is called when a user upload an image
   public static uploadImage: SocketListener = function uploadImage(socket) {
-    socket.on('uploadImage', (data: any) => {
+    socket.on('uploadImage', async (data: any) => {
       debug.socket.on('uploadImage');
 
       let { img, imgB64, imageBase64, text, draw, tags } = data;
 
-      img = img
-        ? img
-        : Buffer.from(imageBase64.split(',')[1], 'base64');
+      try {
+        img = img
+          ? img
+          : Buffer.from(imageBase64.split(',')[1], 'base64');
 
-      // upload all the necessary images into cloudinary
-      upload.withItsThumb(img, imgB64 || imageBase64, draw, text)
-        .then(images => {
-          // delete useless data
-          delete data.imgB64;
-          delete data.imageTemp64;
-          delete data.imageBase64;
-          delete data.text;
-          delete data.draw;
-          delete data.img;
-          console.log(data)
+        // upload all the necessary images into cloudinary
+        const images = await upload.withItsThumb(img, imgB64 || imageBase64, draw, text);
 
-          // add the tags in the database
-          controllers.Tag.addMultiple(tags)
-            .then(tagsData => {
+        // delete useless data
+        delete data.imgB64;
+        delete data.imageTemp64;
+        delete data.imageBase64;
+        delete data.text;
+        delete data.draw;
+        delete data.img;
+        console.log(data)
 
-              const dataToUpload = {
-                ...data,
-                ...images,
-                canvas: {
-                  draw: images.draw,
-                  text: images.text,
-                },
-                link: images.image,
-                tags: [...tagsData.tags],
-              };
+        // add the tags in the database
+        const tagsData = await controllers.Tag.addMultiple(tags);
 
-              // add the image in the database
-              controllers.Image.add(dataToUpload)
-                .then(() => {
-                  debug.socket.on(debug.chalk.green('uploadImage success'));
+        const dataToUpload = {
+          ...data,
+          ...images,
+          canvas: {
+            draw: images.draw,
+            text: images.text,
+          },
+          link: images.image,
+          tags: [...tagsData.documents],
+        };
 
-                  // send a successful response to the client
-                  Emit.imageUploaded(socket);
-                })
-                .catch(err => {
-                  console.error(err);
+        // add the image in the database
+        await controllers.Image.add(dataToUpload);
+      } catch (err) {
+        // send an error to the client
+        Emit.imageUploadFailed(socket, 'An error occured and your image couldn\'t be uploaded');
 
-                  // send an error to the client
-                  Emit.imageUploadFailed(socket, 'An error occured and your image couldn\'t be uploaded');
-                });
-            })
-            .catch(err => {
-              console.error(err);
+        throw new Error(err);
+      }
 
-              // send an error to the client
-              Emit.imageUploadFailed(socket, 'An error occured and your image couldn\'t be uploaded');
-            });
-        })
-        .catch(err => {
-          console.error(err);
-
-          // send an error to the client
-          Emit.imageUploadFailed(socket, 'An error occured and your image couldn\'t be uploaded');
-        });
+      debug.socket.on(debug.chalk.green('uploadImage success'));
+      // send a successful response to the client
+      Emit.imageUploaded(socket);
     });
   }
 
   // is called when a user want to see images
   public static getImagesPage: SocketListener = function getImagesPage(socket) {
-    socket.on('getImagesPage', (data: any) => {
+    socket.on('getImagesPage', async (data: any) => {
       debug.socket.on('getImagesPage');
 
       console.log(data);
-      controllers.Image.getByPage(data.tags, data.page, data.user, data.searchOptions)
-        .then(images => {
-          debug.socket.on(debug.chalk.green('getImagesPage success'));
+      try {
+        const { documents } = await controllers.Tag.getMultipleByName(data.tags);
 
-          Emit.sendImage(socket, images);
-        })
-        .catch(err => {
-          console.error(err);
+        if (documents.length !== data.tags.length) {
+          Emit.sendImage(socket, []);
+          return;
+        }
 
-          Emit.getImageFailed(socket, 'An error occured and no image couldn\'t be retrieved');
-        });
+        const user = await controllers.User.findBySlug(data.searchOptions.match.user.slug);
+
+        if (!user) {
+          Emit.sendImage(socket, []);
+          return;
+        }
+
+        data.searchOptions.match.userData = user;
+        data.searchOptions.tags = data.tags;
+
+        const images = await controllers.Image.getByPage(documents.map(t => t._id), data.page, data.user, data.searchOptions);
+
+        debug.socket.on(debug.chalk.green('getImagesPage success'));
+
+        Emit.sendImage(socket, images);
+      } catch (err) {
+        Emit.getImageFailed(socket, 'An error occured and no image couldn\'t be retrieved');
+
+        throw new Error(err);
+      }
     });
   }
 
   // is called when a user is in the page of a single image
   public static getImageById: SocketListener = function getImageById(socket) {
-    socket.on('getImageById', (data: any) => {
+    socket.on('getImageById', async (data: any) => {
       debug.socket.on('getImageById');
 
-      controllers.Image.getById(data.id)
-        .then(image => {
-          debug.socket.on(debug.chalk.green('getImageById success'));
+      try {
+        const image = await controllers.Image.getById(data.id);
 
-          Emit.sendImage(socket, image);
-        })
-        .catch(err => {
-          console.error(err);
+        debug.socket.on(debug.chalk.green('getImageById success'));
 
-          Emit.getImageFailed(socket, 'An error occured and the image couldn\'t be retrieved');
-        });
+        Emit.sendImage(socket, image);
+      } catch (err) {
+        Emit.getImageFailed(socket, 'An error occured and the image couldn\'t be retrieved');
+
+        throw new Error(err);
+      }
     });
   }
 
   public static getImagesCount: SocketListener = function getImagesCount(socket) {
-    socket.on('getImagesCount', (data: any) => {
+    socket.on('getImagesCount', async (data: any) => {
       debug.socket.on('getImagesCount');
 
-      controllers.Image.getCount(data.user, data.tags)
-        .then(count => {
-          debug.socket.on(debug.chalk.green('getImagesCount success'));
+      try {
+        const count = await controllers.Image.getCount(data.user, data.tags);
 
-          Emit.sendImagesCount(socket, count);
-        })
-        .catch(err => {
-          console.error(err);
+        debug.socket.on(debug.chalk.green('getImagesCount success'));
 
-          Emit.getImagesCountFailed(socket, 'An error occured and the amount of images couldn\'t be retrieved');
-        });
+        Emit.sendImagesCount(socket, count);
+      } catch (err) {
+        Emit.getImagesCountFailed(socket, 'An error occured and the amount of images couldn\'t be retrieved');
+
+        throw new Error(err);
+      }
     });
   }
 }
