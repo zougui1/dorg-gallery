@@ -6,20 +6,20 @@ export class On {
 
   // is called when a user connect to the site
   public static getAllTags: SocketListener = function getAllTags(socket) {
-    socket.on('getAllTags', () => {
+    socket.on('getAllTags', async () => {
       debug.socket.on('getAllTags');
 
-      controllers.Tag.getAll()
-        .then(tags => {
-          debug.socket.on(debug.chalk.green('getAllTags success'));
+      try {
+        const tags = await controllers.Tag.getAll()
 
-          Emit.sendTags(socket, tags);
-        })
-        .catch(err => {
-          console.error(err);
+        debug.socket.on(debug.chalk.green('getAllTags success'));
 
-          Emit.getTagsFailed(socket, err);
-        });
+        Emit.sendTags(socket, tags);
+      } catch (err) {
+        Emit.getTagsFailed(socket, err);
+
+        throw new Error(err);
+      }
     });
   }
 

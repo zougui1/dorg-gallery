@@ -6,7 +6,7 @@ import { EmitLogged, EmitUserObject } from './user.types';
 export class On {
 
   public static signup: SocketListener = function signup(socket) {
-    socket.on('signup', user => {
+    socket.on('signup', async user => {
       debug.socket.on('signup');
 
       if (!user.name && user.username) {
@@ -14,51 +14,42 @@ export class On {
         delete user.username;
       }
 
-      controllers.User.signup(user)
-        .then(user => {
-          debug.socket.on(debug.chalk.green('signup success'));
+      try {
+        const createdUser = await controllers.User.signup(user); // create the user
+        const userDb = await controllers.User.getById(createdUser._id); // get the user WITHOUT its password
 
-          controllers.User.getById(user._id)
-            .then(user => {
-              Emit.signupSuccess(socket, user);
-            })
-            .catch(err => {
-              console.error(err);
+        debug.socket.on(debug.chalk.green('signup success'));
+        Emit.signupSuccess(socket, userDb);
+      } catch (error) {
+        Emit.signupFailed(socket, 'An error occured');
 
-              Emit.signupFailed(socket, 'An error occured');
-            });
-
-        })
-        .catch(err => {
-          console.error(err);
-
-          Emit.signupFailed(socket, 'This username is already used');
-        });
+        throw new Error(error);
+      }
     });
   }
 
   public static login: SocketListener = function login(socket) {
-    socket.on('login', user => {
+    socket.on('login', async user => {
       debug.socket.on('login');
 
-      controllers.User.login(user)
-        .then(user => {
-          debug.socket.on(debug.chalk.green('login success'));
+      try {
+        const userDb = await controllers.User.login(user);
 
-          Emit.logged(socket, user);
-        })
-        .catch(err => {
-          console.error(err);
-          let error;
+        debug.socket.on(debug.chalk.green('login success'));
+        Emit.logged(socket, userDb);
+      } catch (error) {
+        let errorMessage: string = '';
 
-          if (err.from === 'password' || err.from === 'user') {
-            error = err.errorMessage;
-          } else {
-            error = 'An error occured and you couldn\'t be logged in';
-          }
+        if (error.from === 'password' || error.from === 'user') {
+          error = error.errorMessage;
+        } else {
+          error = 'An error occured and you couldn\'t be logged in';
+        }
 
-          Emit.loginFailed(socket, error);
-        });
+        Emit.loginFailed(socket, errorMessage);
+
+        throw new Error(error);
+      }
     });
   }
 };
