@@ -5,6 +5,7 @@ import { debug } from './debug';
 mongoose.Promise = Promise;
 const mongoUri: string = process.env.MONGO_URI || '';
 
+// make the connection to mongoDB
 mongoose.connect(mongoUri, { useNewUrlParser: true })
   .then(() => debug.mongoose(chalk.green('MongoDB started')))
   .catch(err => {

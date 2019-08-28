@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { debug } from '../../../config';
 import { Image } from '../../Models/Image';
-import { Add, GetByPage, GetByUser, GetById, GetCount, IImageController } from './image.types';
+import { IImageController, Add, GetByPage, SearchOptions, GetById, GetCount } from './image.types';
 
 const imagePerPage = 30;
 
@@ -9,6 +9,22 @@ export const ImageController: IImageController = class ImageController {
 
   /**
    * add an image in the DB
+   * @api public
+   * @param {Object} destructured
+   * @param {String} destructured.link link to the main image
+   * @param {String} destructured.thumb link to the thumbnail
+   * @param {Object} destructured.canvas
+   * @param {String} destructured.canvas.text link to the text image
+   * @param {String} destructured.canvas.draw link to the drawing image
+   * @param {TagModel[]} destructured.tags tags of the image
+   * @param {String[]} destructured.rate rate of the image
+   * @param {Object} destructured.artist info of the artist who drew the image
+   * @param {String} destructured.artist.name name of the artist
+   * @param {String} destructured.artist.link link to the artist
+   * @param {String} destructured.characterName name of the character in the image
+   * @param {UserModel} destructured.user data of the user who posted the image
+   * @param {String} destructured.description description of the image
+   * @returns {Promise<Document>}
    */
   public static add: Add = ({ link, thumb, canvas, tags, rate, artist, characterName, user, description }) => {
     debug.mongoose('%o has been called', 'ImageController.add');
@@ -36,7 +52,24 @@ export const ImageController: IImageController = class ImageController {
   }
 
   /**
+   * TODO make a function to get the query used in this method. to make a method that'll get
+   * TODO the count of the images it can returns
    * get images in a page depending of the tags, the page and the rate
+   * @api public
+   * @param {TagModel[]} tags tags to search in the images
+   * @param {Number} page define the range of images to get
+   * @param {UserModel} user the user who is querying
+   * @param {ISearchOptions} searchOptions the options of the query to make more complex query
+   * @param {String[]} searchOptions.search the tags name, used to improve the relevancy of the images
+   * @param {SearchOptions.Match} searchOptions.match contains more data to condition for a more complex and relevant query
+   * @param {SearchOptions.User} searchOptions.match.user data to match with the poster's user data
+   * @param {String} searchOptions.match.user.slug slug to test with the slug of the poster
+   * @param {SearchOptions.HaveOverlays} searchOptions.haveOverlays data used to get the images that have overlays
+   * @param {SearchOptions.Rating} searchOptions.rating rating of the image
+   * @param {SearchOptions.Sort} searchOptions.sort contains data to define the sorting
+   * @param {SearchOptions.Criteria} searchOptions.criteria criteria of the sorting
+   * @param {SearchOptions.Order} searchOptions.order the order of the sorting
+   * @returns {DocumentQuery<Document [], Document, {}>}
    */
   public static getByPage: GetByPage = (tags, page, user, searchOptions) => {
     debug.mongoose('%o has been called', 'ImageController.getByPage');
@@ -53,21 +86,21 @@ export const ImageController: IImageController = class ImageController {
       let canvasQuery: any = {};
 
       // query on the text canvas
-      if (!haveOverlays.includes('text')) {
+      if (!haveOverlays.includes(SearchOptions.HaveOverlays.text)) {
         canvasQuery['canvas.text'] = '';
       } else {
         canvasQuery['canvas.text'] = { $exists: true, $ne: '' };
       }
 
       // query on the drawing canvas
-      if (!haveOverlays.includes('draw')) {
+      if (!haveOverlays.includes(SearchOptions.HaveOverlays.draw)) {
         canvasQuery['canvas.draw'] = '';
       } else {
         canvasQuery['canvas.draw'] = { $exists: true, $ne: '' };
       }
 
       // general query
-      if (haveOverlays.includes('*')) {
+      if (haveOverlays.includes(SearchOptions.HaveOverlays['*'])) {
         canvasQuery = {}; // reset the data it contains
         canvasQuery.canvas = { $exists: true };
       }
@@ -122,21 +155,10 @@ export const ImageController: IImageController = class ImageController {
   }
 
   /**
-   * get a page of images posted by a user
-   */
-  public static getByUser: GetByUser = (user, page) => {
-    debug.mongoose('%o has been called', 'ImageController.getByUser');
-
-    return Image
-      .find({ 'user.name': user.name })
-      .skip((page - 1) * imagePerPage)
-      .limit(imagePerPage)
-      .populate('user', 'name')
-      .sort({ _id: -1 });
-  }
-
-  /**
    * get an image by its ID
+   * @api public
+   * @param {String} id the id of the image to find
+   * @returns {DocumentQuery<Document | null, Document, {}>}
    */
   public static getById: GetById = id => {
     debug.mongoose('%o has been called', 'ImageController.getById');
@@ -145,6 +167,7 @@ export const ImageController: IImageController = class ImageController {
   }
 
   /**
+   * TODO improve this method to use all the parameters the 'getByPage' can use
    * get the amount of images
    */
   public static getCount: GetCount = (user, tags) => {

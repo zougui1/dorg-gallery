@@ -1,24 +1,19 @@
 import { models } from '../';
 
 // clear the whole DB
-export const clear = () => new Promise((resolve, reject) => {
-  const modelsAmount = Object.keys(models).length;
-  let i = 0;
+export const clear = async () => {
+  let queries = [];
 
   for (const modelName in models) {
     if (models.hasOwnProperty(modelName)) {
-      // get the model
       // @ts-ignore
+      // get the model
       const model = models[modelName][modelName];
 
       // delete everything in the model
-      model.deleteMany()
-        .then(() => {
-          if (modelsAmount === ++i) {
-            resolve();
-          }
-        })
-        .catch(reject);
+      queries.push(model.deleteMany());
     }
   }
-});
+
+  return await queries;
+};

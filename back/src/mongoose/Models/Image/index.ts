@@ -30,11 +30,13 @@ const imageSchema = new mongoose.Schema({
     default: []
   },
   rate: {
-    type: String,
-    trim: true,
-    lowercase: true,
-    default: 'general',
-    enum: ['general', 'suggestive', 'nsfw'],
+    type: [{
+      type: String,
+      trim: true,
+      lowercase: true,
+      default: 'general',
+      enum: ['general', 'suggestive', 'nsfw'],
+    }],
   },
   artist: {
     name: {

@@ -6,8 +6,6 @@ import { argv } from 'yargs';
 import { debug } from './debug';
 
 const app = express();
-//let http: http.Server;
-//let https: https.Server;
 let server: http.Server | https.Server;
 let options: any = {};
 const port = 8000;

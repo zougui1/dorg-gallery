@@ -4,10 +4,17 @@ import { User } from '../../Models/User';
 import { controllers } from '../';
 import { Signup, FindByName, Login, GetCount, IUserController, GetById, Slugify, FindBySlug } from './user.types';
 import { UserModel } from '../../Models/User/user.types';
+import { DocumentQuery } from 'mongoose';
 
 
 export const UserController: IUserController = class UserController {
 
+  /**
+   * make a unique slug out of a name
+   * @api public
+   * @param {String} name of the user to make a slug from
+   * @returns {Promise<String>}
+   */
   public static slugify: Slugify = async name => {
     debug.mongoose('%o has been called', 'UserController.slugify');
 
@@ -22,6 +29,11 @@ export const UserController: IUserController = class UserController {
 
   /**
    * create a new user
+   * @api public
+   * @param {Object} destructured object
+   * @param {String} destructured.name name of the user
+   * @param {String} destructured.password password of the user
+   * @returns {Promise<Document>}
    */
   public static signup: Signup = async ({ name, password }) => {
     debug.mongoose('%o has been called', 'UserController.signup');
@@ -47,6 +59,9 @@ export const UserController: IUserController = class UserController {
 
   /**
    * get a user by its name
+   * @api public
+   * @param {String} name of the user to find
+   * @returns {DocumentQuery<Document | null, Document, {}>}
    */
   public static findByName: FindByName = name => {
     debug.mongoose('%o has been called', 'UserController.findByName');
@@ -56,6 +71,9 @@ export const UserController: IUserController = class UserController {
 
   /**
    * get a user by its slug
+   * @api public
+   * @param {string} slug of the user to find
+   * @returns {DocumentQuery<Document | null, Document, {}>}
    */
   public static findBySlug: FindBySlug = slug => {
     debug.mongoose('%o has been called', 'UserController.findBySlug');
@@ -63,8 +81,14 @@ export const UserController: IUserController = class UserController {
     return User.findOne({ slug });
   }
 
+  // @ts-check
   /**
    * get a user if its name and password matches
+   * @api public
+   * @param {Object} user
+   * @param {String} user.name
+   * @param {String} user.password
+   * @returns {Promise<UserModel>}
    */
   public static login: Login = async user => {
     debug.mongoose('%o has been called', 'UserController.login');
@@ -95,6 +119,12 @@ export const UserController: IUserController = class UserController {
     return userObj;
   }
 
+  /**
+   * get a user by id
+   * @api public
+   * @param {String} id of the user to find
+   * @returns {DocumentQuery<Document | null, Document, {}>}
+   */
   public static getById: GetById = id => {
     debug.mongoose('%o has been called', 'UserController.getById');
 
@@ -103,6 +133,8 @@ export const UserController: IUserController = class UserController {
 
   /**
    * get the amount of users
+   * @api public
+   * @returns {Query<Number>}
    */
   public static getCount: GetCount = () => {
     debug.mongoose('%o has been called', 'UserController.getCount');

@@ -59,7 +59,12 @@ userSchema.pre('save', function (next) {
     .catch(next);
 });
 
-// compare the password in the current document with another
+/**
+ * compare the password in the current document with another
+ * @api public
+ * @param {String} candidatePassword password to test with the password in the document
+ * @returns {Promise<Boolean>}
+ */
 userSchema.methods.comparePassword = function (candidatePassword: string) {
   return new Promise((resolve, reject) => {
     bcrypt.compare(candidatePassword, this.password, (err, isMatch) => {

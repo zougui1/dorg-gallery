@@ -29,8 +29,14 @@ const debugs: Dorg.Debug = {
   },
 };
 
+// the debug of socket with on and emit has been done like that because the way it has been done
+// above doesn't work, but got to be done due to the type it has
+
+// debug for things related to socket.io
 debugs.socket = debug(namespace('socket'));
+// debug for the listeners with socket.io
 debugs.socket.on = debug(namespace('socket:on'));
+// debug for the emiters with socket.io
 debugs.socket.emit = debug(namespace('socket:emit'));
 
 export { debugs as debug };
