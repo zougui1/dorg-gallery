@@ -2,69 +2,67 @@ import chalk from 'chalk';
 import { argv } from 'yargs';
 import * as mongooseActions from './mongoose/Actions';
 import { debug } from './config/debug';
+import { Arguments } from './actionDispatcher.types';
 
-// clear the DB
-if (argv['db-clear']) {
-  require('./config/mongoose');
+/**
+ * do an action
+ */
+const dispatcher = async (argv: Arguments) => {
+  // clear the DB
+  if (argv['db-clear']) {
+    require('./config/mongoose');
 
-  debug.action('Clearing the database...');
-  mongooseActions.clear()
-    .then(() => {
+    debug.action('Clearing the database...');
+    try {
+      // clear the database
+      await mongooseActions.clear();
       debug.action(chalk.green('The database has been cleared'));
-      process.exit(0);
-    })
-    .catch((err: any) => {
+    } catch (error) {
       debug.action(chalk.red('An error occured while clearing the database:'));
-      console.error(chalk.red(err));
-      process.exit(1);
-    });
+      throw error;
+    }
 
-} else if (argv['db-populate']) { // populate the DB with default data
-  require('./config/mongoose');
+    // exit the process once the database has been cleared
+    process.exit(0);
 
-  debug.action('Populating the database with default data...');
-  mongooseActions.populate()
-    .then(() => {
+  } else if (argv['db-populate']) { // populate the DB with default data
+    require('./config/mongoose');
+
+    debug.action('Populating the database with default data...');
+    try {
+      // populate the database with default data
+      await mongooseActions.populate();
       debug.action(chalk.green('The database is populated'));
-      process.exit(0);
-    })
-    .catch((err: any) => {
+    } catch (error) {
       debug.action(chalk.red('An error occured while populating the database:'));
-      console.error(chalk.red(err));
-      process.exit(1);
-    });
-} else if (argv['db-reset']) { // reset the DB
-  require('./config/mongoose');
+      throw error;
+    }
 
-  debug.action('Reseting the database...');
-  debug.action('Clearing the database...');
+    // exit the process once the database has been cleared
+    process.exit(0);
 
-  mongooseActions.clear()
-    .then(() => {
-      debug.action(chalk.green('The database has been cleared'));
+  } else if (argv['db-reset']) { // reset the DB
+    require('./config/mongoose');
 
-      debug.action('Populating the database with default data...');
-      mongooseActions.populate()
-        .then(() => {
-          debug.action(chalk.green('The database is populated'));
-          debug.action(chalk.green('The database has been reset'));
-          process.exit(0);
-        })
-        .catch((err: any) => {
-          debug.action(chalk.red('An error occured while populating the database:'));
-          console.error(chalk.red(err));
-          process.exit(1);
-        });
-    })
-    .catch((err: any) => {
-      debug.action(chalk.red('The database couldn\'t be reset'));
-      debug.action(chalk.red('An error occured while clearing the database:'));
-      console.error(chalk.red(err));
-      process.exit(1);
-    });
-} else if (argv['server-start']) { // start the server
-  debug.action('Starting the server...');
+    debug.action('Reseting the database...');
 
-  require('./express');
-  require('./socket');
+    // clear the database
+    await dispatcher({ 'db-clear': true });
+    // populate the database with default data
+    await dispatcher({ 'db-populate': true });
+
+    // exit the process once the database has been cleared
+    process.exit(0);
+
+  } else if (argv['server-start']) { // start the server
+    debug.action('Starting the server...');
+
+    require('./express');
+    require('./socket');
+  }
 }
+
+dispatcher(argv as Arguments)
+  .catch(error => {
+    throw error;
+  });

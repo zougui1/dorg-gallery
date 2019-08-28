@@ -99,13 +99,13 @@ export const UserController: IUserController = class UserController {
     const userDb: any = _userDb;
 
     if (!userDb) {
-      throw new Error(JSON.stringify({ from: 'user', errorMessage: 'There is no user with this name' }));
+      throw new Error('There is no user with this name');
     }
 
     const match = await userDb.comparePassword(user.password);
 
     if (!match) {
-      throw new Error(JSON.stringify({ from: 'password', errorMessage: 'The password is incorrect' }));
+      throw new Error('The password is incorrect');
     }
 
     const userObj: UserModel = {

@@ -4,7 +4,12 @@ import { SocketListener, SocketErrorListener, SocketSendDocuments } from '../soc
 
 export class On {
 
-  // is called when a user connect to the site
+  /**
+   * TODO remove all call to this listener then delete it
+   * is called when a user connect to the site
+   * @api public
+   * @param {SocketIO.Socket} socket
+   */
   public static getAllTags: SocketListener = function getAllTags(socket) {
     socket.on('getAllTags', async () => {
       debug.socket.on('getAllTags');
@@ -25,6 +30,7 @@ export class On {
 
 }
 
+// TODO remove
 export class Emit {
   // used to send a response to the client
   public static sendTags: SocketSendDocuments = function sendTags(socket, tags) {
