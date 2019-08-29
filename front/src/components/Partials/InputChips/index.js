@@ -10,6 +10,8 @@ import Chip from '@material-ui/core/Chip';
 import MenuItem from '@material-ui/core/MenuItem';
 import CancelIcon from '@material-ui/icons/Cancel';
 
+//TODO REMOVE THIS WHOLE FILE
+
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,

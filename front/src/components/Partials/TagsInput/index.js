@@ -4,6 +4,8 @@ import { mapDynamicState } from 'dynamic-redux';
 
 import InputChips from '../InputChips';
 
+//TODO REMOVE THIS WHOLE FILE
+
 const mapStateToProps = mapDynamicState('misc: tags');
 const TagsInput = ({ tags, onChange, tagList, onFocus, onBlur }) => {
   return (

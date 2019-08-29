@@ -14,9 +14,9 @@ export namespace SearchOptions {
   }
 
   export enum HaveOverlays {
-    '*',
-    text,
-    draw,
+    '*' = '*',
+    'text' = 'text',
+    'draw' = 'draw',
   }
 
   export enum Rating {

@@ -17,6 +17,7 @@ class Menu extends React.Component {
 
   /**
    * get the menu contents
+   * @returns {ReactElement[]}
    */
   getMenu = () => {
     const dataLinks = this.getDataLinks();
@@ -26,6 +27,7 @@ class Menu extends React.Component {
 
   /**
    * get the data links depending on the user data
+   * @returns {ReactElement[]}
    */
   getDataLinks = () => {
     let dataLinks = [];
@@ -45,6 +47,12 @@ class Menu extends React.Component {
 
   /**
    * parse the data links into jsx
+   * @param {Object[]} dataLinks
+   * @param {String} dataLinks[].to
+   * @param {String} dataLinks[].label
+   * @param {String} dataLinks[].className
+   * @param {Function} dataLinks[].onClick
+   * @returns {ReactElement[]}
    */
   parseDataToMenu = dataLinks => {
     let links = [];

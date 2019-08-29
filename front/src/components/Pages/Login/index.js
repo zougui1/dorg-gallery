@@ -32,6 +32,8 @@ class Login extends React.Component {
   componentDidMount() {
     const { deniedPage } = this.props;
 
+    // if true this means the user got redirected from a page they don't have access to
+    // so we want deniedAlert to be true
     if (deniedPage.require) {
       this.setState({ deniedAlert: true });
     }
@@ -44,6 +46,10 @@ class Login extends React.Component {
   }
 
 
+  /**
+   * used to change the data in the loader object of the state
+   * @param {Object} data
+   */
   changeLoader = data => {
     this.setState({
       loader: {
@@ -53,6 +59,10 @@ class Login extends React.Component {
     });
   }
 
+  /**
+   * is called when a submit event get triggered with all the fields in the form valid
+   * @param {Object} formData the data of all the fields in the form
+   */
   submit = formData => {
     this.changeLoader({ loading: true });
 
@@ -61,15 +71,27 @@ class Login extends React.Component {
     socket.On.loginFailed(this.loginFailed);
   }
 
-  loginSuccess = userData => () => {
+  /**
+   * called if the user can log in
+   * @param {Object} userData all the data of the user from the DB
+   */
+  loginSuccess = userData => {
     this.changeLoader({ success: true });
     Auth.login(userData);
   }
 
+  /**
+   * called if the user can't log in
+   * @param {Object} data from the server
+   * @param {String} data.error error message
+   */
   loginFailed = data => {
     this.changeLoader({ error: true, errorMessage: data.error });
   }
 
+  /**
+   * called when the user close the dialog
+   */
   handleClose = () => {
     const { setDeniedPage } = this.props;
 

@@ -51,7 +51,7 @@ export class On {
         const userDb = await controllers.User.login(user);
 
         debug.socket.on(debug.chalk.green('login success'));
-        Emit.logged(socket, userDb);
+        Emit.loginSuccess(socket, userDb);
       } catch (error) {
         // TODO use it as default message 'An error occured and you couldn\'t be logged in'
 
@@ -92,10 +92,10 @@ export class Emit {
    * @api public
    * @param {SocketIO.Socket} socket
    */
-  public static logged: EmitLogged = function logged(socket, user) {
-    debug.socket.emit('logged');
+  public static loginSuccess: EmitLogged = function loginSuccess(socket, user) {
+    debug.socket.emit('loginSuccess');
 
-    socket.emit('userCreated', { success: true, user: user });
+    socket.emit('loginSuccess', { success: true, user: user });
   }
 
   /**

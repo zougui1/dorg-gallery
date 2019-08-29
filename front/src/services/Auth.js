@@ -24,6 +24,11 @@ class Auth {
 
   /**
    * get the roles of the client
+   *
+   * @param {Object} user
+   * @param {Object[]} user.roles
+   * @param {String} user.roles[].value
+   * @returns {String[]}
    */
   static getUserRoles = user => {
     if (Array.isArray(user.roles)) {
@@ -35,6 +40,7 @@ class Auth {
 
   /**
    * get if the client is logged
+   * @returns {Boolean}
    */
   static isLogged = () => {
     const user = Auth.getUser();
@@ -43,6 +49,7 @@ class Auth {
 
   /**
    * get if the client is a user
+   * @returns {Boolean}
    */
   static isUser = () => {
     const user = Auth.getUser();
@@ -51,6 +58,7 @@ class Auth {
 
   /**
    * get if the client has given role
+   * @returns {Boolean}
    */
   static hasRole = role => {
     const user = Auth.getUser();
@@ -59,6 +67,8 @@ class Auth {
 
   /**
    * encrypt data
+   * @param {any} data
+   * @returns {String}
    */
   static encrypt = data => {
     return CryptoJS.AES.encrypt(JSON.stringify(data), Auth.secretKey);
@@ -66,6 +76,8 @@ class Auth {
 
   /**
    * decrypt data
+   * @param {String} data
+   * @returns {any}
    */
   static decrypt = data => {
     if (!data) {
@@ -78,6 +90,10 @@ class Auth {
 
   /**
    * add the 'role value' to each role the user have
+   * @param {Object} user
+   * @param {Object[]} user.roles
+   * @param {String} user.roles[].name
+   * @returns {Object} user
    */
   static addRolesValue = user => {
     user.roles.forEach(role => {
@@ -87,6 +103,7 @@ class Auth {
 
   /** used to signup the client
    * save the user data into the store and encrypt it into a cookie for 1 day
+   * @param {Object} user
    */
   static signup = user => {
     if (typeof user === 'object') {
@@ -96,6 +113,7 @@ class Auth {
 
   /** used to login the client
    * save the user data into the store and encrypt it into a cookie for 1 day
+   * @param {Object} user
    */
   static login = user => {
     if (!user) {
@@ -115,10 +133,12 @@ class Auth {
   static logout = () => {
     Cookies.remove(Auth.cookieName);
     actions.login({});
+    //Auth.forceAppUpdate();
   }
 
   /** used the save the client
    * save the user data into the store and encrypt it into a cookie
+   * @param {Object} user
    */
   static saveUser = user => {
     user.logged = true;
@@ -131,6 +151,7 @@ class Auth {
 
   /** set a cookie to save the client
    * encrypt the user data and save it into a cookie
+   * @param {Object} user
    */
   static setCookieSession = user => {
     const encryptedData = Auth.encrypt(user);

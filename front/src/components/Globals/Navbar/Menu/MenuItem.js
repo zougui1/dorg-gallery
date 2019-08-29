@@ -4,6 +4,9 @@ import { Link } from 'react-router-dom';
 
 class MenuItem extends React.Component {
 
+  /**
+   * @returns {Object}
+   */
   getProps = () => {
     const { onClick, to, ...rest } = this.props;
 
@@ -20,6 +23,9 @@ class MenuItem extends React.Component {
     return props;
   }
 
+  /**
+   * @returns {String | ReactElement}
+   */
   getComponent = () => {
     const { to } = this.props;
 

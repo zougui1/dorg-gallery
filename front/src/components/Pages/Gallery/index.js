@@ -11,6 +11,13 @@ const mapDispatchToProps = mapDynamicDispatch(galleryState.actions, 'setCurrentP
 class Gallery extends React.Component {
 
   componentDidMount() {
+    this.initGallery();
+  }
+
+  /**
+   * used to set the data used by the gallery
+   */
+  initGallery = () => {
     const { match, setCurrentPage, setCurrentUser } = this.props;
 
     if (match.params.page) {
@@ -19,7 +26,6 @@ class Gallery extends React.Component {
 
     setCurrentUser(match.params['user_slug']);
   }
-
 
   render() {
     const { currentPage, history } = this.props;

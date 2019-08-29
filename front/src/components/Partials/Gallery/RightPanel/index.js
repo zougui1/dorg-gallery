@@ -31,6 +31,10 @@ class RightPanel extends React.Component {
     }
   }
 
+  /**
+   * used to set state of this component
+   * @param {Object} obj
+   */
   _setState = obj => {
     this.setState(obj);
   }

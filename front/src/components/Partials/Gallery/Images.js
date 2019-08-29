@@ -32,9 +32,14 @@ class Images extends React.Component {
   componentDidUpdate(prevProps) {
     const { user, searchOptions, currentPage, currentUser } = this.props;
 
+    // we want to do a request only if
+    // the user object has changed
     let canRequest = !_.isEqual(prevProps.user, user);
+    // or if the searchOptions has changed
     canRequest = canRequest || !_.isEqual(prevProps.searchOptions, searchOptions);
+    // or if the page has changed
     canRequest = canRequest || currentPage !== prevProps.currentPage;
+    // or if the currentUser has changed
     canRequest = canRequest || currentUser !== prevProps.currentUser;
 
     if (canRequest) {
@@ -55,7 +60,7 @@ class Images extends React.Component {
       searchOptions.search = searchOptions.search.trim().split(' ').filter(str => str);
     }
 
-    // emit to get the images
+    // data used to make the query
     const emitData = {
       tags: [...searchOptions.search],
       page: currentPage,
@@ -73,11 +78,21 @@ class Images extends React.Component {
     socket.Emit.getImagesPage(emitData);
   }
 
+  /**
+   * @param {Object[]} images
+   */
   setImages = images => {
     const { setImages } = this.props;
     setImages(images);
   }
 
+  /**
+   * render the overlays if necessary
+   * @param {Object} image
+   * @param {String} image.draw link to the drawing overlay
+   * @param {String} image.text link to the text overlay
+   * @returns {ReactElement[]}
+   */
   renderOverlays = image => {
     const { showOverlay } = this.props;
 
@@ -99,12 +114,19 @@ class Images extends React.Component {
     }
   }
 
+  /**
+   * is called when an image has loaded
+   * used to resize the container of the image to the size of the image
+   */
   resizeContainer = e => {
     const self = e.target;
     const width = self.offsetWidth;
     self.offsetParent.style.width = width + 'px';
   }
 
+  /**
+   * called when the client change of page
+   */
   handlePageChange = e => {
     const { history, currentUser, setCurrentPage } = this.props;
     // update the URL

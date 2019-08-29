@@ -21,7 +21,10 @@ class ColorPanel extends React.Component {
     alpha: this.props.canvasData.alpha
   };
 
-  // update the variable 'canvasData' in the store
+  /**
+   * update the variable `canvasData` in the store
+   * @param {Object} newData
+   */
   updateCanvasData = newData => {
     const { canvasData, setCanvasData } = this.props;
 
@@ -33,6 +36,7 @@ class ColorPanel extends React.Component {
 
   /**
    * is called each time the color is changed
+   * @param {String} color
    */
   onColorUpdate = (e, color) => {
     const { canvasData } = this.props;
@@ -57,6 +61,7 @@ class ColorPanel extends React.Component {
 
   /**
    * is called each time the alpha is changed, then update the color
+   * @param {String} value
    */
   onAlphaChange = (e, value) => {
     const { canvasData } = this.props;
@@ -67,6 +72,11 @@ class ColorPanel extends React.Component {
     this.onColorUpdate();
   }
 
+  /**
+   * return an rgba color with the opacity to 1
+   * @param {String} color
+   * @returns {String}
+   */
   getUnifiedColor = color => {
     const { canvasData } = this.props;
 

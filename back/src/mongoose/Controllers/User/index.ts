@@ -92,6 +92,11 @@ export const UserController: IUserController = class UserController {
    */
   public static login: Login = async user => {
     debug.mongoose('%o has been called', 'UserController.login');
+    console.log(user);
+
+    if (!user.name && user.username) {
+      user.name = user.username;
+    }
 
     const _userDb = await UserController.findByName(user.name).populate('roles');
 

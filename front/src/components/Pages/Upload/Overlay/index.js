@@ -59,6 +59,12 @@ class Overlay extends React.Component {
     });
   }
 
+  /**
+   * set the position of the canvas
+   * @param {Object} position
+   * @param {Number} position.top
+   * @param {Number} position.left
+   */
   setCanvasPosition = position => {
     this.canvas.style.top = position.top + 'px';
     this.canvas.style.left = position.left + 'px';

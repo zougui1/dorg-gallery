@@ -5,6 +5,11 @@ import { functionUpdate } from '../../../../utils';
 
 class SortRow extends React.Component {
 
+  /**
+   * is called when a select trigger the event `onChange`
+   * @param {String} prop the name of the property to change
+   * @returns {Function}
+   */
   handleChange = prop => e => {
     this.props.setState(functionUpdate({
       searchOptions: { $merge: { sort: { [prop]: e.target.value } } }

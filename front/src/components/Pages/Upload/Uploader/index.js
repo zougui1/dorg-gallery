@@ -6,6 +6,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import { connect } from 'react-redux';
 import { mapDynamicState, mapDynamicDispatch } from 'dynamic-redux';
 
+// TODO replace `TagsInput` with a textarea
 import TagsInput from '../../../Partials/TagsInput';
 import Loader from '../../../Partials/Loader';
 import Field from '../../../Partials/Field';
@@ -134,6 +135,7 @@ class Uploader extends React.Component {
 
   /**
    * is used to transform the data from the form before we upload them
+   * @returns {Promise<Object>} data of the form ready to be send to the server
    */
   transformFormData = () => new Promise(resolve => {
     const { formData } = this.state;
@@ -183,6 +185,8 @@ class Uploader extends React.Component {
 
   /**
    * is called if the upload failed
+   * @param {Object} data from the server
+   * @param {String} data.error error message
    */
   imageUploadFailed = data => {
     this.setState({ loader: { error: true, errorMessage: data.error } });
@@ -190,6 +194,7 @@ class Uploader extends React.Component {
 
   /**
    * change the data inside the formData variable in the state
+   * @param {Object} data
    */
   changeFormData = data => {
     this.setState({
@@ -211,6 +216,7 @@ class Uploader extends React.Component {
 
   /**
    * is called when the value of the 'tagsInput' field change
+   * @param {Array}
    */
   handleTagsInputChange = tags => {
     this.changeFormData({ tags: tags });
@@ -260,6 +266,9 @@ class Uploader extends React.Component {
             </FormGroup>
           ))}
 
+          {
+            // TODO replace `TagsInput` with a textarea
+          }
           <FormGroup row>
             <TagsInput
               tagList={formData.tags}

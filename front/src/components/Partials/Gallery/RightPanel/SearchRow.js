@@ -16,27 +16,32 @@ const mapDispatchToProps = mapDynamicDispatch(galleryState.actions, 'setFilter s
 
 class SearchRow extends React.Component {
 
-  handleClick = () => {
+  /**
+   * is called when the form is submit
+   */
+  submit = e => {
     const { search, searchOptions, setSearchOptions } = this.props;
+    e.preventDefault();
 
     setSearchOptions({ ...searchOptions, search });
   }
 
+  /**
+   * set the images into the store
+   * @param {Object[]} images
+   */
   setImages = images => {
     const { setImages } = this.props;
     setImages(images);
   }
 
+  /**
+   * is called when the input trigger the event `onChange`
+   */
   handleChange = e => {
     const { value } = e.target;
 
     this.props.setState({ search: value });
-  }
-
-  handleChangeSearchOption = prop => value => {
-    this.setState(functionUpdate({
-      searchOptions: { $merge: { [prop]: value } }
-    }));
   }
 
   render() {
@@ -44,7 +49,7 @@ class SearchRow extends React.Component {
       <div className="panel-row">
         <Typography variant="h6" className="color-blue-darken-3">Search</Typography>
 
-        <div className="d-flex">
+        <form onSubmit={this.submit} className="d-flex">
           <Field
             className="field"
             label="Search"
@@ -52,8 +57,8 @@ class SearchRow extends React.Component {
             type="text"
             onChange={this.handleChange}
           />
-          <Button className="color-white bold-nested" onClick={this.handleClick}>Search</Button>
-        </div>
+          <Button className="color-white bold-nested">Search</Button>
+        </form>
       </div>
     );
   }

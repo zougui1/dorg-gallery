@@ -10,7 +10,7 @@ export interface LoginResolve {
 export type Signup = (userModel: UserModel) => Promise<Document & UserModel>;
 export type FindByName = (name: string) => NullableQuery;
 export type FindBySlug = (slug: string) => NullableQuery;
-export type Login = (user: UserModel) => Promise<UserModel>;
+export type Login = (user: UserModel | any) => Promise<UserModel>;
 export type GetById = (id: string) => NullableQuery;
 export type GetCount = () => MQuery<number>;
 export type Slugify = (username: string) => Promise<string>;

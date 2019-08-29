@@ -26,7 +26,10 @@ class Signup extends React.Component {
     socket.Remove.signupFailed(this.signupFailed);
   }
 
-
+  /**
+   * used to change the data in the loader object of the state
+   * @param {Object} data
+   */
   changeLoader = data => {
     this.setState({
       loader: {
@@ -36,6 +39,10 @@ class Signup extends React.Component {
     });
   }
 
+  /**
+   * is called when a submit event get triggered with all the fields in the form valid
+   * @param {Object} formData the data of all the fields in the form
+   */
   submit = formData => {
     this.changeLoader({ loading: true });
 
@@ -44,11 +51,20 @@ class Signup extends React.Component {
     socket.On.signupFailed(this.signupFailed);
   }
 
+  /**
+   * called if the server could sign up the user
+   * @param {Object} userData all the data of the user from the DB
+   */
   signupSuccess = userData => {
     this.changeLoader({ success: true });
     Auth.signup(userData);
   }
 
+  /**
+   * called if the server couldn't sign up the user
+   * @param {Object} data from the server
+   * @param {String} data.error error message
+   */
   signupFailed = data => {
     this.changeLoader({ error: true, errorMessage: data.error });
   }

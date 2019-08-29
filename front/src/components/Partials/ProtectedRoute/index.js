@@ -1,5 +1,5 @@
 import React from 'react';
-import Modal from '@material-ui/core/Modal';
+import _ from 'lodash';
 import { Route, Redirect, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { mapDynamicState, mapDynamicDispatch } from 'dynamic-redux';
@@ -7,6 +7,7 @@ import { mapDynamicState, mapDynamicDispatch } from 'dynamic-redux';
 import authState from '../../../store/states/auth';
 import Auth from '../../../services/Auth';
 
+const mapStateToProps = mapDynamicState('auth: user');
 const mapDispatchToProps = mapDynamicDispatch(authState.actions, 'setDeniedPage');
 
 class ProtectedRoute extends React.Component {
@@ -16,16 +17,34 @@ class ProtectedRoute extends React.Component {
   }
 
   componentDidMount() {
+    console.log('CDM protectedRoute')
+    this.setDeniedPageIfAccessDenied();
+  }
+
+  /**
+   * set denied page data if the client doesn't have access to the page
+   */
+  setDeniedPageIfAccessDenied = () => {
     const { setDeniedPage, role } = this.props;
+
+    if (Auth.hasRole(role)) {
+      return;
+    }
 
     setDeniedPage({
       path: window.location.href,
       require: role,
     });
 
-    setTimeout(() => {
-      this.setState({ redirect: true });
-    }, 0);
+    this.setState({ redirect: true });
+  }
+
+  componentDidUpdate(prevProps) {
+    const { user } = this.props;
+
+    if (!_.isEqual(prevProps.user, user)) {
+      this.setDeniedPageIfAccessDenied();
+    }
   }
 
 
@@ -43,4 +62,4 @@ class ProtectedRoute extends React.Component {
   }
 }
 
-export default withRouter(connect(null, mapDispatchToProps)(ProtectedRoute));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ProtectedRoute));

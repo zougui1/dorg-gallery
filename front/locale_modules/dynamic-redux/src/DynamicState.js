@@ -1,6 +1,5 @@
 import { inArray } from './utils';
 
-
 class DynamicState {
 
   actions = {};

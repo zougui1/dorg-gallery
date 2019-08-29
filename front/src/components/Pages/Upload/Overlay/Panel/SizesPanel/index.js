@@ -26,15 +26,16 @@ class SizesPanel extends React.Component {
 
   /**
    * is called each time a slider is changed
+   *
+   * @param {String} slider name
+   * @returns {Function}
+   *
+   * @param {Number} value
    */
-  onSlideChange = (slider, asPx) => (e, value) => {
+  onSlideChange = slider => (e, value) => {
     const { canvasData } = this.props;
 
     this.setState({ [slider]: value });
-
-    /*if (asPx) {
-      value = value + 'px';
-    }*/
 
     // we want to update the canvasData
     canvasData[slider] = value;
@@ -51,7 +52,7 @@ class SizesPanel extends React.Component {
           label="Font size"
           name="fontSize"
           value={fontSize}
-          onChange={this.onSlideChange('fontSize', true)}
+          onChange={this.onSlideChange('fontSize')}
           step={1}
           min={16}
           max={100}

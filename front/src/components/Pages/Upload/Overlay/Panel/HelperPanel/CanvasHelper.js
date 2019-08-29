@@ -28,7 +28,7 @@ const CanvasHelper = ({ onClose, open }) => (
               Move the textboxes
             </li>
             <li>
-              Remove the textboxes by dropping them out of the image
+              To remove a textbox you must drop it out of the image, re-drag it and quickly re-drop it
             </li>
             <li>
               Change the text size

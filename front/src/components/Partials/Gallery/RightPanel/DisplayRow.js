@@ -14,6 +14,10 @@ const mapDispatchToProps = mapDynamicDispatch(galleryState.actions, 'setShowOver
 
 class DisplayRow extends React.Component {
 
+  /**
+   * handler when the checkboxes trigger the event `onChange`
+   * @param {String[]} value
+   */
   handleChange = value => {
     const { setShowOverlay } = this.props;
     setShowOverlay(value);

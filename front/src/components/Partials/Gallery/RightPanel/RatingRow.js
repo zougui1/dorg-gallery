@@ -6,10 +6,14 @@ import { functionUpdate } from '../../../../utils';
 
 class RatingRow extends React.Component {
 
+  /**
+   * is called when a checkbox trigger the event `onChange`
+   * @param {Object[]} value
+   */
   handleChange = value => {
     this.props.setState(functionUpdate({
       searchOptions: { $merge: { rating: value } }
-    }))
+    }));
   }
 
   render() {

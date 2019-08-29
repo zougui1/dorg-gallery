@@ -45,6 +45,8 @@ class Uploader extends React.Component {
 
   /**
    * cast a pixel string into a number
+   * @param {String} str
+   * @returns {Number}
    */
   pixelToNumber = str => {
     return +str.replace('px', '');

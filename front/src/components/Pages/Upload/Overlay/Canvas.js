@@ -1,4 +1,5 @@
 import React from 'react';
+import { throttle, debounce } from 'lodash';
 import { connect } from 'react-redux';
 import { mapDynamicState, mapDynamicDispatch } from 'dynamic-redux';
 import uploaderState from '../../../../store/states/uploader';
@@ -17,13 +18,15 @@ class Canvas extends React.Component {
   }
 
   componentDidMount() {
-    document.body.addEventListener('dragover', e => this.dragOverHandler(e, true));
+    document.body.addEventListener('dragover', e => throttle(this.dragOverHandler, 200)(e, true));
     document.body.addEventListener('drop', this.dropHandler);
     document.body.addEventListener('mouseup', this.mouseUpHandler);
   }
 
   /**
    * calculate a position relative to the canvas from an absolute position
+   * @param {Number} x
+   * @param {Number} y
    */
   calculateRelativePosition = (x, y) => {
     const { top, left } = this.props.canvasData.imageBounds;
@@ -36,6 +39,10 @@ class Canvas extends React.Component {
 
   /**
    * do an action on the canvas depending to the context action
+   * @param {Number} x0
+   * @param {Number} y0
+   * @param {Number} x1
+   * @param {Number} y1
    */
   canvasAction = (x0, y0, x1, y1) => {
     const { canvasData } = this.props;
@@ -57,6 +64,10 @@ class Canvas extends React.Component {
 
   /**
    * draw a line on the canvas
+   * @param {Number} x0
+   * @param {Number} y0
+   * @param {Number} x1
+   * @param {Number} y1
    */
   drawLine = (x0, y0, x1, y1) => {
     const { canvasData } = this.props;
@@ -78,6 +89,8 @@ class Canvas extends React.Component {
 
   /**
    * erase an area on the canvas
+   * @param {Number} x
+   * @param {Number} y
    */
   eraseArea = (x, y) => {
     const { canvasData } = this.props;
@@ -146,23 +159,21 @@ class Canvas extends React.Component {
   }
 
   /**
-   * is called to put a cooldown on the call of a function
+   * is called to persist an event and call a function that'll use the persisted event
+   * @param {Function} callback
+   * @returns {Function}
+   *
+   * @param {Boolean} boolean
    */
-  throttle = (callback, delay) => {
-    let previousCall = new Date().getTime();
-
-    return function() {
-      let time = new Date().getTime();
-
-      if ((time - previousCall) >= delay) {
-        previousCall = time;
-        callback.apply(null, arguments);
-      }
-    };
+  persister = callback => e => {
+    e.persist();
+    return callback(e);
   }
 
   /**
    * cast a pixel string into a number
+   * @param {String}
+   * @returns {Number}
    */
   pixelToNumber = str => {
     return +str.replace('px', '');
@@ -170,9 +181,11 @@ class Canvas extends React.Component {
 
   /**
    * is called when an input is dragged over the canvas
+   * @param {Boolean} preventUpdate
    */
   dragOverHandler = (e, preventUpdate) => {
     e.preventDefault();
+    console.log('dragOver')
 
     if (!preventUpdate && this.draggingOut) {
       this.draggingOut = false;
@@ -202,12 +215,12 @@ class Canvas extends React.Component {
       for (let i = 0; i < inputs.length; i++) {
         const input = inputs[i];
 
-        if (input.id !== id) {
+        if (input && input.id !== id || !input) {
           continue;
         }
 
         const { x, y } = this.calculateRelativePosition(e.clientX, e.clientY);
-        const label = labels[i];
+        const { label } = input;
 
         const prevY = this.pixelToNumber(label.style.top);
         const prevX = this.pixelToNumber(label.style.left);
@@ -241,7 +254,7 @@ class Canvas extends React.Component {
         <div
           className="select-none canvas-container"
           onDragLeave={this.dragLeaveHandler}
-          onDragOver={this.dragOverHandler}
+          onDragOver={this.persister(throttle(this.dragOverHandler, 100))}
         >
           <canvas
             className="select-none canvas droppable"
@@ -249,7 +262,7 @@ class Canvas extends React.Component {
             width={width && width - 300}
             height={height}
             onMouseDown={this.mouseDownHandler}
-            onMouseMove={this.throttle(this.mouseMoveHandler, 10)}
+            onMouseMove={this.persister(throttle(this.mouseMoveHandler, 20))}
           >
 
           </canvas>

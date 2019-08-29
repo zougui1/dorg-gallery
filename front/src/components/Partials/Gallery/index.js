@@ -29,6 +29,9 @@ class Gallery extends React.Component {
     window.removeEventListener('resize', this.setTopSize);
   }
 
+  /**
+   * set `topSize` to the height of the navbar
+   */
   setTopSize = () => {
     const navbar = document.getElementById('Navbar');
     const navbarHeight = navbar.offsetHeight + 'px';
@@ -38,7 +41,7 @@ class Gallery extends React.Component {
 
   render() {
     const { topSize } = this.state;
-    const { currentPage, match, history } = this.props;
+    const { currentPage, history } = this.props;
 
     return (
       <div className="Gallery">

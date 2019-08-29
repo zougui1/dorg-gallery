@@ -5,25 +5,35 @@ import Checkbox from '../../Checkbox';
 
 class HaveOverlaysRow extends React.Component {
 
+  /**
+   * called when the checkboxes trigger the event `onChange`
+   * @param {String[]} value
+   */
   handleChange = value => {
     this.props.setState(prevState => {
       const newSearchOptions = { ...prevState.searchOptions };
       const includedAll = prevState.searchOptions.haveOverlays.includes('*');
 
+      // if `haveOverlays` previously included `*`
       if (includedAll) {
+        // and if the value now has a length greater than 1
         if (value.length > 1) {
+          // we don't want to keep the `*` value
           newSearchOptions.haveOverlays = value.filter(str => str !== '*');
         } else {
+          // otherwise we now set the new value. value that can be an empty array
           newSearchOptions.haveOverlays = value;
         }
-      } else if (!includedAll) {
+      } else {
+        // otherwise if the value includes `*`
+        // we want the value to only be `*` so we explicitely set it
+        // in an array
+        // otherwise we simple set to the value
         if (value.includes('*')) {
           newSearchOptions.haveOverlays = ['*'];
         } else {
           newSearchOptions.haveOverlays = value;
         }
-      } else {
-        newSearchOptions.haveOverlays = value;
       }
 
       return { searchOptions: newSearchOptions };

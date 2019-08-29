@@ -34,10 +34,11 @@ class InputCreator extends React.Component {
     const client = { x: x + 10, y: y + 10 };
 
     // avoid to use the references to their source (the store)
-    inputs = [...inputs];
-    labels = [...labels];
+    inputs = inputs.slice();
+    labels = [...labels].slice();
 
     labels[inputId] = React.createRef();
+    console.log(labels);
     setCanvasLabel(labels);
 
     const field = (
@@ -55,7 +56,7 @@ class InputCreator extends React.Component {
       label: labels[inputId]
     };
 
-    inputs[inputs.length] = input;
+    inputs[inputId] = input;
 
     setCanvasField(inputs);
     this.setState({ inputId: inputId + 1, lastInput: input })

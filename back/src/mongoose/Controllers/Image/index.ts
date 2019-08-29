@@ -112,7 +112,7 @@ export const ImageController: IImageController = class ImageController {
     // if the user send a request with "test" in the search input
     // all the images matching the '$and' command are returned
     return Image.find({
-      //rate: { $in: searchOptions.rating },
+      rate: { $in: searchOptions.rating },
       /**
        *  perform a query using the tags for
        *  - the name of all tags linked to the imagça fait un backtracking
@@ -123,9 +123,9 @@ export const ImageController: IImageController = class ImageController {
        */
       //tags: { $all: tags },
       //user: searchOptions.match.userData._id,
-      'tags.name': { $exists: false }
+      tags: { $all: tags },
       //'tags.name': { $ne: '*' }
-      //...getCanvas(),
+      ...getCanvas(),
       /*$and: [
         { $or: [
           { 'artist.name': { $in: searchOptions.tags } },
