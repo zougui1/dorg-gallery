@@ -129,19 +129,6 @@ class Uploader extends React.Component {
     this.setState({ loader: { error: true, errorMessage: data.error } });
   }
 
-  /**
-   * change the data inside the formData variable in the state
-   * @param {Object} data
-   */
-  changeFormData = data => {
-    this.setState({
-      formData: {
-        ...this.state.formData,
-        ...data
-      }
-    });
-  }
-
   render() {
     const { loader, error } = this.state;
 
