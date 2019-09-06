@@ -1,5 +1,10 @@
 export const fields = [
   {
+    name: 'title',
+    label: 'Title',
+    fullWidth: true
+  },
+  {
     name: 'artistName',
     label: 'Artist name'
   },
@@ -8,7 +13,7 @@ export const fields = [
     label: 'Artist link'
   },
   {
-    name: 'characterName',
-    label: 'Character name',
+    name: 'tags',
+    label: 'Keywords',
   },
 ];

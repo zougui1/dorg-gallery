@@ -1,0 +1,34 @@
+.Images {
+  .images-container {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .image-container {
+    margin: 5px;
+    height: 150px;
+    width: 100px;
+    position: relative;
+
+    .image {
+      height: 150px;
+      position: absolute;
+    }
+
+    .mainImage {
+      border: solid 1px transparent;
+
+      &.general {
+        border-color: #ccc;
+      }
+
+      &.suggestive {
+        border-color: #04f;
+      }
+
+      &.nsfw {
+        border-color: #d03;
+      }
+    }
+  }
+}

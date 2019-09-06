@@ -8,18 +8,18 @@ class Field extends React.Component {
   }
 
   render() {
-    let { name, type, label, onChange, field, className = '' } = this.props;
+    let { name, type, label, onChange, field, fullWidth, className = '' } = this.props;
     let Field = field || TextField;
 
     return (
       <Field
-        fullWidth={false}
+        fullWidth={fullWidth}
         onChange={onChange}
         name={name}
         label={label}
         id={name}
         className={name + ' ' + className}
-        type={type}
+        type={type || 'text'}
       />
     );
   }

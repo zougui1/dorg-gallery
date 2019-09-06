@@ -17,6 +17,7 @@ const galleryState = new DynamicState('gallery', {
       order: 'ASC'
     }
   },
+  currentImage: null,
 });
 
 galleryState.createState({
@@ -29,6 +30,7 @@ galleryState.createState({
   setFilter: 'SET_FILTER',
   setCurrentPage: 'SET_CURRENT_PAGE',
   setCurrentUser: 'SET_CURRENT_USER',
+  setCurrentImage: 'SET_CURRENT_IMAGE',
   setRequestReceived: 'SET_REQUEST_RECEIVED',
   setSearchOptions: 'SET_SEARCH_OPTIONS',
 });

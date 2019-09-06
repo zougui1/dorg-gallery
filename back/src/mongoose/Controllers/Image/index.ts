@@ -2,6 +2,7 @@ import _ from 'lodash';
 import { debug } from '../../../config';
 import { Image } from '../../Models/Image';
 import { IImageController, Add, GetByPage, SearchOptions, GetById, GetCount } from './image.types';
+import { QueryParser } from '../../../services/QueryParser';
 
 const imagePerPage = 30;
 
@@ -163,7 +164,7 @@ export const ImageController: IImageController = class ImageController {
   public static getById: GetById = id => {
     debug.mongoose('%o has been called', 'ImageController.getById');
 
-    return Image.findById(id).populate('user', 'name');
+    return Image.findById(id).populate('user', 'name').populate('tags');
   }
 
   /**

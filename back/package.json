@@ -14,7 +14,9 @@
     "debug:*": "cross-env NODE_ENV=development DEBUG=* node dist --server-start",
     "db:clear": "cross-env DEBUG=Dorg-gallery:action node dist --db-clear",
     "db:populate": "cross-env DEBUG=Dorg-gallery:action node dist --db-populate",
-    "db:reset": "cross-env DEBUG=Dorg-gallery:action node dist --db-reset"
+    "db:reset": "cross-env DEBUG=Dorg-gallery:action node dist --db-reset",
+    "dev": "cross-env NODE_ENV=development node dist",
+    "dev:watch": "cross-env NODE_ENV=development nodemon dist"
   },
   "author": "",
   "license": "ISC",

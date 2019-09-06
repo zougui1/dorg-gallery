@@ -1,13 +1,7 @@
 import React from 'react';
-import { Button, Typography, NativeSelect } from '@material-ui/core';
-import { connect } from 'react-redux';
-import { mapDynamicState, mapDynamicDispatch } from 'dynamic-redux';
 
+import OverrideReactElement from '../../OverrideReactElement';
 import './RightPanel.scss';
-import Field from '../../Field';
-import Checkbox from '../../Checkbox';
-import galleryState from '../../../../store/states/gallery';
-import { functionUpdate } from '../../../../utils';
 
 import DisplayRow from './DisplayRow';
 import SearchRow from './SearchRow';
@@ -16,6 +10,12 @@ import HaveOverlaysRow from './HaveOverlaysRow';
 import RatingRow from './RatingRow';
 
 class RightPanel extends React.Component {
+
+  static DisplayRow = DisplayRow;
+  static SearchRow = SearchRow;
+  static SortRow = SortRow;
+  static HaveOverlaysRow = HaveOverlaysRow;
+  static RatingRow = RatingRow;
 
   state = {
     inputTags: [],
@@ -41,14 +41,17 @@ class RightPanel extends React.Component {
 
   render() {
     const { searchOptions, search } = this.state;
+    const { children } = this.props;
 
     return (
       <div className="RightPanel color-white">
-        <DisplayRow />
-        <SearchRow setState={this._setState} searchOptions={searchOptions} search={search} />
-        <SortRow setState={this._setState} searchOptions={searchOptions} />
-        <HaveOverlaysRow setState={this._setState} searchOptions={searchOptions} />
-        <RatingRow setState={this._setState} searchOptions={searchOptions} />
+        <OverrideReactElement
+          setState={this._setState}
+          searchOptions={searchOptions}
+          search={search}
+        >
+          {children}
+        </OverrideReactElement>
       </div>
     );
   }

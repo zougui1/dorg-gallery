@@ -75,7 +75,7 @@ class Overlay extends React.Component {
 
     return (
       <div id="overlay-container">
-        <img className="draw-on" src={imageData.imageBase64} ref={e => this.img = e} />
+        <img className="draw-on" src={imageData.imageBase64} ref={e => this.img = e} alt="" />
         <Canvas />
 
         <Panel modalOpen={this.modalOpen} />

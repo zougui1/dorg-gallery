@@ -1,6 +1,7 @@
 import React from 'react';
 import MuiMenuItem from '@material-ui/core/MenuItem';
 import { Link } from 'react-router-dom';
+import classNames from 'classnames';
 
 class MenuItem extends React.Component {
 
@@ -16,7 +17,9 @@ class MenuItem extends React.Component {
       props.onClick = onClick;
     }
 
-    if (to) {
+    if (typeof to === 'function') {
+      props.to = to();
+    } else if(to) {
       props.to = to;
     }
 
@@ -37,12 +40,12 @@ class MenuItem extends React.Component {
   }
 
   render() {
-    const { onClose, children } = this.props;
+    const { onClose, children, className } = this.props;
     const Component = this.getComponent();
 
     return (
       <MuiMenuItem onClick={onClose}>
-        <Component {...this.getProps()}>
+        <Component {...this.getProps()} className={classNames('color-black', className)}>
           {children}
         </Component>
       </MuiMenuItem>

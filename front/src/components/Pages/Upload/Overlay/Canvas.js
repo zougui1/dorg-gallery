@@ -1,5 +1,5 @@
 import React from 'react';
-import { throttle, debounce } from 'lodash';
+import { throttle } from 'lodash';
 import { connect } from 'react-redux';
 import { mapDynamicState, mapDynamicDispatch } from 'dynamic-redux';
 import uploaderState from '../../../../store/states/uploader';
@@ -205,7 +205,7 @@ class Canvas extends React.Component {
    * is called when an input is dropped
    */
   dropHandler = e => {
-    let { inputs, labels, setCanvasField, setCanvasLabel, canvasData } = this.props;
+    let { inputs, labels, setCanvasField, setCanvasLabel } = this.props;
     const id = +e.dataTransfer.getData('id');
 
     // if the input is not dragged outside of the canvas
@@ -215,7 +215,7 @@ class Canvas extends React.Component {
       for (let i = 0; i < inputs.length; i++) {
         const input = inputs[i];
 
-        if (input && input.id !== id || !input) {
+        if ((input && input.id !== id) || !input) {
           continue;
         }
 

@@ -5,8 +5,6 @@ import { mapDynamicState, mapDynamicDispatch } from 'dynamic-redux';
 
 import Field from '../../Field';
 import galleryState from '../../../../store/states/gallery';
-import { functionUpdate } from '../../../../utils';
-import * as socket from './socket';
 
 const mapStateToProps = mapDynamicState({
   gallery: 'showOverlay images filter currentPage',

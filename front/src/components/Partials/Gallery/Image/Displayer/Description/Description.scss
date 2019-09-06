@@ -1,0 +1,16 @@
+.Description {
+  .rating {
+
+    &.general {
+      color: #eee;
+    }
+
+    &.suggestive {
+      color: #0ff;
+    }
+
+    &.nsfw {
+      color: #f00;
+    }
+  }
+}

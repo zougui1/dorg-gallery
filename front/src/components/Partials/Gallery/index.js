@@ -1,20 +1,24 @@
 import React from 'react';
 import * as Space from 'react-spaces';
-import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { mapDynamicState, mapDynamicDispatch } from 'dynamic-redux';
 
 import './Gallery.scss';
 
 import galleryState from '../../../store/states/gallery';
-import Images from './Images';
+import * as Images from './Images/';
+import * as Image from './Image/';
 import RightPanel from './RightPanel';
-import { Grid } from '@material-ui/core';
 
 const mapStateToProps = mapDynamicState('gallery: showOverlay filteredImages images');
 const mapDispatchToProps = mapDynamicDispatch(galleryState.actions, 'setCurrentPage');
 
 class Gallery extends React.Component {
+
+  static kind = {
+    multiple: 0,
+    single: 1,
+  }
 
   state = {
     topSize: '0px'
@@ -41,20 +45,37 @@ class Gallery extends React.Component {
 
   render() {
     const { topSize } = this.state;
-    const { currentPage, history } = this.props;
+    const { history, kind } = this.props;
+
+    let GalleryKind = Images;
+
+    switch (kind) {
+      case Gallery.kind.multiple:
+        GalleryKind = Images;
+        break;
+      case Gallery.kind.single:
+        GalleryKind = Image;
+        break;
+
+      default:
+        throw new Error(`Kind must be of value "Gallery.kind", got "${kind}"`);
+    }
 
     return (
       <div className="Gallery">
+        <GalleryKind.Requester />
         <Space.Fill>
           <Space.Top size={topSize} />
           <Space.Fill>
 
             <Space.Fill scrollable>
-              <Images history={history} currentPage={currentPage} />
+              <GalleryKind.Displayer history={history} />
             </Space.Fill>
 
             <Space.Right size="297px">
-              <RightPanel />
+              <RightPanel >
+                <GalleryKind.RightPanel />
+              </RightPanel>
             </Space.Right>
 
           </Space.Fill>

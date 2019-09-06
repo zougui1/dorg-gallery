@@ -27,7 +27,7 @@ export const user = [
     label: 'home'
   },
   {
-    to: '/gallery/zougui',
+    to: () => '/gallery/' + Auth.getUser().slug,
     label: 'my gallery'
   },
   {

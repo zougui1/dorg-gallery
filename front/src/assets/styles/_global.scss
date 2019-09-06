@@ -28,3 +28,9 @@ a {
     overflow: visible
   }
 }
+
+hr.gradient {
+  border-image-source: linear-gradient(to right, transparent -5%, currentColor, transparent 105%);
+  border-image-slice: 1;
+  border-image-width: 1;
+}

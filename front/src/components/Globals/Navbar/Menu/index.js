@@ -1,8 +1,5 @@
 import React from 'react';
-import IconButton from '@material-ui/core/IconButton';
 import MuiMenu from '@material-ui/core/Menu';
-import MenuIcon from '@material-ui/icons/Menu';
-import { Link } from 'react-router-dom';
 
 import Auth from '../../../../services/Auth';
 import * as data from './data';

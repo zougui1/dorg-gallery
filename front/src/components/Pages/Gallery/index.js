@@ -14,6 +14,14 @@ class Gallery extends React.Component {
     this.initGallery();
   }
 
+  componentDidUpdate(prevProps) {
+    const { match, setCurrentUser } = this.props;
+
+    if (match.params.user_slug !== prevProps.match.params.user_slug) {
+      setCurrentUser(match.params.user_slug);
+    }
+  }
+
   /**
    * used to set the data used by the gallery
    */
@@ -24,13 +32,13 @@ class Gallery extends React.Component {
       setCurrentPage(match.params.page);
     }
 
-    setCurrentUser(match.params['user_slug']);
+    setCurrentUser(match.params.user_slug);
   }
 
   render() {
-    const { currentPage, history } = this.props;
+    const { history } = this.props;
 
-    return <PGallery history={history} currentPage={currentPage} />
+    return <PGallery history={history} kind={PGallery.kind.multiple} />
   }
 }
 

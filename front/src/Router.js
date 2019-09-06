@@ -9,6 +9,7 @@ import Upload from './components/Pages/Upload';
 import Signup from './components/Pages/Signup';
 import Login from './components/Pages/Login';
 import Gallery from './components/Pages/Gallery';
+import Show from './components/Pages/Show';
 //import Image from './components/Pages/Image';
 import NotFound from './components/Pages/NotFound';
 
@@ -20,6 +21,7 @@ const Router = () => (
     <Route exact path="/signup" component={Signup} />
     <Route exact path="/login" component={Login} />
     <Route exact path="/gallery/:user_slug/:page?" component={Gallery} />
+    <Route exact path="/image/:id" component={Show} />
     {/*<Route exact path="/gallery/:user_slug/:page" component={Gallery} />*/}
     {/*<Route exact path="/user/:username" component={User} />
     <Route exact path="/user/:username/:page" component={User} />
