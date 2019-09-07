@@ -2,7 +2,7 @@ export const fields = [
   {
     name: 'title',
     label: 'Title',
-    fullWidth: true
+    //fullWidth: true
   },
   {
     name: 'artistName',

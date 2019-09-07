@@ -57,14 +57,22 @@ class OverrideReactElement extends React.Component {
    * @returns {ReactElement[]}
    */
   overrideChildren = () => {
-    const { children } = this.props
+    const { children, index } = this.props
 
     // children can be an array
     // as well as it can be an object
     if (_.isArray(children)) {
       // the elements can be ReactElements as well
       // as they can be a simple string (in case of spaces)
-      return children.filter(_.isObject).map(this.singleChildren);
+      const childrens = children.filter(_.isObject);
+
+      // if the user wants to override only a single element out of an array
+      if (_.isSafeInteger(index)) {
+        // override the current children only if the index match with the iteration
+        return childrens.map((c, i) => i  === index ? this.singleChildren(c, i) : c);
+      }
+
+      return childrens.map(this.singleChildren);
     } else if (_.isObject(children)) {
       return this.singleChildren(children, 0);
     }

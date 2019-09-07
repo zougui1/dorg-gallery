@@ -9,6 +9,7 @@ import DisplayPanel from './DisplayPanel';
 import InputCreator from './InputCreator';
 import Uploader from './Uploader';
 import HelperPanel from './HelperPanel';
+import DataEditionDialog from './DataEditionDialog';
 
 const mapDispatchToProps = mapDynamicDispatch(uploaderState.actions, 'setCanvasData');
 
@@ -18,6 +19,7 @@ const Panel = () => (
     <SizesPanel />
     <DisplayPanel />
     <InputCreator />
+    <DataEditionDialog />
     <Uploader />
     <HelperPanel />
   </div>

@@ -73,14 +73,12 @@ class Uploader extends React.Component {
 
   /**
    * is used to transform the data from the form before we upload them
+   * @param {Object} formData
    * @returns {Promise<Object>} data of the form ready to be send to the server
    */
   transformFormData = formData => new Promise(resolve => {
 
-    const transformedFormData = {
-      ...formData,
-      rate: formData.isNsfw ? 'nsfw' : 'general',
-    };
+    const transformedFormData = { ...formData };
 
     if (transformedFormData.artistLink) {
       transformedFormData.artistLink = transformedFormData.artistLink.trim();
@@ -135,7 +133,7 @@ class Uploader extends React.Component {
     return (
       <div className="Uploader d-flex justify-content-center text-center">
 
-        <Grid xs={11} md={6} sm={9} className="d-flex flex-column align-items-center">
+        <Grid container item xs={11} md={6} sm={9} className="d-flex flex-column align-items-center">
           <FormDisplayer onSubmit={this.submit} />
 
           <Loader {...loader} redirection="/" errorMessage={error || loader.errorMessage} successMessage="The image has been uploaded" />

@@ -35,7 +35,8 @@ class EditableFields extends React.Component {
             <Field
               {...field}
               fullWidth
-              onChange={this.handleInputChange}
+              value={formData[field.name]}
+              onChange={this.handleChange}
             />
           </FormGroup>
         ))}

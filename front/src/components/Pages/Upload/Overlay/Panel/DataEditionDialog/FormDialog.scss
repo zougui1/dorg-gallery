@@ -1,0 +1,18 @@
+.form-dialog {
+  .paper {
+    max-width: 100%;
+    width: 60%;
+  }
+
+  @media (max-width: 800px) {
+    .paper {
+      width: 75%;
+    }
+  }
+
+  @media (max-width: 500px) {
+    .paper {
+      width: 90%;
+    }
+  }
+}

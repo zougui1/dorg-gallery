@@ -1,57 +1,53 @@
 import React from 'react';
-import Dialog from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import withMobileDialog from '@material-ui/core/withMobileDialog';
+import { withMobileDialog } from '@material-ui/core';
+
+import Dialog from '../../../../../Partials/Dialog';
+import './CanvasHelper.scss';
 
 const CanvasHelper = ({ onClose, open }) => (
   <Dialog
-    style={{ zIndex: 99999999999 }}
     aria-labelledby="simple-dialog-title"
     open={open}
     onClose={onClose}
   >
-    <DialogTitle>Tutorial</DialogTitle>
-    <DialogContent>
-      <DialogContentText>
-        <div style={{ fontSize: '1.13rem' }}>
-          <span style={{ fontWeight: 650 }}>You can:</span>
-          <ul>
-            <li>
-              Change the color/alpha of the brush/text
-            </li>
-            <li>
-              Create a textbox
-            </li>
-            <li>
-              Move the textboxes
-            </li>
-            <li>
-              To remove a textbox you must drop it out of the image, re-drag it and quickly re-drop it
-            </li>
-            <li>
-              Change the text size
-            </li>
-            <li>
-              Erase what you drew
-            </li>
-            <li>
-              Change the eraser size
-            </li>
-            <li>
-              Remove everything you drew
-            </li>
-            <li>
-              Display/hide the textboxes and/or the drawing
-            </li>
-          </ul>
-          <p>
-            The textboxes are created at the top left of the image,
-          </p>
-        </div>
-      </DialogContentText>
-    </DialogContent>
+    <Dialog.Title closer>Tutorial</Dialog.Title>
+    <Dialog.ContentText textProps={{ component: 'div' }}>
+      <div className="text-content">
+        <span className="subtitle">You can:</span>
+        <ul>
+          <li>
+            Change the color/alpha of the brush/text
+          </li>
+          <li>
+            Create a textbox
+          </li>
+          <li>
+            Move the textboxes
+          </li>
+          <li>
+            To remove a textbox you must drop it out of the image, re-drag it and quickly re-drop it
+          </li>
+          <li>
+            Change the text size
+          </li>
+          <li>
+            Erase what you drew
+          </li>
+          <li>
+            Change the eraser size
+          </li>
+          <li>
+            Remove everything you drew
+          </li>
+          <li>
+            Display/hide the textboxes and/or the drawing
+          </li>
+        </ul>
+        <p>
+          The textboxes are created on the top left of the image,
+        </p>
+      </div>
+    </Dialog.ContentText>
   </Dialog>
 );
 

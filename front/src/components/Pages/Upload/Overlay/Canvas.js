@@ -268,7 +268,6 @@ class Canvas extends React.Component {
           </canvas>
           {inputs}
         </div>
-        <div style={{ height: '1000px', width: '100px' }}></div>
       </div>
     );
   }

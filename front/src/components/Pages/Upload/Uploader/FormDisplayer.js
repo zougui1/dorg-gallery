@@ -6,6 +6,7 @@ import EditableForm from './Forms/EditableFields/index';
 class FormDisplayer extends React.Component {
 
   state = {
+    title: '',
     artistName: '',
     artistLink: '',
     tags: [],
@@ -15,6 +16,11 @@ class FormDisplayer extends React.Component {
     step: 1,
   }
 
+  /**
+   * get the form depending on the step
+   * @returns {ReactComponent}
+   * @throws {Error} if the step is invalid
+   */
   getForm = () => {
     const { step } = this.state;
 
@@ -28,6 +34,9 @@ class FormDisplayer extends React.Component {
     }
   }
 
+  /**
+   * is called when the form has been submited and validated
+   */
   submit = e => {
     const { step } = this.state;
     const { onSubmit } = this.props;
@@ -39,9 +48,10 @@ class FormDisplayer extends React.Component {
     }
   }
 
-  _setState = obj => {
-    this.setState(obj);
-  }
+  /**
+   * give the form the possibility to edit the state
+   */
+  _setState = obj => this.setState(obj);
 
   render() {
     const Form = this.getForm();
