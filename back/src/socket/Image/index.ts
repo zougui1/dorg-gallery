@@ -48,7 +48,8 @@ export class On {
         };
 
         // add the image in the database
-        await controllers.Image.add(dataToUpload);
+        const results = await controllers.Image.add(dataToUpload);
+        console.log(results);
       } catch (err) {
         // send an error to the client
         Emit.imageUploadFailed(socket, 'An error occured and your image couldn\'t be uploaded');

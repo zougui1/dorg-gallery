@@ -1,35 +1,34 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { mapDynamicState, mapDynamicDispatch } from 'dynamic-redux';
-import uploaderState from '../../../../store/states/uploader';
 
-const mapStateToProps = mapDynamicState('uploader: imageData canvasSize canvasData imagesToUpload inputs labels');
-const mapDispatchToProps = mapDynamicDispatch(uploaderState.actions, 'setCanvasLabel setCanvasField setImageData setCanvasData');
+const mapStateToProps = mapDynamicState('uploader: canvasData inputs labels');
+const mapDispatchToProps = mapDynamicDispatch('uploader: labels inputs');
 
 class CanvasField extends React.Component {
 
   componentDidMount() {
-    let { setCanvasLabel, inputs, labels, setCanvasField } = this.props;
+    let { inputs, labels } = this.props;
 
     // set the label element in the array
-    const updatedLabels = labels.map((label, i) => {
+    const updatedLabels = labels.get.map((label, i) => {
       if (i === this.props.id) label = document.getElementById('label-' + this.props.id);
       return label;
     });
 
     // set the label element in the array
-    const updatedFields = inputs.map((field, i) => {
+    const updatedFields = inputs.get.map((field, i) => {
       if (i === this.props.id) field.label = document.getElementById('label-' + this.props.id);
       return field;
     });
 
     // update the labels and inputs
-    setCanvasLabel(updatedLabels);
-    setCanvasField(updatedFields);
+    labels.set(updatedLabels);
+    inputs.set(updatedFields);
   }
 
   shouldComponentUpdate = nextProps => {
-    return nextProps.inputs !== this.props.inputs;
+    return nextProps.inputs.get !== this.props.inputs.get;
   }
 
   /**
@@ -57,12 +56,12 @@ class CanvasField extends React.Component {
     const { inputs, setCanvasField, canvasData } = this.props;
     const id = +e.target.getAttribute('data-id');
 
-    for (let i = 0; i < inputs.length; i++) {
-      if (inputs[i].id !== id) {
+    for (let i = 0; i < inputs.get.length; i++) {
+      if (inputs.get[i].id !== id) {
         continue;
       }
 
-      const label = inputs[i].label;
+      const label = inputs.get[i].label;
       const input = label.childNodes[1];
 
       // change the style of the field
@@ -74,7 +73,7 @@ class CanvasField extends React.Component {
       input.style.height = this.getHeight(canvasData.fontSize) + 'px';
 
       // update the fields
-      setCanvasField(inputs);
+      setCanvasField(inputs.get);
       break;
     }
   }
@@ -89,12 +88,12 @@ class CanvasField extends React.Component {
 
     const id = +e.target.getAttribute('data-id');
 
-    for (let i = 0; i < inputs.length; i++) {
-      if (inputs[i].id !== id) {
+    for (let i = 0; i < inputs.get.length; i++) {
+      if (inputs.get[i].id !== id) {
         continue;
       }
 
-      let labelContent = inputs[i].label.childNodes[0];
+      let labelContent = inputs.get[i].label.childNodes[0];
 
       // if the input has text written in it we don't want the label to have content
       if (value.length > 0) {

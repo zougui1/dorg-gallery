@@ -1,11 +1,16 @@
 "use strict";
 
-var inArray = function inArray(needle, haystack) {
-  for (var i = 0, len = haystack.length; i < len; i++) {
-    if (haystack[i].toLowerCase() === needle.toLowerCase()) return true;
-  }
-
-  return false;
+/**
+ * remove all useless spaces within an array of strings
+ * @param {String[]} array
+ * @returns {String[]}
+ */
+var removeSpaces = function removeSpaces(array) {
+  return array.map(function (str) {
+    return str.trim();
+  }).filter(function (str) {
+    return str;
+  });
 };
 
-exports.inArray = inArray;
+exports.removeSpaces = removeSpaces;

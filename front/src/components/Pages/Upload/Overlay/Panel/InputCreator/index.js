@@ -3,11 +3,10 @@ import Button from '@material-ui/core/Button';
 import { connect } from 'react-redux';
 import { mapDynamicState, mapDynamicDispatch } from 'dynamic-redux';
 
-import uploaderState from '../../../../../../store/states/uploader';
 import CanvasField from '../../CanvasField';
 
-const mapStateToProps = mapDynamicState('uploader: canvasData imageData inputs labels imagesToUpload');
-const mapDispatchToProps = mapDynamicDispatch(uploaderState.actions, 'setCanvasData setCanvasField setCanvasLabel resetReducer');
+const mapStateToProps = mapDynamicState('uploader: canvasData inputs labels');
+const mapDispatchToProps = mapDynamicDispatch('uploader: canvasData inputs labels');
 
 class InputCreator extends React.Component {
 
@@ -19,9 +18,9 @@ class InputCreator extends React.Component {
    * update the variable 'canvasData' in the store
    */
   updateCanvasData = () => {
-    const { canvasData, setCanvasData } = this.props;
+    const { canvasData } = this.props;
 
-    setCanvasData(canvasData);
+    canvasData.set(canvasData.get);
   }
 
   /**
@@ -29,36 +28,36 @@ class InputCreator extends React.Component {
    */
   createInput = () => {
     const { inputId } = this.state;
-    let { inputs, canvasData, labels, setCanvasLabel, setCanvasField } = this.props;
-    const { x, y } = canvasData.imageBounds;
+    let { inputs, canvasData, labels } = this.props;
+    const { x, y } = canvasData.get.imageBounds;
     const client = { x: x + 10, y: y + 10 };
 
     // avoid to use the references to their source (the store)
-    inputs = inputs.slice();
-    labels = [...labels].slice();
+    inputs.get = inputs.get.slice();
+    labels.get = labels.get.slice();
 
     labels[inputId] = React.createRef();
-    console.log(labels);
-    setCanvasLabel(labels);
+    console.log(labels.get);
+    labels.set(labels.get);
 
     const field = (
       <CanvasField
         key={inputId}
         id={inputId}
         client={client}
-        currentCanvasData={canvasData}
+        currentCanvasData={canvasData.get}
       />
     );
 
     const input = {
       element: field,
       id: inputId,
-      label: labels[inputId]
+      label: labels.get[inputId]
     };
 
-    inputs[inputId] = input;
+    inputs.get[inputId] = input;
 
-    setCanvasField(inputs);
+    inputs.set(inputs);
     this.setState({ inputId: inputId + 1, lastInput: input })
   }
 

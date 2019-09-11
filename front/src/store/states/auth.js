@@ -5,9 +5,9 @@ const authState = new DynamicState('auth', {
   deniedPage: {},
 });
 
-authState.createState({
-  login: { type: 'LOGIN', prop: 'user' },
-  setDeniedPage: 'SET_DENIED_PAGE',
+authState.createReducer({
+  user: 'set',
+  deniedPage: 'set',
 });
 
 export default authState;

@@ -27,12 +27,16 @@ export const user = [
     label: 'home'
   },
   {
+    to: '/upload',
+    label: 'upload'
+  },
+  {
     to: () => '/gallery/' + Auth.getUser().slug,
     label: 'my gallery'
   },
   {
-    to: '/upload',
-    label: 'upload'
+    to: '/profile',
+    label: 'profile'
   },
   {
     label: 'logout',

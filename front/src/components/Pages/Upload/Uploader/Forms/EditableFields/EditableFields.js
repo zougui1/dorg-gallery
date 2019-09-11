@@ -1,8 +1,9 @@
 import React from 'react';
-import { FormGroup, Select, MenuItem, InputLabel, Input, FormControl } from '@material-ui/core';
+import { FormGroup, Select, MenuItem, InputLabel, FormControl } from '@material-ui/core';
 
-import Field from '../../../../../Partials/Field';
+import Input from '../../../../../Partials/Input';
 import { fields } from './fields';
+import './EditableFields.scss';
 
 class EditableFields extends React.Component {
 
@@ -32,7 +33,7 @@ class EditableFields extends React.Component {
 
         {fields.map(field => (
           <FormGroup row key={field.name} className="justify-content-center">
-            <Field
+            <Input
               {...field}
               fullWidth
               value={formData[field.name]}
@@ -42,21 +43,22 @@ class EditableFields extends React.Component {
         ))}
 
         <FormGroup row className="justify-content-center">
-          <FormControl fullWidth>
-            <InputLabel htmlFor="rate">Rate</InputLabel>
             <Select
+              className="svg-color-white"
+              fullWidth
               value={formData.rate}
               onChange={this.handleChange}
-              inputProps={{
-                name: 'rate',
-                id: 'rate'
+              input={<Input name="rate" label="Rate" />}
+              MenuProps={{
+                MenuListProps: {
+                  className: 'bg-color-grey color-grey-darken-4'
+                }
               }}
             >
               <MenuItem value="general">General</MenuItem>
               <MenuItem value="suggestive">Suggestive</MenuItem>
               <MenuItem value="nsfw">NSFW</MenuItem>
             </Select>
-          </FormControl>
         </FormGroup>
       </React.Fragment>
     );

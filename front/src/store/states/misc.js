@@ -4,8 +4,8 @@ const miscState = new DynamicState('misc', {
   tags: []
 });
 
-miscState.createState({
-  setTags: 'SET_TAGS',
+miscState.createReducer({
+  tags: 'set',
 });
 
 export default miscState;

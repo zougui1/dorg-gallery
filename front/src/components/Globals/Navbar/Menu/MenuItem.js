@@ -44,8 +44,11 @@ class MenuItem extends React.Component {
     const Component = this.getComponent();
 
     return (
-      <MuiMenuItem onClick={onClose}>
-        <Component {...this.getProps()} className={classNames('color-black', className)}>
+      <MuiMenuItem onClick={onClose} className="p-0">
+        <Component
+          {...this.getProps()}
+          className={classNames('color-black d-block h-100 w-100 nav-link', className)}
+        >
           {children}
         </Component>
       </MuiMenuItem>

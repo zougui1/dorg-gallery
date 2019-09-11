@@ -3,14 +3,13 @@ import _ from 'lodash';
 import { connect } from 'react-redux';
 import { mapDynamicState, mapDynamicDispatch } from 'dynamic-redux';
 
-import galleryState from '../../../../store/states/gallery';
 import * as socket from './socket';
 
 const mapStateToProps = mapDynamicState({
   gallery: 'searchOptions currentPage currentUser',
   auth: 'user'
 });
-const mapDispatchToProps = mapDynamicDispatch(galleryState.actions, 'setImages');
+const mapDispatchToProps = mapDynamicDispatch('gallery: images');
 
 class Requester extends React.Component {
 
@@ -75,9 +74,9 @@ class Requester extends React.Component {
   /**
    * @param {Object[]} images
    */
-  setImages = images => {
-    const { setImages } = this.props;
-    setImages(images);
+  setImages = _images => {
+    const { images } = this.props;
+    images.set(_images);
   }
 
   render() {

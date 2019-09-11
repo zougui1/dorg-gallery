@@ -12,8 +12,11 @@ const FormDialog = ({ open, onClose, onSubmit }) => (
     aria-labelledby="form of edition of the data associated to the image"
     open={open}
     onClose={onClose}
+    PaperProps={{
+      className: 'bg-color-grey-darken-3 color-grey-lighten-4'
+    }}
   >
-    <Dialog.Title closer>Edit the data</Dialog.Title>
+    <Dialog.Title closer>Change infos</Dialog.Title>
 
     <Dialog.Content>
       <Form onSubmit={onSubmit} />

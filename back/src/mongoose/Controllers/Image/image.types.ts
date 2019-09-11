@@ -11,6 +11,7 @@ export namespace SearchOptions {
 
   export interface Match {
     user: User;
+    userData: any;
   }
 
   export enum HaveOverlays {

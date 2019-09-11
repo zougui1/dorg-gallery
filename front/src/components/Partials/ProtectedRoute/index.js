@@ -4,11 +4,10 @@ import { Route, Redirect, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { mapDynamicState, mapDynamicDispatch } from 'dynamic-redux';
 
-import authState from '../../../store/states/auth';
 import Auth from '../../../services/Auth';
 
 const mapStateToProps = mapDynamicState('auth: user');
-const mapDispatchToProps = mapDynamicDispatch(authState.actions, 'setDeniedPage');
+const mapDispatchToProps = mapDynamicDispatch('auth: deniedPage');
 
 class ProtectedRoute extends React.Component {
 
@@ -17,7 +16,6 @@ class ProtectedRoute extends React.Component {
   }
 
   componentDidMount() {
-    console.log('CDM protectedRoute')
     this.setDeniedPageIfAccessDenied();
   }
 
@@ -25,13 +23,13 @@ class ProtectedRoute extends React.Component {
    * set denied page data if the client doesn't have access to the page
    */
   setDeniedPageIfAccessDenied = () => {
-    const { setDeniedPage, role } = this.props;
+    const { deniedPage, role } = this.props;
 
     if (Auth.hasRole(role)) {
       return;
     }
 
-    setDeniedPage({
+    deniedPage.set({
       path: window.location.href,
       require: role,
     });

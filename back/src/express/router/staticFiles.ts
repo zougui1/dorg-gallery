@@ -1,8 +1,8 @@
-import path from 'path';
 import { app, express } from '../../config/server';
 
-// send the build for any URL
-const build = express.static(path.join(__dirname, '/../../../front/build'));
+// create a build
+const build = express.static('/root/gallery-dorg/front/build');
 
+// send the build to any URL
 app.use('/', build);
 app.use('*', build);

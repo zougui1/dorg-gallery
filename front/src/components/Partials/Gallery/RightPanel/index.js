@@ -1,4 +1,7 @@
 import React from 'react';
+import classNames from 'classnames';
+import { connect } from 'react-redux';
+import { mapDynamicState } from 'dynamic-redux';
 
 import OverrideReactElement from '../../OverrideReactElement';
 import './RightPanel.scss';
@@ -8,6 +11,8 @@ import SearchRow from './SearchRow';
 import SortRow from './SortRow';
 import HaveOverlaysRow from './HaveOverlaysRow';
 import RatingRow from './RatingRow';
+
+const mapStateToProps = mapDynamicState('gallery: searchOptionsPanel');
 
 class RightPanel extends React.Component {
 
@@ -28,7 +33,7 @@ class RightPanel extends React.Component {
         criteria: 'date',
         order: 'ASC'
       }
-    }
+    },
   }
 
   /**
@@ -41,14 +46,15 @@ class RightPanel extends React.Component {
 
   render() {
     const { searchOptions, search } = this.state;
-    const { children } = this.props;
+    const { children, size, searchOptionsPanel: openPanel } = this.props;
 
     return (
-      <div className="RightPanel color-white">
+      <div className={classNames('RightPanel color-white h-100', size, { open: openPanel })}>
         <OverrideReactElement
           setState={this._setState}
           searchOptions={searchOptions}
           search={search}
+          size={size}
         >
           {children}
         </OverrideReactElement>
@@ -57,4 +63,4 @@ class RightPanel extends React.Component {
   }
 }
 
-export default RightPanel;
+export default connect(mapStateToProps)(RightPanel);

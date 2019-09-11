@@ -1,16 +1,11 @@
 import React from 'react';
 import { Typography, Button } from '@material-ui/core';
 import { connect } from 'react-redux';
-import { mapDynamicState, mapDynamicDispatch } from 'dynamic-redux';
+import { mapDynamicDispatch } from 'dynamic-redux';
 
 import Field from '../../Field';
-import galleryState from '../../../../store/states/gallery';
 
-const mapStateToProps = mapDynamicState({
-  gallery: 'showOverlay images filter currentPage',
-  auth: 'user'
-});
-const mapDispatchToProps = mapDynamicDispatch(galleryState.actions, 'setFilter setImages setSearchOptions');
+const mapDispatchToProps = mapDynamicDispatch('gallery: searchOptions');
 
 class SearchRow extends React.Component {
 
@@ -18,19 +13,10 @@ class SearchRow extends React.Component {
    * is called when the form is submit
    */
   submit = e => {
-    const { search, searchOptions, setSearchOptions } = this.props;
+    const { search, searchOptions } = this.props;
     e.preventDefault();
 
-    setSearchOptions({ ...searchOptions, search });
-  }
-
-  /**
-   * set the images into the store
-   * @param {Object[]} images
-   */
-  setImages = images => {
-    const { setImages } = this.props;
-    setImages(images);
+    searchOptions.set({ ...searchOptions.get, search });
   }
 
   /**
@@ -62,4 +48,4 @@ class SearchRow extends React.Component {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SearchRow);
+export default connect(null, mapDispatchToProps)(SearchRow);

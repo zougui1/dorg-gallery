@@ -5,15 +5,15 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { mapDynamicState, mapDynamicDispatch } from 'dynamic-redux';
 
-import authState from '../../../store/states/auth';
-import Field from '../../Partials/Field';
+import Input from '../../Partials/Input';
 import Loader from '../../Partials/Loader';
 import Auth from '../../../services/Auth';
+import Section from '../../Partials/Section';
 import * as socket from './socket';
 import Alert from './Alert';
 
 const mapStateToProps = mapDynamicState('auth: deniedPage');
-const mapDispatchToProps = mapDynamicDispatch(authState.actions, 'setDeniedPage');
+const mapDispatchToProps = mapDynamicDispatch('auth: deniedPage');
 
 class Login extends React.Component {
 
@@ -34,7 +34,7 @@ class Login extends React.Component {
 
     // if true this means the user got redirected from a page they don't have access to
     // so we want deniedAlert to be true
-    if (deniedPage.require) {
+    if (deniedPage.get.require) {
       this.setState({ deniedAlert: true });
     }
   }
@@ -93,10 +93,10 @@ class Login extends React.Component {
    * called when the user close the dialog
    */
   handleClose = () => {
-    const { setDeniedPage } = this.props;
+    const { deniedPage } = this.props;
 
     this.setState({ deniedAlert: false });
-    setDeniedPage({});
+    deniedPage.set({});
   }
 
   render() {
@@ -104,20 +104,24 @@ class Login extends React.Component {
 
     return (
       <Grid container className="text-center Login" justify="center">
-        <Alert open={deniedAlert} onClose={this.handleClose} />
-        <Form
-          onSubmit={this.submit}
-          field={Field}
-          title="Login"
-          fields={['username', 'password']}
-          submitText="Login"
-          errorMessage=""
-        >
-          <Grid container direction="column" className="mt-2" justify="center">
-            <Link className="color-blue-lighten-1 mb-2" to="/signup">You do not have an account yet?</Link>
-            <Loader {...loader} timeout={0} />
+        <Section md={8}>
+          <Grid container className="text-center Login" justify="center">
+            <Alert open={deniedAlert} onClose={this.handleClose} />
+            <Form
+              onSubmit={this.submit}
+              field={Input.Override}
+              title="Login"
+              fields={['username', 'password']}
+              submitText="Login"
+              errorMessage=""
+            >
+              <Grid container direction="column" className="mt-2" justify="center">
+                <Link className="color-blue-lighten-1 mb-2" to="/signup">You do not have an account yet?</Link>
+                <Loader {...loader} timeout={0} />
+              </Grid>
+            </Form>
           </Grid>
-        </Form>
+        </Section>
       </Grid>
     );
   }

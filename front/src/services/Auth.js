@@ -3,10 +3,9 @@ import Cookies from 'js-cookie';
 import { mapDynamicState, mapDynamicDispatch } from 'dynamic-redux';
 
 import store from '../store';
-import authState from '../store/states/auth';
 import roles from '../data/roles';
 
-const actions = mapDynamicDispatch(authState.actions, 'login')(store.dispatch);
+const actions = mapDynamicDispatch('auth: user')(store.dispatch);
 
 class Auth {
 
@@ -19,7 +18,7 @@ class Auth {
    * get the user data from the state
    */
   static getUser = () => {
-    return mapDynamicState('auth: user')(store.getState()).user;
+    return mapDynamicState('auth: user')(store.getState()).user || {};
   }
 
   /**
@@ -132,7 +131,7 @@ class Auth {
    */
   static logout = () => {
     Cookies.remove(Auth.cookieName);
-    actions.login({});
+    actions.user.set({});
     //Auth.forceAppUpdate();
   }
 
@@ -145,7 +144,7 @@ class Auth {
 
     Auth.addRolesValue(user);
 
-    actions.login(user);
+    actions.user.set(user);
     Auth.setCookieSession(user);
   }
 

@@ -1,40 +1,24 @@
-import { inArray } from './utils';
+import _ from 'lodash';
 
 class DynamicState {
 
   actions = {};
   reducerConditions = [];
-  stateName = '';
 
-  constructor(stateName, initialState) {
-    if (typeof stateName === 'string') {
-      this.stateName = stateName;
-    } else {
-      initialState = stateName;
-    }
-
+  constructor(initialState) {
     this.initialState = initialState;
     this.reducer = (state = initialState, action) => this.dynamicReducer(state, action, this.reducerConditions);
   }
 
-  capitalize = str => str.charAt(0).toUpperCase() + str.substring(1);
-
-  camelCasify = str => {
-    str = str.toLowerCase().split('set_');
-    str = str[1] || str[0];
-
-    return str.split(/[_-]/g).map((str, i) => i > 0 ? this.capitalize(str) : str).join('');
-  }
-
   dynamicReducer = (state, action, typesAndProps) => {
-    if(action.type === 'RESET_' + this.stateName.toUpperCase() + '_REDUCER') return this.initialState;
+    if(action.type === 'RESET_REDUCER') return this.initialState;
 
     const tempState = {};
     for(const key in state) if(state.hasOwnProperty(key)) tempState[key] = state[key];
     typesAndProps.forEach(({ type, prop }) => {
       if(type === action.type) {
-        prop = prop || this.camelCasify(type);
-        if(!inArray(prop, Object.keys(state)) && !action.multi)
+        prop = prop || _.camelCase(type);
+        if(!_.hasIn(state, prop) && !action.multi)
           console.error(new Error(`Received "${prop}" as prop but it doesn't exists in the state`));
 
         if(!action.multi) tempState[prop] = action.payload;
@@ -70,8 +54,8 @@ class DynamicState {
     }
   }
 
-  createState = options => {
-    options.resetReducer = 'RESET_' + this.stateName.toUpperCase() + '_REDUCER';
+  createReducer = options => {
+    options.resetReducer = 'RESET_REDUCER';
     const actions = {};
     let reducerConditions = [];
     for (const actionName in options) {

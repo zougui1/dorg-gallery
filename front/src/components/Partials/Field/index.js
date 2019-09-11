@@ -3,10 +3,6 @@ import TextField from '@material-ui/core/TextField';
 
 class Field extends React.Component {
 
-  state = {
-    input: React.createRef()
-  }
-
   render() {
     let { name, type, label, field, className = '', ...rest } = this.props;
     let Field = field || TextField;

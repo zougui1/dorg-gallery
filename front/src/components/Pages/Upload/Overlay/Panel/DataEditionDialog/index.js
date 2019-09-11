@@ -26,7 +26,7 @@ class DataEditionDialog extends React.Component {
       <span className="panel-row">
         <FormDialog open={open} onClose={this.handleClose} onSubmit={this.submit} />
 
-        <Button className="color-white" onClick={this.handleClick}>Edit the form data</Button>
+        <Button className="color-white" onClick={this.handleClick}>Change infos</Button>
       </span>
     );
   }

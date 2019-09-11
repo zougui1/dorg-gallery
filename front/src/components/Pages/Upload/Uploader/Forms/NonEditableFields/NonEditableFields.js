@@ -56,7 +56,7 @@ class NonEditableFields extends React.Component {
             onChange={this.handleFiles}
           />
           <label htmlFor="image">
-            <Button variant="contained" component="span">Browse</Button>
+            <Button variant="contained" component="span" className="bg-color-grey-darken-1 color-white">Browse</Button>
           </label>
         </FormGroup>
 

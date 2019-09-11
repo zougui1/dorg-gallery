@@ -1,17 +1,12 @@
 import React from 'react';
 import * as Space from 'react-spaces';
-import { connect } from 'react-redux';
-import { mapDynamicState, mapDynamicDispatch } from 'dynamic-redux';
 
 import './Gallery.scss';
 
-import galleryState from '../../../store/states/gallery';
 import * as Images from './Images/';
 import * as Image from './Image/';
 import RightPanel from './RightPanel';
-
-const mapStateToProps = mapDynamicState('gallery: showOverlay filteredImages images');
-const mapDispatchToProps = mapDynamicDispatch(galleryState.actions, 'setCurrentPage');
+import { Hidden } from '@material-ui/core';
 
 class Gallery extends React.Component {
 
@@ -49,16 +44,15 @@ class Gallery extends React.Component {
 
     let GalleryKind = Images;
 
-    switch (kind) {
-      case Gallery.kind.multiple:
-        GalleryKind = Images;
-        break;
-      case Gallery.kind.single:
-        GalleryKind = Image;
-        break;
+    const isMultiple = kind === Gallery.kind.multiple;
+    const isSingle = kind === Gallery.kind.single;
 
-      default:
-        throw new Error(`Kind must be of value "Gallery.kind", got "${kind}"`);
+    if (isMultiple) {
+      GalleryKind = Images;
+    } else if (isSingle) {
+      GalleryKind = Image;
+    } else {
+      throw new Error(`Kind must be of value "Gallery.kind", got "${kind}"`);
     }
 
     return (
@@ -72,11 +66,23 @@ class Gallery extends React.Component {
               <GalleryKind.Displayer history={history} />
             </Space.Fill>
 
-            <Space.Right size="297px">
-              <RightPanel >
-                <GalleryKind.RightPanel />
-              </RightPanel>
-            </Space.Right>
+            <Hidden smDown>
+              <Space.Right size="297px">
+                <RightPanel size="large">
+                  <GalleryKind.RightPanel />
+                </RightPanel>
+              </Space.Right>
+            </Hidden>
+
+            {
+              isMultiple && (
+                <Hidden mdUp>
+                  <RightPanel size="small">
+                    <GalleryKind.RightPanel />
+                  </RightPanel>
+                </Hidden>
+              )
+            }
 
           </Space.Fill>
         </Space.Fill>
@@ -89,4 +95,4 @@ Gallery.defaultProps = {
   currentPage: 1,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Gallery);
+export default Gallery;

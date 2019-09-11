@@ -3,25 +3,24 @@ import { connect } from 'react-redux';
 import { mapDynamicState, mapDynamicDispatch } from 'dynamic-redux';
 
 import PanelSlider from '../PanelSlider';
-import uploaderState from '../../../../../../store/states/uploader';
 
-const mapStateToProps = mapDynamicState('uploader: canvasData imageData inputs labels imagesToUpload');
-const mapDispatchToProps = mapDynamicDispatch(uploaderState.actions, 'setCanvasData resetReducer');
+const mapStateToProps = mapDynamicState('uploader: canvasData');
+const mapDispatchToProps = mapDynamicDispatch('uploader: canvasData');
 
 class SizesPanel extends React.Component {
 
   state = {
-    fontSize: this.props.canvasData.fontSize,
-    eraseSize: this.props.canvasData.eraseSize,
+    fontSize: this.props.canvasData.get.fontSize,
+    eraseSize: this.props.canvasData.get.eraseSize,
   }
 
   /**
    * update the variable 'canvasData' in the store
    */
   updateCanvasData = () => {
-    const { canvasData, setCanvasData } = this.props;
+    const { canvasData } = this.props;
 
-    setCanvasData(canvasData);
+    canvasData.set(canvasData.get);
   }
 
   /**
@@ -38,7 +37,7 @@ class SizesPanel extends React.Component {
     this.setState({ [slider]: value });
 
     // we want to update the canvasData
-    canvasData[slider] = value;
+    canvasData.get[slider] = value;
     this.updateCanvasData();
   }
 
@@ -59,9 +58,9 @@ class SizesPanel extends React.Component {
         />
 
         {
-          canvasData.contextAction === 'erase' && (
+          canvasData.get.contextAction === 'erase' && (
             <PanelSlider
-              show={canvasData.contextAction === 'erase'}
+              show={canvasData.get.contextAction === 'erase'}
               label="Erase size"
               name="eraseSize"
               value={eraseSize}

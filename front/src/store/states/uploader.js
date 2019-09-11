@@ -26,14 +26,14 @@ const uploaderState = new DynamicState('uploader', {
   labels: [],
 });
 
-uploaderState.createState({
-  setFormView: 'SET_FORM_VIEW',
-  setImageData: 'SET_IMAGE_DATA',
-  setCanvasData: 'SET_CANVAS_DATA',
-  setImagesToUpload: 'SET_IMAGES_TO_UPLOAD',
-  setCanvasField: { type: 'SET_CANVAS_FIELD', prop: 'inputs' },
-  setCanvasLabel: { type: 'SET_CANVAS_LABEL', prop: 'labels' },
-  resetReducer: 'RESET_REDUCER'
+uploaderState.createReducer({
+  formView: 'set',
+  imageData: 'set',
+  canvasData: 'set',
+  imagesToUpload: 'set',
+  inputs: 'set',
+  labels: 'set',
+  //resetReducer: 'reset'
 });
 
 export default uploaderState;

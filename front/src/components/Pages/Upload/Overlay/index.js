@@ -1,13 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { mapDynamicState, mapDynamicDispatch } from 'dynamic-redux';
-import uploaderState from '../../../../store/states/uploader';
 
 import Canvas from './Canvas';
 import Panel from './Panel';
 
-const mapStateToProps = mapDynamicState('uploader: imageData canvasSize canvasData imagesToUpload inputs');
-const mapDispatchToProps = mapDynamicDispatch(uploaderState.actions, 'setImageData setCanvasData resetReducer');
+const mapStateToProps = mapDynamicState('uploader: imageData canvasData');
+const mapDispatchToProps = mapDynamicDispatch('uploader: imageData resetReducer');
 
 class Overlay extends React.Component {
 
@@ -30,25 +29,25 @@ class Overlay extends React.Component {
    * reset the reducer once the user is done with the overlay
    */
   componentWillUnmount() {
-    const { resetReducer } = this.props;
-    resetReducer();
+    /*const { resetReducer } = this.props;
+    resetReducer();*/
   }
 
   setImageSize = () => {
-    const { imageData, setImageData, canvasData, setCanvasData } = this.props;
+    const { imageData, canvasData } = this.props;
 
     this.img.addEventListener('load', () => {
       const imageBounds = this.img.getBoundingClientRect();
       this.setState({ imageBounds });
 
-      setImageData({
-        ...imageData,
+      imageData.set({
+        ...imageData.get,
         width: imageBounds.width,
         height: imageBounds.height,
       });
 
-      setCanvasData({
-        ...canvasData,
+      canvasData.set({
+        ...canvasData.get,
         context: this.canvas.getContext('2d'),
         imageBounds: imageBounds,
         canvas: this.canvas,
@@ -75,7 +74,7 @@ class Overlay extends React.Component {
 
     return (
       <div id="overlay-container">
-        <img className="draw-on" src={imageData.imageBase64} ref={e => this.img = e} alt="" />
+        <img className="draw-on" src={imageData.get.imageBase64} ref={e => this.img = e} alt="" />
         <Canvas />
 
         <Panel modalOpen={this.modalOpen} />

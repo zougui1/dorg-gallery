@@ -1,0 +1,27 @@
+.custom-field {
+
+  label {
+    color: #fff !important;
+    z-index: 1;
+    padding-left: 7px;
+  }
+
+  .helper {
+    color: #eee;
+  }
+
+  .custom-input {
+    background-color: #454545;
+    color: #fff !important;
+    box-shadow: inset 0 0 15px #0008 !important;
+    padding-left: 7px !important;
+
+    &::before {
+      border-bottom-color: #ffffffb3 !important;
+    }
+
+    &::after {
+      border-bottom-color: #5a9ed6 !important;
+    }
+  }
+}

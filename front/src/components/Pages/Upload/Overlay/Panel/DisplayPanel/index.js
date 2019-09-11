@@ -4,10 +4,9 @@ import { connect } from 'react-redux';
 import { mapDynamicState, mapDynamicDispatch } from 'dynamic-redux';
 
 import Checkbox from './Checkbox';
-import uploaderState from '../../../../../../store/states/uploader';
 
-const mapStateToProps = mapDynamicState('uploader: canvasData imageData inputs labels imagesToUpload');
-const mapDispatchToProps = mapDynamicDispatch(uploaderState.actions, 'setCanvasData resetReducer');
+const mapStateToProps = mapDynamicState('uploader: canvasData');
+const mapDispatchToProps = mapDynamicDispatch('uploader: canvasData');
 
 class DisplayPanel extends React.Component {
 
@@ -16,10 +15,10 @@ class DisplayPanel extends React.Component {
    * @param {Object} newData
    */
   updateCanvasData = newData => {
-    const { canvasData, setCanvasData } = this.props;
+    const { canvasData } = this.props;
 
-    setCanvasData({
-      ...canvasData,
+    canvasData.set({
+      ...canvasData.get,
       ...newData
     });
   }
@@ -32,14 +31,14 @@ class DisplayPanel extends React.Component {
 
     const overlayContainer = document.getElementById('overlay-container');
 
-    if (canvasData.displayInputs) { // hide the text
+    if (canvasData.get.displayInputs) { // hide the text
       overlayContainer.classList.add('hideInputs');
     } else { // show the text
       overlayContainer.classList.remove('hideInputs');
     }
 
     // update the value
-    this.updateCanvasData({ displayInputs: !canvasData.displayInputs });
+    this.updateCanvasData({ displayInputs: !canvasData.get.displayInputs });
   }
 
   /**
@@ -48,14 +47,14 @@ class DisplayPanel extends React.Component {
   displayMainLayer = () => {
     const { canvasData } = this.props;
 
-    if (canvasData.displayMainLayer) { // hide the drawing
-      canvasData.context.canvas.classList.add('d-none');
+    if (canvasData.get.displayMainLayer) { // hide the drawing
+      canvasData.get.context.canvas.classList.add('d-none');
     } else { // show the drawing
-      canvasData.context.canvas.classList.remove('d-none');
+      canvasData.get.context.canvas.classList.remove('d-none');
     }
 
     // update the value
-    this.updateCanvasData({ displayMainLayer: !canvasData.displayMainLayer });
+    this.updateCanvasData({ displayMainLayer: !canvasData.get.displayMainLayer });
   }
 
   // clear the whole canvas
@@ -75,14 +74,14 @@ class DisplayPanel extends React.Component {
           <Checkbox
             label="Display text"
             name="displayInputs"
-            checked={canvasData.displayInputs}
+            checked={canvasData.get.displayInputs}
             onChange={this.displayInputs}
           />
 
           <Checkbox
             label="Display drawing"
             name="displayMainLayer"
-            checked={canvasData.displayMainLayer}
+            checked={canvasData.get.displayMainLayer}
             onChange={this.displayMainLayer}
           />
         </div>

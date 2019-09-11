@@ -3,11 +3,10 @@ import _ from 'lodash';
 import { connect } from 'react-redux';
 import { mapDynamicState, mapDynamicDispatch } from 'dynamic-redux';
 
-import uploaderState from '../../../../../../store/states/uploader';
 import EditableForm from '../../../Uploader/Forms/EditableFields';
 
 const mapStateToProps = mapDynamicState('uploader: imageData');
-const mapDispatchToProps = mapDynamicDispatch(uploaderState.actions, 'setImageData');
+const mapDispatchToProps = mapDynamicDispatch('uploader: imageData');
 
 class Form extends React.Component {
 
@@ -26,7 +25,7 @@ class Form extends React.Component {
   componentDidUpdate(prevProps) {
     const { imageData } = this.props;
 
-    if (!_.isEqual(imageData, prevProps.imageData)) {
+    if (!_.isEqual(imageData.get, prevProps.imageData.get)) {
       this.updateState();
     }
   }
@@ -39,14 +38,14 @@ class Form extends React.Component {
     const { imageData } = this.props;
 
     const newState = {
-      ...imageData,
+      ...imageData.get,
       artistName: '',
       artistLink: '',
     };
 
-    if (_.isObject(imageData)) {
-      newState.artistName = imageData.artist.name;
-      newState.artistLink = imageData.artist.link;
+    if (_.isObject(imageData.get)) {
+      newState.artistName = imageData.get.artist.name;
+      newState.artistLink = imageData.get.artist.link;
     }
 
     this.setState(newState);
@@ -56,11 +55,11 @@ class Form extends React.Component {
    * is called when the form has been submited and validated
    */
   submit = e => {
-    const { setImageData, onSubmit } = this.props;
+    const { imageData, onSubmit } = this.props;
 
     const formData = this.transformFormData(this.state);
 
-    setImageData(formData);
+    imageData.set(formData);
     onSubmit(e)
   }
 

@@ -1,5 +1,5 @@
 import { createStore } from 'dynamic-redux';
 
-import reducers from './states';
+import states from './states';
 
-export default createStore(reducers);
+export default createStore(states);

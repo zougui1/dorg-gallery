@@ -3,6 +3,9 @@ import { argv } from 'yargs';
 import * as mongooseActions from './mongoose/Actions';
 import { debug } from './config/debug';
 import { Arguments } from './actionDispatcher.types';
+import './config/mongoose';
+import './express';
+import './socket';
 
 /**
  * do an action
@@ -10,7 +13,6 @@ import { Arguments } from './actionDispatcher.types';
 const dispatcher = async (argv: Arguments) => {
   // clear the DB
   if (argv['db-clear']) {
-    require('./config/mongoose');
 
     debug.action('Clearing the database...');
     try {
@@ -26,7 +28,6 @@ const dispatcher = async (argv: Arguments) => {
     process.exit(0);
 
   } else if (argv['db-populate']) { // populate the DB with default data
-    require('./config/mongoose');
 
     debug.action('Populating the database with default data...');
     try {
@@ -42,7 +43,6 @@ const dispatcher = async (argv: Arguments) => {
     process.exit(0);
 
   } else if (argv['db-reset']) { // reset the DB
-    require('./config/mongoose');
 
     debug.action('Reseting the database...');
 
@@ -54,15 +54,13 @@ const dispatcher = async (argv: Arguments) => {
     // exit the process once the database has been cleared
     process.exit(0);
 
-  } else if (argv['server-start']) { // start the server
+  } else { // start the server
     debug.action('Starting the server...');
-
-    require('./express');
-    require('./socket');
   }
 }
 
 dispatcher(argv as Arguments)
+  .then()
   .catch(error => {
     throw error;
   });

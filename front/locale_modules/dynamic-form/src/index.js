@@ -175,8 +175,8 @@ class Form extends React.Component {
             step={field.step}
             rangeField={field.field || rangeField}
             selectField={field.field || selectField}
-            minlength={field.minlength}
-            maxlength={field.maxlength}
+            minLength={field.minlength}
+            maxLength={field.maxlength}
           />
         ))}
 

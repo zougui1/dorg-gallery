@@ -1,19 +1,19 @@
 import React from 'react';
-import FormGroup from '@material-ui/core/FormGroup';
+import _ from 'lodash';
+import { Grid } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { mapDynamicState, mapDynamicDispatch } from 'dynamic-redux';
 
 import FormDisplayer from './FormDisplayer';
 import Loader from '../../../Partials/Loader';
-import uploaderState from '../../../../store/states/uploader';
+import Section from '../../../Partials/Section';
 import socket from './socket';
-import { Grid } from '@material-ui/core';
 
 const mapStateToProps = mapDynamicState({
   misc: 'tags',
   auth: 'user',
 });
-const mapDispatchToProps = mapDynamicDispatch(uploaderState.actions, 'setFormView setImageData');
+const mapDispatchToProps = mapDynamicDispatch('uploader: formView imageData');
 
 class Uploader extends React.Component {
 
@@ -43,7 +43,7 @@ class Uploader extends React.Component {
    * is called when the user submit the form
    */
   submit = formData => {
-    const { setImageData, setFormView, user } = this.props;
+    const { imageData, formView, user } = this.props;
 
     this.setState({ loader: { loading: true } });
 
@@ -53,8 +53,8 @@ class Uploader extends React.Component {
         // view to draw an overlay
         // other we upload the image
         if (formData.withOverlay) {
-          setImageData(formData);
-          setFormView('Overlay');
+          imageData.set(formData);
+          formView.set('Overlay');
         } else {
 
           socket.Emit.uploadImage({
@@ -78,36 +78,41 @@ class Uploader extends React.Component {
    */
   transformFormData = formData => new Promise(resolve => {
 
-    const transformedFormData = { ...formData };
+    const newFormData = { ...formData };
 
-    if (transformedFormData.artistLink) {
-      transformedFormData.artistLink = transformedFormData.artistLink.trim();
+    if (newFormData.artistLink) {
+      newFormData.artistLink = newFormData.artistLink.trim();
     }
 
     if (!/^https?:\/\//.test(formData.artistLink)) {
-      transformedFormData.artistLink = 'http://' + transformedFormData.artistLink;
+      newFormData.artistLink = 'http://' + newFormData.artistLink;
+    }
+
+    if (_.isString(newFormData.tags)) {
+      // transform the tags into an array and delete whitespaces
+      newFormData.tags = newFormData.tags.trim().split(' ').filter(str => str.trim());
     }
 
     // we change the structure of the artist data
     // to match the model used in the database
-    transformedFormData.artist = {
-      name: formData.artistName,
-      link: formData.artistLink,
+    newFormData.artist = {
+      name: newFormData.artistName,
+      link: newFormData.artistLink,
     };
 
     // those 2 values or now useless so we delete them
-    delete transformedFormData.artistName;
-    delete transformedFormData.artistLink;
+    delete newFormData.artistName;
+    delete newFormData.artistLink;
 
     const reader = new FileReader();
 
     // we want the image as a base64 string
-    reader.readAsDataURL(transformedFormData.image);
+    reader.readAsDataURL(newFormData.image);
     reader.addEventListener('load', () => {
-      transformedFormData.image = formData.image;
-      transformedFormData.imageBase64 = reader.result;
+      newFormData.image = formData.image;
+      newFormData.imageBase64 = reader.result;
 
-      resolve(transformedFormData);
+      resolve(newFormData);
     });
   });
 
@@ -134,9 +139,16 @@ class Uploader extends React.Component {
       <div className="Uploader d-flex justify-content-center text-center">
 
         <Grid container item xs={11} md={6} sm={9} className="d-flex flex-column align-items-center">
-          <FormDisplayer onSubmit={this.submit} />
+          <Section>
+            <FormDisplayer onSubmit={this.submit} />
 
-          <Loader {...loader} redirection="/" errorMessage={error || loader.errorMessage} successMessage="The image has been uploaded" />
+            <Loader
+              {...loader}
+              redirection="/"
+              errorMessage={error || loader.errorMessage}
+              successMessage="The image has been uploaded"
+            />
+          </Section>
         </Grid>
       </div>
     );

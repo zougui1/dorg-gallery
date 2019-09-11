@@ -9,6 +9,7 @@
     "compile:prod": "cross-env NODE_ENV=production webpack",
     "start": "cross-env DEBUG= node dist --server-start",
     "prod": "cross-env NODE_ENV=production node dist --server-start",
+    "deploy": "pm2 start npm -- start",
     "debug:dorg": "cross-env NODE_ENV=development DEBUG=Dorg-gallery:* node dist --server-start",
     "debug:dorg:watch": "cross-env NODE_ENV=development DEBUG=Dorg-gallery:* nodemon dist --server-start",
     "debug:*": "cross-env NODE_ENV=development DEBUG=* node dist --server-start",
@@ -34,7 +35,7 @@
     "node-gyp": "^5.0.3",
     "pretty-error": "^2.1.1",
     "redis": "^2.8.0",
-    "sharp": "^0.23.0",
+    "sharp": "^0.21.3",
     "socket.io": "^2.2.0",
     "typegoose": "^5.9.0",
     "url-slug": "^2.2.0-alpha.0"

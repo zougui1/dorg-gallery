@@ -7,13 +7,12 @@ import { mapDynamicDispatch } from 'dynamic-redux';
 import './index.scss';
 
 import store from './store';
-import miscState from './store/states/misc';
 import Navbar from './components/Globals/Navbar';
 import Router from './Router';
 import Auth from './services/Auth';
 import socket from './socket/config';
 
-const actions = mapDynamicDispatch(miscState.actions, 'setTags')(store.dispatch);
+const actions = mapDynamicDispatch('misc: tags')(store.dispatch);
 
 class Root extends React.Component {
 
@@ -22,7 +21,7 @@ class Root extends React.Component {
 
     socket.emit('getAllTags');
     socket.on('sendTags', data => {
-      actions.setTags(data.tags);
+      actions.tags.set(data.tags);
     });
   }
 

@@ -1,9 +1,11 @@
 import React from 'react';
+import classNames from 'classnames';
 import MuiCheckbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 import Multiple from './Multiple';
 import YesNo from './YesNo';
+import './Checkbox.scss';
 
 class Checkbox extends React.Component {
 
@@ -15,7 +17,7 @@ class Checkbox extends React.Component {
 
     return (
       <FormControlLabel
-        className={className}
+        className={classNames('checkbox-control-label', className)}
         value={value}
         control={
           <MuiCheckbox

@@ -18,21 +18,20 @@ const galleryState = new DynamicState('gallery', {
     }
   },
   currentImage: null,
+  searchOptionsPanel: false,
 });
 
-galleryState.createState({
-  setShowOverlay: {
-    type: 'SET_SHOW_OVERLAY_ON_IMAGES',
-    prop: 'showOverlay'
-  },
-  setImages: 'SET_IMAGES',
-  setFilteredImages: 'SET_FILTERED_IMAGES',
-  setFilter: 'SET_FILTER',
-  setCurrentPage: 'SET_CURRENT_PAGE',
-  setCurrentUser: 'SET_CURRENT_USER',
-  setCurrentImage: 'SET_CURRENT_IMAGE',
-  setRequestReceived: 'SET_REQUEST_RECEIVED',
-  setSearchOptions: 'SET_SEARCH_OPTIONS',
+galleryState.createReducer({
+  showOverlay: 'set',
+  images: 'set',
+  filteredImages: 'set',
+  filter: 'set',
+  currentPage: ['set', 'inc', 'dec'],
+  currentUser: 'set',
+  currentImage: 'set',
+  requestReceived: 'set',
+  searchOptions: 'set',
+  searchOptionsPanel: 'set',
 });
 
 export default galleryState;

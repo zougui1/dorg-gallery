@@ -15,10 +15,10 @@ class OverlayedImage extends React.Component {
    */
   renderOverlays = image => {
     const { showOverlay } = this.props;
+    let overlays = [];
 
     if(image.canvas) {
       const { canvas } = image;
-      let overlays = [];
 
       for (const key in canvas) {
         if (!showOverlay.includes(key) || !canvas[key]) {
@@ -30,8 +30,9 @@ class OverlayedImage extends React.Component {
         );
         overlays.push(imageElement);
       }
-      return overlays
     }
+
+    return overlays
   }
 
   /**
@@ -51,6 +52,8 @@ class OverlayedImage extends React.Component {
     if (!image) {
       return null;
     }
+
+    console.log(this.renderOverlays(image))
 
     return (
       <React.Fragment>

@@ -1,6 +1,5 @@
 import React from 'react';
 import validator from 'validator';
-import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { mapDynamicState } from 'dynamic-redux';
 
@@ -14,10 +13,10 @@ class Tags extends React.Component {
     const { currentImage } = this.props;
 
     if (validator.isURL(currentImage.artist.link)) {
-      return ({ children }) => <Link target="blank" to={currentImage.artist.link}>{children}</Link>;
+      return ({ children, ...rest }) => <a {...rest} rel="noreferrer" href={currentImage.artist.link}>{children}</a>;
     }
 
-    return ({ children }) => <span>{children}</span>;
+    return ({ children, ...rest }) => <span {...rest}>{children}</span>;
   }
 
   render() {
@@ -30,13 +29,8 @@ class Tags extends React.Component {
     const Link = this.getValidElement();
 
     return (
-      <div className="panel-row Tags">
-        <div>
-          <span className="fw-500">Artist name:</span> <Link>{currentImage.artist.name}</Link>
-        </div>
-        <div>
-          <span className="fw-500">Character name:</span> <span>{currentImage.characterName}</span>
-        </div>
+      <div className="panel-row AdditionalData">
+        <span className="fw-500">Artist name:</span> <Link className="color-white">{currentImage.artist.name}</Link>
       </div>
     );
   }

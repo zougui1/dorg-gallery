@@ -7,18 +7,17 @@ import './ColorPanel.scss';
 
 import swatches from '../ColorPanel/swatches';
 import PanelSlider from '../PanelSlider';
-import uploaderState from '../../../../../../store/states/uploader';
 import show from '../../../../../../containers/show';
 
 const FaEraser = show(_FaEraser);
 
-const mapStateToProps = mapDynamicState('uploader: canvasData imageData inputs labels imagesToUpload');
-const mapDispatchToProps = mapDynamicDispatch(uploaderState.actions, 'setCanvasData resetReducer');
+const mapStateToProps = mapDynamicState('uploader: canvasData');
+const mapDispatchToProps = mapDynamicDispatch('uploader: canvasData');
 
 class ColorPanel extends React.Component {
 
   state = {
-    alpha: this.props.canvasData.alpha
+    alpha: this.props.canvasData.get.alpha
   };
 
   /**
@@ -26,10 +25,10 @@ class ColorPanel extends React.Component {
    * @param {Object} newData
    */
   updateCanvasData = newData => {
-    const { canvasData, setCanvasData } = this.props;
+    const { canvasData } = this.props;
 
-    setCanvasData({
-      ...canvasData,
+    canvasData.set({
+      ...canvasData.get,
       ...newData
     });
   }
@@ -45,16 +44,16 @@ class ColorPanel extends React.Component {
     if (e) {
       // erase isn't a color but the context action
       if (color !== 'erase') {
-        canvasData.color = color;
-        canvasData.contextAction = 'draw';
+        canvasData.get.color = color;
+        canvasData.get.contextAction = 'draw';
       } else {
-        canvasData.contextAction = 'erase';
+        canvasData.get.contextAction = 'erase';
       }
     }
 
     // change the alpha
-    let newColor = canvasData.color.replace(/[0-1]+([.][0-9]*)?\)$/, alpha + ')');
-    canvasData.color = newColor;
+    let newColor = canvasData.get.color.replace(/[0-1]+([.][0-9]*)?\)$/, alpha + ')');
+    canvasData.get.color = newColor;
 
     this.updateCanvasData(canvasData);
   }
@@ -67,7 +66,7 @@ class ColorPanel extends React.Component {
     const { canvasData } = this.props;
 
     this.setState({ alpha: value });
-    canvasData.alpha = value;
+    canvasData.get.alpha = value;
 
     this.onColorUpdate();
   }
@@ -80,13 +79,13 @@ class ColorPanel extends React.Component {
   getUnifiedColor = color => {
     const { canvasData } = this.props;
 
-    if (canvasData.contextAction === 'draw') {
+    if (canvasData.get.contextAction === 'draw') {
       if (color.indexOf('rgba') >= 0) {
         color = color.replace(/ /g, '').substring(0, color.lastIndexOf(','));
         color += ',1)';
       }
     } else {
-      color = canvasData.contextAction;
+      color = canvasData.get.contextAction;
     }
 
     return color;
@@ -96,7 +95,7 @@ class ColorPanel extends React.Component {
     const { canvasData } = this.props;
     const { alpha } = this.state;
 
-    const color = this.getUnifiedColor(canvasData.color, true);
+    const color = this.getUnifiedColor(canvasData.get.color, true);
 
     return (
       <React.Fragment>

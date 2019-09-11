@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Grid from '@material-ui/core/Grid';
@@ -9,6 +10,7 @@ import { mapDynamicState } from 'dynamic-redux';
 
 import Auth from '../../../services/Auth';
 import Menu from './Menu';
+import './Navbar.scss';
 
 const mapStateToProps = mapDynamicState('auth: user');
 
@@ -18,7 +20,11 @@ class Navbar extends React.Component {
     const { user } = this.props;
 
     return (
-      <AppBar position="fixed" className="bg-color-blue" id="Navbar">
+      <AppBar
+        position="fixed"
+        className="navbar"
+        id="Navbar"
+      >
         <Toolbar>
           <Grid container justify="space-between" alignItems="center">
             <Grid item>

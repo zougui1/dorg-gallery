@@ -1,5 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
+import classNames from 'classnames';
 
 import OverrideReactElement from '../OverrideReactElement';
 
@@ -34,12 +35,12 @@ class ImageContainer extends React.Component {
   }
 
   render() {
-    const { children } = this.props;
+    const { children, className } = this.props;
 
     const SubContainer = this.getSubContainer();
 
     return (
-      <div className="image-container">
+      <div className={classNames('image-container', className)}>
         <SubContainer>
           <OverrideReactElement onLoad={this.loadHandler}>
             {children}

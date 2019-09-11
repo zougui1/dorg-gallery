@@ -25,9 +25,7 @@ class OverrideReactElement extends React.Component {
    * @returns {String}
    */
   getUniqueKey = (children, i) => {
-    const { fileName, lineNumber } = children._source;
-
-    return fileName + ':' + lineNumber + '-' + i;
+    return i;
   }
 
   /**

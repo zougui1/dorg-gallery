@@ -1,8 +1,10 @@
-const inArray = (needle, haystack) => {
-  for (let i = 0, len = haystack.length; i < len; i++) {
-    if(haystack[i].toLowerCase() === needle.toLowerCase()) return true;
-  }
-  return false;
+/**
+ * remove all useless spaces within an array of strings
+ * @param {String[]} array
+ * @returns {String[]}
+ */
+const removeSpaces = array => {
+  return array.map(str => str.trim()).filter(str => str);
 }
 
-exports.inArray = inArray;
+exports.removeSpaces = removeSpaces;

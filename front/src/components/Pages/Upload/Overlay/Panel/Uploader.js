@@ -3,7 +3,6 @@ import _Button from '@material-ui/core/Button';
 import { connect } from 'react-redux';
 import { mapDynamicState, mapDynamicDispatch } from 'dynamic-redux';
 
-import uploaderState from '../../../../../store/states/uploader';
 import show from '../../../../../containers/show';
 import socket from '../../Uploader/socket';
 import Loader from '../../../../Partials/Loader';
@@ -14,13 +13,14 @@ const mapStateToProps = mapDynamicState({
   uploader: 'canvasData imageData inputs labels imagesToUpload',
   auth: 'user'
 });
-const mapDispatchToProps = mapDynamicDispatch(uploaderState.actions, 'setCanvasData setImagesToUpload resetReducer');
+const mapDispatchToProps = mapDynamicDispatch('uploader: canvasData imagesToUpload');
 
 class Uploader extends React.Component {
 
   state = {
     loader: {
       loading: false,
+      redirection: '/',
       success: false,
       error: false,
       errorMessage: '',
@@ -38,9 +38,9 @@ class Uploader extends React.Component {
    * update the variable 'canvasData' in the store
    */
   updateCanvasData = () => {
-    const { canvasData, setCanvasData } = this.props;
+    const { canvasData } = this.props;
 
-    setCanvasData(canvasData);
+    canvasData.set(canvasData.get);
   }
 
   /**
@@ -56,7 +56,12 @@ class Uploader extends React.Component {
    * is called when the user click on the upload button
    */
   uploadHanler = () => {
-    this.setState({ loader: { loading: true }, uploading: true });
+    this.setState({
+      loader: {
+        ...this.state.loader,
+        loading: true
+      }, uploading: true
+    });
 
     this.setImagesToUpload();
 
@@ -67,29 +72,29 @@ class Uploader extends React.Component {
    * is used to set the existing layers into na object as image to upload
    */
   setImagesToUpload = () => {
-    let { imagesToUpload, setImagesToUpload, canvasData } = this.props;
+    let { imagesToUpload, canvasData } = this.props;
 
     const textCanvas = this.createTextCanvas();
     const drawingCanvas = this.getDrawingCanvas();
 
     // drawingCanvas may not exist
     if (drawingCanvas) {
-      imagesToUpload.draw = drawingCanvas.toDataURL();
+      imagesToUpload.get.draw = drawingCanvas.toDataURL();
     } else {
       // we set in the canvasData that there is no drawing
-      canvasData.hasDrawingCanvas = false;
+      canvasData.get.hasDrawingCanvas = false;
     }
 
     // textCanvas may not exist
     if (textCanvas) {
-      imagesToUpload.text = textCanvas.toDataURL();
+      imagesToUpload.get.text = textCanvas.toDataURL();
     } else {
       // we set in the canvasData that there is no text
-      canvasData.hasTextCanvas = false;
+      canvasData.get.hasTextCanvas = false;
     }
 
     this.updateCanvasData();
-    setImagesToUpload(imagesToUpload);
+    imagesToUpload.set(imagesToUpload.get);
   }
 
   /**
@@ -97,14 +102,15 @@ class Uploader extends React.Component {
    */
   getDrawingCanvas = () => {
     const { canvasData } = this.props;
-    const { width, height } = canvasData.imageBounds;
+    const { width, height } = canvasData.get.imageBounds;
 
     const pixelBuffer = new Uint32Array(
-      canvasData.context.getImageData(0, 0, width, height).data.buffer
+      canvasData.get.context.getImageData(0, 0, width, height).data.buffer
     );
 
-    if (!pixelBuffer.some(color => color !== 0)) {
-      return canvasData.canvas;
+
+    if (pixelBuffer.some(color => color !== 0)) {
+      return canvasData.get.canvas;
     }
   }
 
@@ -120,7 +126,7 @@ class Uploader extends React.Component {
       return;
     }
 
-    const { width, height } = canvasData.imageBounds;
+    const { width, height } = canvasData.get.imageBounds;
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
 
@@ -159,8 +165,8 @@ class Uploader extends React.Component {
   upload = () => {
     setTimeout(() => {
       const { imagesToUpload , canvasData, user } = this.props;
-      const { hasTextCanvas, hasDrawingCanvas } = canvasData;
-      const { draw, text } = imagesToUpload;
+      const { hasTextCanvas, hasDrawingCanvas } = canvasData.get;
+      const { draw, text } = imagesToUpload.get;
 
       // 1 image have to be uploaded
       const upload1Image = !draw && !text && !hasTextCanvas && !hasDrawingCanvas;
@@ -176,12 +182,12 @@ class Uploader extends React.Component {
       // 3 images have to be uploaded
       const upload3Images = draw && text && hasTextCanvas;
 
-      console.log(canvasData);
-      console.log(imagesToUpload);
+      console.log(canvasData.get);
+      console.log(imagesToUpload.get);
       if (upload1Image || upload2Images || upload3Images) {
         console.log('uploading');
         const { imageData } = this.props;
-        const images = { ...imageData, ...imagesToUpload, user };
+        const images = { ...imageData, ...imagesToUpload.get, user };
 
         socket.Emit.uploadImage(images);
         socket.On.imageUploaded(this.imageUploaded);
@@ -192,8 +198,18 @@ class Uploader extends React.Component {
     }, 1000);
   }
 
-  imageUploaded = () => this.setState({ loader: { success: true } });
-  imageUploadFailed = () => this.setState({ loader: { error: true } });
+  imageUploaded = () => this.setState({
+    loader: {
+      ...this.state.loader,
+      success: true
+    }
+  });
+  imageUploadFailed = () => this.setState({
+    loader: {
+      ...this.state.loader,
+      error: true
+    }
+  });
 
   render() {
     const { uploading, loader } = this.state;

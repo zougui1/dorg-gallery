@@ -4,8 +4,9 @@ import Form from 'dynamic-form';
 
 import './Signup.scss';
 
-import Field from '../../Partials/Field';
+import Input from '../../Partials/Input';
 import Loader from '../../Partials/Loader';
+import Section from '../../Partials/Section';
 import Auth from '../../../services/Auth';
 import * as socket from './socket';
 
@@ -74,18 +75,22 @@ class Signup extends React.Component {
 
     return (
       <Grid container className="text-center Signup" justify="center">
-        <Form
-          onSubmit={this.submit}
-          field={Field}
-          title="Signup"
-          fields={['username', 'password', 'confirmPassword']}
-          submitText="Signup"
-          errorMessage=""
-        >
-          <Grid container className="mt-2" justify="center">
-            <Loader {...loader} successMessage="Your account has been created" />
+        <Section md={8}>
+          <Grid container className="text-center Signup" justify="center">
+            <Form
+              onSubmit={this.submit}
+              field={Input.Override}
+              title="Signup"
+              fields={['username', 'password', 'confirmPassword']}
+              submitText="Signup"
+              errorMessage=""
+            >
+              <Grid container className="mt-2" justify="center">
+                <Loader {...loader} successMessage="Your account has been created" />
+              </Grid>
+            </Form>
           </Grid>
-        </Form>
+        </Section>
       </Grid>
     );
   }

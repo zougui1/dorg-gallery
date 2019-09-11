@@ -27,6 +27,7 @@ export interface ImageModel extends CoreModel {
   artist: Artist;
   characterName: string;
   user: UserModel;
+  title: string;
   description: string;
   createdOn: Date;
 }

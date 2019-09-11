@@ -1,4 +1,5 @@
 import React from 'react';
+import _ from 'lodash';
 import { Grid } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { mapDynamicState } from 'dynamic-redux';
@@ -24,6 +25,10 @@ class Displayer extends React.Component {
    */
   getImgSize = (img, useOffsetSize) => {
     let width, height;
+
+    if (!_.isObject(img)) {
+      return { width: 0, height: 0 };
+    }
 
     if (useOffsetSize) {
       width = img.offsetWidth;

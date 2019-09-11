@@ -1,7 +1,11 @@
 import mongoose from 'mongoose';
-import autopopulate from 'mongoose-autopopulate';
 
 const imageSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    trim: true,
+    maxlength: 150
+  },
   link: {
     type: String,
     required: true,
@@ -48,20 +52,13 @@ const imageSchema = new mongoose.Schema({
       trim: true
     },
   },
-  characterName: {
-    type: String,
-    trim: true,
-    maxlength: 60,
-    default: 'unknown'
-  },
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
   },
   description: {
-    type: String,
-    maxlength: 5000
+    type: String
   },
   createdAt: {
     type: Date,
@@ -69,7 +66,6 @@ const imageSchema = new mongoose.Schema({
   }
 });
 
-//imageSchema.plugin(autopopulate);
 const Image = mongoose.model('Image', imageSchema);
 
 export {

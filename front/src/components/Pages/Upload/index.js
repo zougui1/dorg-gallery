@@ -4,10 +4,9 @@ import { mapDynamicState, mapDynamicDispatch } from 'dynamic-redux';
 
 import Uploader from './Uploader';
 import Overlay from './Overlay';
-import uploaderState from '../../../store/states/uploader';
 
 const mapStateToProps = mapDynamicState('uploader: formView');
-const mapDispatchToProps = mapDynamicDispatch(uploaderState.actions, 'resetReducer');
+const mapDispatchToProps = mapDynamicDispatch('uploader: resetReducer');
 
 class Upload extends React.Component {
 
@@ -18,7 +17,7 @@ class Upload extends React.Component {
 
   componentDidMount() {
     // reset the reducer before doing anything
-    this.props.resetReducer();
+    //this.props.resetReducer();
   }
 
   render() {

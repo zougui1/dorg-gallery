@@ -1,5 +1,11 @@
 "use strict";
 
+var _lodash = _interopRequireDefault(require("lodash"));
+
+var _utils = require("./utils");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
@@ -8,75 +14,80 @@ function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = 
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
-var mapDynamicState = function mapDynamicState(stateList) {
-  return function (state) {
-    if (!state) return false;
+/**
+ * puts the props of the `state` into `newState` based on the `_props` passed
+ * @param {String} _props
+ * @param {Object} state
+ * @param {Object} newState
+ */
+var mapString = function mapString(_props, state, newState) {
+  var stateParts = (0, _utils.removeSpaces)(_props.split(':'));
 
-    if (!stateList) {
-      console.warn('mapDynamicState: didn\'t received the wanted props from the state');
+  if (stateParts.length < 2) {
+    throw new Error('The props aren\'t specified within a state');
+  }
+
+  var _stateParts = _slicedToArray(stateParts, 2),
+      reducerName = _stateParts[0],
+      propsStr = _stateParts[1];
+
+  var props = (0, _utils.removeSpaces)(propsStr.split(/\s/g));
+  var reducer = reducerName + 'Reducer';
+  props.forEach(function (prop) {
+    return newState[prop] = state[reducer][prop];
+  });
+};
+/**
+ * puts the props of the `state` into `newState` based on the `reducers` passed
+ * @param {Object} reducers
+ * @param {Object} state
+ * @param {Object} newState
+ */
+
+
+var mapObject = function mapObject(reducers, state, newState) {
+  _lodash.default.forIn(reducers, function (props, reducerName) {
+    var propList = reducerName + ': ';
+
+    if (Array.isArray(props)) {
+      propList += props.join(' ');
+    } else if (_lodash.default.isString(props)) {
+      propList += props;
+    } else {
+      throw new Error("The props must be either an array or a string. Got \"".concat(props, "\""));
+    }
+
+    mapString(propList, state, newState);
+  });
+};
+/**
+ * returns the properties from an object based on the props passed in parameter
+ * @param {String | Object} props
+ * @returns {Function}
+ */
+
+
+function mapDynamicState(props) {
+  return function (state) {
+    if (!props) {
+      console.warn('The wanted props are not specified');
       return {};
     }
 
-    var tempState = {};
+    var newState = {};
+    var mapper;
 
-    if (typeof stateList === 'string') {
-      var stateParts = stateList.split(':').map(function (str) {
-        return str.trim();
-      });
-
-      if (stateParts.length < 2) {
-        console.error(new Error("mapDynamicState: should be used with \"reducerName: propName\", instead received:\n\"".concat(stateList, "\"")));
-        return false;
-      }
-
-      var _stateParts = _slicedToArray(stateParts, 2),
-          reducerName = _stateParts[0],
-          propsStr = _stateParts[1];
-
-      var props = propsStr.split(/\s/);
-      props.forEach(function (prop) {
-        if (state["".concat(reducerName, "Reducer")]) tempState[prop] = state["".concat(reducerName, "Reducer")][prop];else console.warn("mapDynamicState: There is no props called \"".concat(reducerName, "Reducer\" in the state"));
-      });
-    } else if (stateList.constructor.name === 'Object') {
-      var _loop = function _loop(_reducerName) {
-        if (stateList.hasOwnProperty(_reducerName)) {
-          var propsTemp = stateList[_reducerName];
-          var _props = [];
-
-          if (Array.isArray(propsTemp)) {
-            propsTemp = propsTemp.map(function (str) {
-              return str.trim();
-            });
-            var dirtyArr = propsTemp.map(function (str) {
-              return str.split(/\s/);
-            });
-            dirtyArr.forEach(function (str) {
-              if (typeof str === 'string') _props.push(str);else if (Array.isArray(str)) str.forEach(function (str) {
-                return _props.push(str);
-              });
-            });
-          } else if (typeof propsTemp === 'string') {
-            propsTemp = propsTemp.trim();
-            _props = propsTemp.split(/\s/);
-          } else {
-            console.error(new Error("mapDynamicState: The element in an object in mapDynamicState must be of type Array or String, instead received the type \"".concat(propsTemp.constructor.name, "\"")));
-          }
-
-          _props.forEach(function (prop) {
-            if (state["".concat(_reducerName, "Reducer")]) tempState[prop] = state["".concat(_reducerName, "Reducer")][prop];else console.warn("mapDynamicState: There is no props called \"".concat(_reducerName, "Reducer\" in the state"));
-          });
-        }
-      };
-
-      for (var _reducerName in stateList) {
-        _loop(_reducerName);
-      }
+    if (_lodash.default.isString(props)) {
+      mapper = mapString;
+    } else if (_lodash.default.isObject(props)) {
+      mapper = mapObject;
     } else {
-      console.error(new Error("mapDynamicState: The element in mapDynamicState must be of type Object or String, instead received the type \"".concat(stateList.constructor.name, "\"")));
+      throw new Error("The props must be either a string or an object. Got \"".concat(props, "\""));
     }
 
-    return tempState;
+    mapper(props, state, newState);
+    return newState;
   };
-};
+}
 
 module.exports = mapDynamicState;

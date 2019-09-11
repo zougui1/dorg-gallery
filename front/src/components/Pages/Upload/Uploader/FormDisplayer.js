@@ -11,7 +11,7 @@ class FormDisplayer extends React.Component {
     artistLink: '',
     tags: [],
     withOverlay: false,
-    rate: '',
+    rate: 'general',
     image: null,
     step: 1,
   }

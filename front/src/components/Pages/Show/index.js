@@ -1,19 +1,17 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { mapDynamicState, mapDynamicDispatch } from 'dynamic-redux';
+import { mapDynamicDispatch } from 'dynamic-redux';
 
-import galleryState from '../../../store/states/gallery';
 import Gallery from '../../Partials/Gallery';
 import * as socket from '../../Partials/Gallery/Image/socket';
 
-const mapStateToProps = mapDynamicState('gallery: currentImage showOverlay');
-const mapDispatchToProps = mapDynamicDispatch(galleryState.actions, 'setCurrentImage setShowOverlay');
+const mapDispatchToProps = mapDynamicDispatch('gallery: currentImage');
 
 class Show extends React.Component {
 
   componentDidMount() {
-    const { match, setCurrentImage } = this.props;
-    socket.On.sendImage(data => setCurrentImage(data.image));
+    const { match, currentImage } = this.props;
+    socket.On.sendImage(data => currentImage.set(data.image));
 
     if (match.params.id) {
       this.request();
@@ -29,8 +27,8 @@ class Show extends React.Component {
   }
 
   componentWillUnmount() {
-    const { setCurrentImage } = this.props;
-    socket.Remove.sendImage(data => setCurrentImage(data.image));
+    const { currentImage } = this.props;
+    socket.Remove.sendImage(data => currentImage.set(data.image));
   }
 
   request = () => {
@@ -54,4 +52,4 @@ class Show extends React.Component {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Show);
+export default connect(null, mapDispatchToProps)(Show);

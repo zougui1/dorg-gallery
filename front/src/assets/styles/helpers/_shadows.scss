@@ -1,0 +1,20 @@
+@import '../mixins/shadows';
+
+$i: 0;
+$max-elevation: 24;
+
+@while $i <= $max-elevation {
+  .z-elevation-#{$i} {
+    @include mat-elevation($i);
+  }
+
+  .z-elevation-#{$i}-hover:hover {
+    @include mat-elevation($i);
+  }
+
+  $i: $i + 1;
+}
+
+.shadow-trans {
+  transition: box-shadow .2s;
+}

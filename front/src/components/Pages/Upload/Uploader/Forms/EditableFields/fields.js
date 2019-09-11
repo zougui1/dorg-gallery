@@ -16,4 +16,10 @@ export const fields = [
     name: 'tags',
     label: 'Keywords',
   },
+  {
+    name: 'description',
+    label: 'Description',
+    multiline: true,
+    rows: 5,
+  }
 ];

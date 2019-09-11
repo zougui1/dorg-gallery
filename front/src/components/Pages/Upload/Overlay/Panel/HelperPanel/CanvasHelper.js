@@ -9,10 +9,13 @@ const CanvasHelper = ({ onClose, open }) => (
     aria-labelledby="simple-dialog-title"
     open={open}
     onClose={onClose}
+    PaperProps={{
+      className: 'bg-color-grey-darken-3 color-grey-lighten-4'
+    }}
   >
     <Dialog.Title closer>Tutorial</Dialog.Title>
     <Dialog.ContentText textProps={{ component: 'div' }}>
-      <div className="text-content">
+      <div className="text-content color-grey-lighten-1">
         <span className="subtitle">You can:</span>
         <ul>
           <li>

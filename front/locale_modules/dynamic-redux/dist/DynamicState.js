@@ -1,174 +1,221 @@
 "use strict";
 
-var _utils = require("./utils");
+var _lodash = _interopRequireDefault(require("lodash"));
 
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+var _Actions = _interopRequireDefault(require("./Actions"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var DynamicState = function DynamicState(stateName, initialState) {
-  var _this = this;
+var DynamicState =
+/*#__PURE__*/
+function () {
+  /**
+   * @property {String} name
+   * @private
+   */
 
-  _classCallCheck(this, DynamicState);
+  /**
+   * @property {Object} initialState
+   * @private
+   */
 
-  _defineProperty(this, "actions", {});
+  /**
+   * @property {Object} actions
+   * @public
+   */
 
-  _defineProperty(this, "reducerConditions", []);
+  /**
+   * @property {Array} reducerConditions
+   * @private
+   */
 
-  _defineProperty(this, "stateName", '');
+  /**
+   * @property {Function} reducer
+   * @function
+   * @public
+   */
 
-  _defineProperty(this, "capitalize", function (str) {
-    return str.charAt(0).toUpperCase() + str.substring(1);
-  });
+  /**
+   * @property {String} resetType
+   * @private
+   */
 
-  _defineProperty(this, "camelCasify", function (str) {
-    str = str.toLowerCase().split('set_');
-    str = str[1] || str[0];
-    return str.split(/[_-]/g).map(function (str, i) {
-      return i > 0 ? _this.capitalize(str) : str;
-    }).join('');
-  });
+  /**
+   * @param {String} name
+   * @param {Object} initialState
+   */
+  function DynamicState(name, initialState) {
+    var _this = this;
 
-  _defineProperty(this, "dynamicReducer", function (state, action, typesAndProps) {
-    if (action.type === 'RESET_' + _this.stateName.toUpperCase() + '_REDUCER') return _this.initialState;
-    var tempState = {};
+    _classCallCheck(this, DynamicState);
 
-    for (var key in state) {
-      if (state.hasOwnProperty(key)) tempState[key] = state[key];
-    }
+    _defineProperty(this, "name", '');
 
-    typesAndProps.forEach(function (_ref) {
-      var type = _ref.type,
-          prop = _ref.prop;
+    _defineProperty(this, "initialState", {});
 
-      if (type === action.type) {
-        prop = prop || _this.camelCasify(type);
-        if (!(0, _utils.inArray)(prop, Object.keys(state)) && !action.multi) console.error(new Error("Received \"".concat(prop, "\" as prop but it doesn't exists in the state")));
-        if (!action.multi) tempState[prop] = action.payload;else if (action.multi && _typeof(action.payload) === 'object') {
-          for (var _key in action.payload) {
-            if (action.payload.hasOwnProperty(_key)) {
-              var value = action.payload[_key];
-              tempState[_key] = value;
-            }
-          }
-        }
+    _defineProperty(this, "actions", {});
+
+    _defineProperty(this, "reducerConditions", []);
+
+    _defineProperty(this, "reducer", function () {});
+
+    _defineProperty(this, "resetType", '');
+
+    _defineProperty(this, "dynamicReducer", function (state, action) {
+      if (action.type === _this.resetType) {
+        return _this.initialState;
       }
+
+      var newState = _lodash.default.cloneDeep(state);
+
+      _this.reducerConditions.forEach(function (_ref) {
+        var type = _ref.type,
+            prop = _ref.prop;
+
+        if (type !== action.type) {
+          return;
+        }
+
+        switch (action.kind) {
+          case 'set':
+            newState[prop] = action.payload;
+            break;
+
+          case 'push':
+          case 'pop':
+          case 'shift':
+          case 'unshift':
+            _Actions.default.array(newState, action, prop);
+
+            break;
+
+          case 'concat':
+            newState[prop] = _Actions.default.arrayWithArray(newState, action, prop);
+            break;
+
+          case 'filter':
+          case 'map':
+          case 'reduce':
+            newState[prop] = _Actions.default.arrayWithFunction(newState, action, prop);
+            break;
+
+          case 'merge':
+            newState[prop] = _Actions.default.objectWithObject(newState, action, prop);
+            break;
+
+          case 'inc':
+          case 'dec':
+            newState[prop] = _Actions.default.numberWithNumber(newState, action, prop);
+            break;
+
+          default:
+            break;
+        }
+      });
+
+      return newState;
     });
-    return tempState;
-  });
 
-  _defineProperty(this, "createAction", function (action) {
-    return function (value) {
-      var type, multi;
-      if (typeof action === 'string') type = action;else {
-        type = action.type;
-        multi = action.multi;
-      }
-      return {
-        type: type,
-        payload: value,
-        multi: multi
-      };
-    };
-  });
-
-  _defineProperty(this, "dynamicActions", function (actions) {
-    for (var actionName in actions) {
-      if (actions.hasOwnProperty(actionName)) {
-        var action = actions[actionName];
-        _this.actions[actionName] = _this.createAction(action);
-      }
-    }
-  });
-
-  _defineProperty(this, "createState", function (options) {
-    options.resetReducer = 'RESET_' + _this.stateName.toUpperCase() + '_REDUCER';
-    var actions = {};
-    var reducerConditions = [];
-
-    for (var actionName in options) {
-      if (options.hasOwnProperty(actionName)) {
-        var type = void 0,
-            prop = void 0,
-            multi = void 0;
-        var action = options[actionName];
-        if (typeof options[actionName] === 'string') type = action;else {
-          type = action.type;
-          prop = action.prop;
-          multi = action.multi;
+    _defineProperty(this, "createAction", function (action) {
+      var actions = {};
+      action.kinds.forEach(function (kind) {
+        if (!_lodash.default.isString(kind)) {
+          throw new Error("The kind of action must be a string. Got \"".concat(kind, "\""));
         }
-        actions[actionName] = {
+
+        actions[kind] = _this.actionCreator({
+          name: action.name,
+          kind: kind,
+          prop: action.prop
+        });
+      });
+      _this.actions[action.name] = actions;
+    });
+
+    _defineProperty(this, "actionCreator", function (action) {
+      var type = action.kind === 'reset' ? _this.resetType : action.kind.toUpperCase() + '_' + _lodash.default.snakeCase(action.name).toUpperCase();
+
+      _this.reducerConditions.push({
+        type: type,
+        prop: action.prop
+      });
+
+      return function (value) {
+        return {
           type: type,
-          multi: multi
+          payload: value,
+          kind: action.kind
         };
-        reducerConditions.push({
-          type: type,
+      };
+    });
+
+    if (!_lodash.default.isString(name)) {
+      throw new Error("The name must be a string. Got \"".concat(name, "\""));
+    }
+
+    if (!_lodash.default.isObject(initialState)) {
+      throw new Error("The initial state must be an object. Got \"".concat(initialState, "\""));
+    }
+
+    this.name = name;
+    this.resetType = 'RESET_' + name.toUpperCase() + '_REDUCER';
+    this.initialState = initialState;
+
+    this.reducer = function () {
+      var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initialState;
+      var action = arguments.length > 1 ? arguments[1] : undefined;
+      return _this.dynamicReducer(state, action);
+    };
+  }
+  /**
+   * @param {Object} state
+   * @param {Object} action
+   * @returns {Object}
+   * @private
+   */
+
+
+  _createClass(DynamicState, [{
+    key: "createReducer",
+
+    /**
+     * @param {Object} _actions
+     * @public
+     */
+    value: function createReducer(_actions) {
+      var _this2 = this;
+
+      _lodash.default.forIn(_actions, function (action, actionName) {
+        var prop = _lodash.default.camelCase(actionName);
+
+        if (prop !== 'resetReducer' && !_lodash.default.hasIn(_this2.initialState, prop)) {
+          throw new Error("\"".concat(prop, "\" doesn't exists in the state of \"").concat(_this2.name, "\""));
+        }
+
+        if (_lodash.default.isString(action)) {
+          action = [action];
+        } else if (!Array.isArray(action)) {
+          throw new Error("The kind of action must be a string or an array. Got \"".concat(action, "\""));
+        }
+
+        _this2.createAction({
+          name: actionName,
+          kinds: action,
           prop: prop
         });
-      }
+      });
     }
+  }]);
 
-    _this.reducerConditions = reducerConditions;
+  return DynamicState;
+}();
 
-    _this.dynamicActions(actions);
-  });
-
-  if (typeof stateName === 'string') {
-    this.stateName = stateName;
-  } else {
-    initialState = stateName;
-  }
-
-  this.initialState = initialState;
-
-  this.reducer = function () {
-    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initialState;
-    var action = arguments.length > 1 ? arguments[1] : undefined;
-    return _this.dynamicReducer(state, action, _this.reducerConditions);
-  };
-};
-
-module.exports = DynamicState; // the props are the actions's name, their values are either a string that is the action's type
-// either an object that can have 3 values
-
-/*
- * type {string} = action's type
- * prop {string} = the prop that will be repleiced in the state; default = camelcasified type without 'set'
- * multi {boolean} = set if there's several props that should be modified; default = false
-*/
-
-/* example:
- * (init)
- * setImages: {
- *  type: 'SET_IMAGES',
- *  prop: 'images'
- * }
- * will results by:
- * (in reducer)
- * case 'SET_IMAGES':
- *  return {
- *    ...state,
- *    images: action.payload, // payload is the prob that contains the value
- *  }
- * (action's usage)
- * setImage('value');
- *
- * (init)
- * setImages: {
- *   type: 'SET_IMAGES',
- *   multi: true
- * }
- * will results by:
- * (in reducer)
- * case 'SET_IMAGES':
- *  return {
- *    ...state,
- *    something: action.payload.something,
- *    somethingElse: action.payload.somethingElse,
- *    anotherProp: action.payload.anotherProp,
- *  }
- * (action's usage)
- * setImages({ something: 'val', somethingElse: 'val', anotherProp: 'val' });
-*/
+module.exports = DynamicState;

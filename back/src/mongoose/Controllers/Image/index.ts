@@ -27,7 +27,7 @@ export const ImageController: IImageController = class ImageController {
    * @param {String} destructured.description description of the image
    * @returns {Promise<Document>}
    */
-  public static add: Add = ({ link, thumb, canvas, tags, rate, artist, characterName, user, description }) => {
+  public static add: Add = ({ link, thumb, canvas, tags, rate, artist, user, description, title }) => {
     debug.mongoose('%o has been called', 'ImageController.add');
 
     const image = new Image({
@@ -44,9 +44,9 @@ export const ImageController: IImageController = class ImageController {
         name: artist.name || 'unknown',
         link: artist.link,
       },
-      characterName: characterName || 'unknown',
       user: user._id,
       description: description,
+      title: title,
     });
 
     return image.save();
@@ -103,7 +103,6 @@ export const ImageController: IImageController = class ImageController {
       // general query
       if (haveOverlays.includes(SearchOptions.HaveOverlays['*'])) {
         canvasQuery = {}; // reset the data it contains
-        canvasQuery.canvas = { $exists: true };
       }
 
       return canvasQuery;
@@ -123,7 +122,7 @@ export const ImageController: IImageController = class ImageController {
        *  - the character's name who is represented in the image
        */
       //tags: { $all: tags },
-      //user: searchOptions.match.userData._id,
+      user: searchOptions.match.userData._id,
       tags: { $all: tags },
       //'tags.name': { $ne: '*' }
       ...getCanvas(),

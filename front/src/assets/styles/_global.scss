@@ -34,3 +34,8 @@ hr.gradient {
   border-image-slice: 1;
   border-image-width: 1;
 }
+
+.border-gradient {
+  border-image: linear-gradient(to right, transparent -20%, currentcolor, transparent 120%);
+  border-image-slice: 1;
+}

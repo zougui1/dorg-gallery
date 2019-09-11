@@ -1,15 +1,15 @@
-import { combineReducers } from 'redux';
+import { CombineStates } from 'dynamic-redux';
 
 import galleryState from './gallery';
 import miscState from './misc';
 import authState from './auth';
 import uploaderState from './uploader';
 
-const reducers = combineReducers({
-  miscReducer: miscState.reducer,
-  uploaderReducer: uploaderState.reducer,
-  galleryReducer: galleryState.reducer,
-  authReducer: authState.reducer,
-});
+const states = new CombineStates([
+  galleryState,
+  miscState,
+  authState,
+  uploaderState,
+]);
 
-export default reducers;
+export default states;

@@ -10,6 +10,7 @@ import Signup from './components/Pages/Signup';
 import Login from './components/Pages/Login';
 import Gallery from './components/Pages/Gallery';
 import Show from './components/Pages/Show';
+import Profile from './components/Pages/Profile';
 //import Image from './components/Pages/Image';
 import NotFound from './components/Pages/NotFound';
 
@@ -22,10 +23,9 @@ const Router = () => (
     <Route exact path="/login" component={Login} />
     <Route exact path="/gallery/:user_slug/:page?" component={Gallery} />
     <Route exact path="/image/:id" component={Show} />
-    {/*<Route exact path="/gallery/:user_slug/:page" component={Gallery} />*/}
+    <Route exact path="/profile" component={Profile} />
     {/*<Route exact path="/user/:username" component={User} />
-    <Route exact path="/user/:username/:page" component={User} />
-    <Route exact path="/image/:id" component={Image} />*/}
+    <Route exact path="/user/:username/:page" component={User} />*/}
     <Route exact component={NotFound} />
   </Switch>
 );

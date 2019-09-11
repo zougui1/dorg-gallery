@@ -88,6 +88,9 @@ class Menu extends React.Component {
           anchorEl={menu}
           open={Boolean(menu)}
           onClose={this.handleClose}
+          MenuListProps={{
+            className: 'bg-color-grey-lighten-1'
+          }}
         >
           {this.getMenu()}
         </MuiMenu>
