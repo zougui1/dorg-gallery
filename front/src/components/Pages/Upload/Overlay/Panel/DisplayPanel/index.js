@@ -17,10 +17,7 @@ class DisplayPanel extends React.Component {
   updateCanvasData = newData => {
     const { canvasData } = this.props;
 
-    canvasData.set({
-      ...canvasData.get,
-      ...newData
-    });
+    canvasData.set(newData);
   }
 
   /**
@@ -31,14 +28,14 @@ class DisplayPanel extends React.Component {
 
     const overlayContainer = document.getElementById('overlay-container');
 
-    if (canvasData.get.displayInputs) { // hide the text
+    if (canvasData.get().displayInputs) { // hide the text
       overlayContainer.classList.add('hideInputs');
     } else { // show the text
       overlayContainer.classList.remove('hideInputs');
     }
 
     // update the value
-    this.updateCanvasData({ displayInputs: !canvasData.get.displayInputs });
+    this.updateCanvasData({ displayInputs: !canvasData.get().displayInputs });
   }
 
   /**
@@ -47,20 +44,20 @@ class DisplayPanel extends React.Component {
   displayMainLayer = () => {
     const { canvasData } = this.props;
 
-    if (canvasData.get.displayMainLayer) { // hide the drawing
-      canvasData.get.context.canvas.classList.add('d-none');
+    if (canvasData.get().displayMainLayer) { // hide the drawing
+      canvasData.get().context.canvas.classList.add('d-none');
     } else { // show the drawing
-      canvasData.get.context.canvas.classList.remove('d-none');
+      canvasData.get().context.canvas.classList.remove('d-none');
     }
 
     // update the value
-    this.updateCanvasData({ displayMainLayer: !canvasData.get.displayMainLayer });
+    this.updateCanvasData({ displayMainLayer: !canvasData.get().displayMainLayer });
   }
 
   // clear the whole canvas
   clearCanvas = () => {
     const { canvasData } = this.props;
-    const { context, imageBounds } = canvasData;
+    const { context, imageBounds } = canvasData.get();
 
     context.clearRect(0, 0, imageBounds.width, imageBounds.height);
   }
@@ -74,14 +71,14 @@ class DisplayPanel extends React.Component {
           <Checkbox
             label="Display text"
             name="displayInputs"
-            checked={canvasData.get.displayInputs}
+            checked={canvasData.get().displayInputs}
             onChange={this.displayInputs}
           />
 
           <Checkbox
             label="Display drawing"
             name="displayMainLayer"
-            checked={canvasData.get.displayMainLayer}
+            checked={canvasData.get().displayMainLayer}
             onChange={this.displayMainLayer}
           />
         </div>

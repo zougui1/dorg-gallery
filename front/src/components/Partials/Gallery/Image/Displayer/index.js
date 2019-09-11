@@ -10,7 +10,6 @@ import ImageContainer from '../../../ImageContainer';
 import './Image.scss';
 
 const mapStateToProps = mapDynamicState('gallery: currentImage showOverlay');
-//const mapDispatchToProps = mapDynamicDispatch(galleryState.actions, 'setImages setCurrentPage');
 
 class Displayer extends React.Component {
 

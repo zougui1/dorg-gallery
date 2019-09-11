@@ -45,10 +45,12 @@ class Displayer extends React.Component {
 
   render() {
     const { pageCount } = this.state;
-    let { images, currentPage } = this.props;
+    let { _images, currentPage } = this.props;
 
-    if (!_.isArray(images.get)) {
-      images.get = [];
+    let images = _images.get()
+
+    if (!_.isArray(images)) {
+      images = [];
     }
 
     return (
@@ -66,7 +68,7 @@ class Displayer extends React.Component {
               </Grid>
             </Hidden>
             <Grid item container direction="row" wrap="wrap" justify="center" className="px-2 mt-4">
-              {images.get.map(image => (
+              {images.map(image => (
                 <ImageContainer
                   className="z-elevation-3 z-elevation-7-hover shadow-trans"
                   subContainer={({ children }) => <Link to={'/image/' + image._id}>{children}</Link>}
@@ -79,7 +81,7 @@ class Displayer extends React.Component {
             <Grid item>
               <Pagination
                 onPageChange={this.handlePageChange}
-                currentPage={currentPage.get}
+                currentPage={currentPage.get()}
                 pageCount={pageCount}
               />
             </Grid>

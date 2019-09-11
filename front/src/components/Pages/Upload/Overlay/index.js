@@ -6,7 +6,7 @@ import Canvas from './Canvas';
 import Panel from './Panel';
 
 const mapStateToProps = mapDynamicState('uploader: imageData canvasData');
-const mapDispatchToProps = mapDynamicDispatch('uploader: imageData resetReducer');
+const mapDispatchToProps = mapDynamicDispatch('uploader: imageData canvasData');
 
 class Overlay extends React.Component {
 
@@ -25,14 +25,6 @@ class Overlay extends React.Component {
     document.body.addEventListener('click', this.handleModalClose);
   }
 
-  /**
-   * reset the reducer once the user is done with the overlay
-   */
-  componentWillUnmount() {
-    /*const { resetReducer } = this.props;
-    resetReducer();*/
-  }
-
   setImageSize = () => {
     const { imageData, canvasData } = this.props;
 
@@ -40,14 +32,12 @@ class Overlay extends React.Component {
       const imageBounds = this.img.getBoundingClientRect();
       this.setState({ imageBounds });
 
-      imageData.set({
-        ...imageData.get,
+      imageData.merge({
         width: imageBounds.width,
         height: imageBounds.height,
       });
 
-      canvasData.set({
-        ...canvasData.get,
+      canvasData.merge({
         context: this.canvas.getContext('2d'),
         imageBounds: imageBounds,
         canvas: this.canvas,
@@ -74,7 +64,7 @@ class Overlay extends React.Component {
 
     return (
       <div id="overlay-container">
-        <img className="draw-on" src={imageData.get.imageBase64} ref={e => this.img = e} alt="" />
+        <img className="draw-on" src={imageData.get().imageBase64} ref={e => this.img = e} alt="" />
         <Canvas />
 
         <Panel modalOpen={this.modalOpen} />

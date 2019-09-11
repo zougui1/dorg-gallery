@@ -17,7 +17,7 @@ class Upload extends React.Component {
 
   componentDidMount() {
     // reset the reducer before doing anything
-    //this.props.resetReducer();
+    this.props.resetReducer();
   }
 
   render() {

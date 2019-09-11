@@ -10,8 +10,8 @@ const mapDispatchToProps = mapDynamicDispatch('uploader: canvasData');
 class SizesPanel extends React.Component {
 
   state = {
-    fontSize: this.props.canvasData.get.fontSize,
-    eraseSize: this.props.canvasData.get.eraseSize,
+    fontSize: this.props.canvasData.get().fontSize,
+    eraseSize: this.props.canvasData.get().eraseSize,
   }
 
   /**
@@ -20,7 +20,7 @@ class SizesPanel extends React.Component {
   updateCanvasData = () => {
     const { canvasData } = this.props;
 
-    canvasData.set(canvasData.get);
+    canvasData.set(canvasData.get());
   }
 
   /**
@@ -37,7 +37,7 @@ class SizesPanel extends React.Component {
     this.setState({ [slider]: value });
 
     // we want to update the canvasData
-    canvasData.get[slider] = value;
+    canvasData.get()[slider] = value;
     this.updateCanvasData();
   }
 
@@ -58,9 +58,9 @@ class SizesPanel extends React.Component {
         />
 
         {
-          canvasData.get.contextAction === 'erase' && (
+          canvasData.get().contextAction === 'erase' && (
             <PanelSlider
-              show={canvasData.get.contextAction === 'erase'}
+              show={canvasData.get().contextAction === 'erase'}
               label="Erase size"
               name="eraseSize"
               value={eraseSize}

@@ -6,7 +6,7 @@ import { mapDynamicState, mapDynamicDispatch } from 'dynamic-redux';
 import CanvasField from '../../CanvasField';
 
 const mapStateToProps = mapDynamicState('uploader: canvasData inputs labels');
-const mapDispatchToProps = mapDynamicDispatch('uploader: canvasData inputs labels');
+const mapDispatchToProps = mapDynamicDispatch('uploader: inputs labels');
 
 class InputCreator extends React.Component {
 
@@ -15,49 +15,42 @@ class InputCreator extends React.Component {
   };
 
   /**
-   * update the variable 'canvasData' in the store
-   */
-  updateCanvasData = () => {
-    const { canvasData } = this.props;
-
-    canvasData.set(canvasData.get);
-  }
-
-  /**
    * create an input on the canvas
    */
   createInput = () => {
     const { inputId } = this.state;
     let { inputs, canvasData, labels } = this.props;
-    const { x, y } = canvasData.get.imageBounds;
+    const { x, y } = canvasData.imageBounds;
     const client = { x: x + 10, y: y + 10 };
 
     // avoid to use the references to their source (the store)
-    inputs.get = inputs.get.slice();
-    labels.get = labels.get.slice();
+    const newInputs = inputs.get().slice();
+    const newLabels = labels.get().slice();
 
     labels[inputId] = React.createRef();
-    console.log(labels.get);
-    labels.set(labels.get);
+    console.log(newLabels);
+    labels.set(newLabels);
 
     const field = (
       <CanvasField
         key={inputId}
         id={inputId}
         client={client}
-        currentCanvasData={canvasData.get}
+        currentCanvasData={canvasData}
       />
     );
 
     const input = {
       element: field,
       id: inputId,
-      label: labels.get[inputId]
+      label: newLabels[inputId],
+      currentCanvasData: canvasData,
+      value: ''
     };
 
-    inputs.get[inputId] = input;
+    newInputs[inputId] = input;
 
-    inputs.set(inputs);
+    inputs.set(newInputs);
     this.setState({ inputId: inputId + 1, lastInput: input })
   }
 

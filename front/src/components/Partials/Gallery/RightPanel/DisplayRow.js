@@ -28,7 +28,7 @@ class DisplayRow extends React.Component {
 
         <Checkbox.Multiple
             name="display"
-            value={showOverlay.get}
+            value={showOverlay.get()}
             data={[
               { label: 'Drawing', name: 'draw' },
               { label: 'Text', name: 'text' }

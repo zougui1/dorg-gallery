@@ -1,10 +1,15 @@
 "use strict";
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.mapDynamicDispatch = mapDynamicDispatch;
+
 var _lodash = _interopRequireDefault(require("lodash"));
 
 var _utils = require("./utils");
 
-var _mapDynamicState = _interopRequireDefault(require("./mapDynamicState"));
+var _2 = require(".");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -38,7 +43,10 @@ var createDispatch = function createDispatch(states, action, dispatch, store) {
     };
   });
 
-  newActions.get = (0, _mapDynamicState.default)("".concat(action.reducerName, ": ").concat(action.name))(store.getState());
+  newActions.get = function () {
+    return (0, _2.mapDynamicState)("".concat(action.reducerName, ": ").concat(action.name))(store.getState())[action.name];
+  };
+
   return newActions;
 };
 /**
@@ -68,7 +76,17 @@ var mapString = function mapString(_actions, dispatch, tempActions, states, stor
       throw new Error("The reducer \"".concat(reducerName, "\" doesn't exists"));
     }
 
-    if (action !== 'resetReducer' && !states[reducer].actions[action]) {
+    if (action === 'resetReducer') {
+      console.log(states[reducer].actions[action]);
+
+      tempActions[action] = function () {
+        return dispatch(states[reducer].actions[action].reset());
+      };
+
+      return;
+    }
+
+    if (!states[reducer].actions[action]) {
       throw new Error("The action \"".concat(action, "\" doesn't exists on the reducer \"").concat(reducerName, "\""));
     }
 
@@ -127,5 +145,3 @@ function mapDynamicDispatch(actions) {
     return tempActions;
   };
 }
-
-module.exports = mapDynamicDispatch;

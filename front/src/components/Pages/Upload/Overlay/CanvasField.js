@@ -7,17 +7,25 @@ const mapDispatchToProps = mapDynamicDispatch('uploader: labels inputs');
 
 class CanvasField extends React.Component {
 
+  state = {
+    currentCanvasData: this.props.currentCanvasData
+  }
+
   componentDidMount() {
-    let { inputs, labels } = this.props;
+    let { inputs, labels, currentCanvasData } = this.props;
+
+    this.setState({
+      currentCanvasData
+    });
 
     // set the label element in the array
-    const updatedLabels = labels.get.map((label, i) => {
+    const updatedLabels = labels.get().map((label, i) => {
       if (i === this.props.id) label = document.getElementById('label-' + this.props.id);
       return label;
     });
 
     // set the label element in the array
-    const updatedFields = inputs.get.map((field, i) => {
+    const updatedFields = inputs.get().map((field, i) => {
       if (i === this.props.id) field.label = document.getElementById('label-' + this.props.id);
       return field;
     });
@@ -25,10 +33,8 @@ class CanvasField extends React.Component {
     // update the labels and inputs
     labels.set(updatedLabels);
     inputs.set(updatedFields);
-  }
 
-  shouldComponentUpdate = nextProps => {
-    return nextProps.inputs.get !== this.props.inputs.get;
+    this.inputChangeHandler();
   }
 
   /**
@@ -53,27 +59,24 @@ class CanvasField extends React.Component {
    * is used to change the input's style with the style saved in the canvasData
    */
   onInputClick = e => {
-    const { inputs, setCanvasField, canvasData } = this.props;
+    const { inputs: _inputs, canvasData } = this.props;
     const id = +e.target.getAttribute('data-id');
 
-    for (let i = 0; i < inputs.get.length; i++) {
-      if (inputs.get[i].id !== id) {
+    const inputs = _inputs.get();
+
+    for (let i = 0; i < inputs.length; i++) {
+      if (inputs[i].id !== id) {
         continue;
       }
 
-      const label = inputs.get[i].label;
-      const input = label.childNodes[1];
+      const input = inputs[i];
 
-      // change the style of the field
-      input.style.color = canvasData.color;
-      label.style.color = canvasData.color;
-      input.style.borderColor = canvasData.color;
-      input.style.fontSize = canvasData.fontSize + 'px';
-      label.style.fontSize = canvasData.fontSize + 'px';
-      input.style.height = this.getHeight(canvasData.fontSize) + 'px';
+      input.currentCanvasData.color = canvasData.color;
+      input.currentCanvasData.fontSize = canvasData.fontSize;
+      input.currentCanvasData.height = this.getHeight(canvasData.fontSize) + 'px';
 
       // update the fields
-      setCanvasField(inputs.get);
+      _inputs.set(inputs);
       break;
     }
   }
@@ -82,18 +85,23 @@ class CanvasField extends React.Component {
    * is called when the value of an input change
    */
   inputChangeHandler = e => {
-    const { inputs } = this.props;
-    let { value } = e.target;
-    value = value.trim();
+    const { inputs: _inputs, id } = this.props;
 
-    const id = +e.target.getAttribute('data-id');
+    const inputs = _inputs.get();
 
-    for (let i = 0; i < inputs.get.length; i++) {
-      if (inputs.get[i].id !== id) {
+    for (let i = 0; i < inputs.length; i++) {
+      if (inputs[i].id !== id) {
         continue;
       }
 
-      let labelContent = inputs.get[i].label.childNodes[0];
+      const input = inputs[i];
+
+      let { value } = e ? e.target : input;
+      value = value.trim();
+
+      input.value = value;
+
+      let labelContent = input.label.childNodes[0];
 
       // if the input has text written in it we don't want the label to have content
       if (value.length > 0) {
@@ -102,6 +110,8 @@ class CanvasField extends React.Component {
         labelContent.textContent = 'Input';
       }
     }
+
+    _inputs.set(inputs);
   }
 
   /**
@@ -113,7 +123,8 @@ class CanvasField extends React.Component {
   }
 
   render() {
-    const { id, client, currentCanvasData } = this.props;
+    const { id, client, inputs } = this.props;
+    const { currentCanvasData, value } = inputs.get().find(i => i.id === id);
 
     return (
       <label
@@ -139,6 +150,7 @@ class CanvasField extends React.Component {
           }}
           className="canvas-input"
           onChange={this.inputChangeHandler}
+          value={value}
           //onFocus={this.focusInputHandler}
           //onBlur={this.blurInputHandler}
         />

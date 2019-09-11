@@ -1,5 +1,10 @@
 "use strict";
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.mapDynamicState = mapDynamicState;
+
 var _lodash = _interopRequireDefault(require("lodash"));
 
 var _utils = require("./utils");
@@ -89,5 +94,3 @@ function mapDynamicState(props) {
     return newState;
   };
 }
-
-module.exports = mapDynamicState;

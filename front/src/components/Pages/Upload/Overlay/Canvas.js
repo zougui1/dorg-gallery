@@ -28,7 +28,7 @@ class Canvas extends React.Component {
    * @param {Number} y
    */
   calculateRelativePosition = (x, y) => {
-    const { top, left } = this.props.canvasData.get.imageBounds;
+    const { top, left } = this.props.canvasData.get().imageBounds;
 
     return {
       x: x - left + window.pageXOffset,
@@ -54,9 +54,9 @@ class Canvas extends React.Component {
     x1 = pos.x;
     y1 = pos.y;
 
-    if (canvasData.get.contextAction === 'draw') {
+    if (canvasData.get().contextAction === 'draw') {
       this.drawLine(x0, y0, x1, y1);
-    } else if (canvasData.get.contextAction === 'erase') {
+    } else if (canvasData.get().contextAction === 'erase') {
       this.eraseArea(x0, y0);
     }
   }
@@ -70,7 +70,7 @@ class Canvas extends React.Component {
    */
   drawLine = (x0, y0, x1, y1) => {
     const { canvasData } = this.props;
-    const { context, lineWidth, color } = canvasData.get;
+    const { context, lineWidth, color } = canvasData.get();
 
     context.beginPath();
 
@@ -93,7 +93,7 @@ class Canvas extends React.Component {
    */
   eraseArea = (x, y) => {
     const { canvasData } = this.props;
-    const { context, eraseSize } = canvasData.get;
+    const { context, eraseSize } = canvasData.get();
 
     x -= eraseSize / 2;
     y -= eraseSize / 2;
@@ -108,12 +108,12 @@ class Canvas extends React.Component {
   mouseDownHandler = e => {
     const { canvasData } = this.props;
 
-    canvasData.get.x = e.clientX;
-    canvasData.get.y = e.clientY;
-    canvasData.get.drawing = true;
-
     // update the canvasData
-    canvasData.set(canvasData.get);
+    canvasData.merge({
+      x: e.clientX,
+      y: e.clientY,
+      drawing: true
+    });
   }
 
   /**
@@ -121,20 +121,18 @@ class Canvas extends React.Component {
    */
   mouseUpHandler = e => {
     const { canvasData } = this.props;
+    const _canvasData = canvasData.get();
 
     // if the user isn't drawing we don't want to do anything
-    if (!canvasData.get.drawing) {
+    if (!_canvasData.drawing) {
       return;
     }
 
     // update the canvasData
-    canvasData.set({
-      ...canvasData.get,
-      drawing: false,
-    });
+    canvasData.merge({ drawing: false });
 
     // do an action on the canvas
-    this.canvasAction(canvasData.get.x, canvasData.get.y, e.clientX, e.clientY);
+    this.canvasAction(_canvasData.x, _canvasData.y, e.clientX, e.clientY);
   }
 
   /**
@@ -142,19 +140,21 @@ class Canvas extends React.Component {
    */
   mouseMoveHandler = e => {
     const { canvasData } = this.props;
+    const _canvasData = canvasData.get();
 
     // if the user isn't drawing we don't want to do anything
-    if (!canvasData.get.drawing) {
+    if (!_canvasData.drawing) {
       return;
     }
 
     // do an action on the canvas
-    this.canvasAction(canvasData.get.x, canvasData.get.y, e.clientX, e.clientY);
-    canvasData.get.x = e.clientX;
-    canvasData.get.y = e.clientY;
+    this.canvasAction(_canvasData.x, _canvasData.y, e.clientX, e.clientY);
 
     // update the canvasData
-    canvasData.set(canvasData.get);
+    canvasData.merge({
+      x: e.clientX,
+      y: e.clientY
+    });
   }
 
   /**
@@ -184,7 +184,6 @@ class Canvas extends React.Component {
    */
   dragOverHandler = (e, preventUpdate) => {
     e.preventDefault();
-    console.log('dragOver')
 
     if (!preventUpdate && this.draggingOut) {
       this.draggingOut = false;
@@ -204,15 +203,18 @@ class Canvas extends React.Component {
    * is called when an input is dropped
    */
   dropHandler = e => {
-    let { inputs, labels } = this.props;
+    let { inputs: _inputs, labels: _labels } = this.props;
     const id = +e.dataTransfer.getData('id');
+
+    let inputs = _inputs.get();
+    let labels = _labels.get();
 
     // if the input is not dragged outside of the canvas
     // we want to change its position
     // otherwise we want to delete it
     if (!this.draggingOut) {
-      for (let i = 0; i < inputs.get.length; i++) {
-        const input = inputs.get[i];
+      for (let i = 0; i < inputs.length; i++) {
+        const input = inputs[i];
 
         if ((input && input.id !== id) || !input) {
           continue;
@@ -229,24 +231,22 @@ class Canvas extends React.Component {
         label.style.left = (prevX + (x - prevX)) + 'px';
 
         // update the inputs and labels
-        inputs.set(inputs.get);
-        labels.set(labels.get);
+        _inputs.set(inputs);
+        _labels.set(labels);
         break;
       }
     } else {
-      const inputsUpdate = inputs.get.filter(input => input.id !== id);
-      const labelsUpdate = labels.get.filter((_, i) => i !== id);
 
-      inputs.set(inputsUpdate);
-      labels.set(labelsUpdate);
+      _inputs.filter(input => input.id !== id);
+      _labels.filter((_, i) => i !== id);
     }
   }
 
   render() {
     const { canvasData, inputs: _inputs } = this.props;
-    const { width, height } = canvasData.get.imageBounds;
+    const { width, height } = canvasData.get().imageBounds;
 
-    const inputs = _inputs.get.map(input => input.element);
+    const inputs = _inputs.get().map(input => input.element);
 
     return (
       <div>

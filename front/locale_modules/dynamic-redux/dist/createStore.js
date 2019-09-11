@@ -1,5 +1,14 @@
 "use strict";
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.createStore = void 0;
+
+var _redux = require("redux");
+
+var _ = require(".");
+
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
@@ -10,19 +19,11 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-var _require = require('redux'),
-    rCreateStore = _require.createStore,
-    applyMiddleware = _require.applyMiddleware,
-    compose = _require.compose;
-
-var mapDynamicDispatch = require('./mapDynamicDispatch');
 /**
  *
  * @param {Object} reducer
  * @param {Array?} middlewares
  */
-
-
 var createStore = function createStore(reducer, middlewares) {
   if (_typeof(middlewares) === 'object' && !Array.isArray(middlewares)) {
     var middlewaresArr = [];
@@ -35,7 +36,7 @@ var createStore = function createStore(reducer, middlewares) {
     middlewares = middlewaresArr;
   }
 
-  mapDynamicDispatch.states = reducer.states;
+  _.mapDynamicDispatch.states = reducer.states;
   var enhancers;
   var devTools = [];
 
@@ -45,10 +46,10 @@ var createStore = function createStore(reducer, middlewares) {
     }));
   }
 
-  if (middlewares) enhancers = compose.apply(void 0, [applyMiddleware.apply(void 0, _toConsumableArray(middlewares))].concat(devTools));else enhancers = devTools[0];
-  var store = rCreateStore(reducer.combinedReducers, enhancers);
-  mapDynamicDispatch.store = store;
+  if (middlewares) enhancers = _redux.compose.apply(void 0, [_redux.applyMiddleware.apply(void 0, _toConsumableArray(middlewares))].concat(devTools));else enhancers = devTools[0];
+  var store = (0, _redux.createStore)(reducer.combinedReducers, enhancers);
+  _.mapDynamicDispatch.store = store;
   return store;
 };
 
-module.exports = createStore;
+exports.createStore = createStore;

@@ -1,5 +1,10 @@
 "use strict";
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Actions = void 0;
+
 var _lodash = _interopRequireDefault(require("lodash"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -92,6 +97,8 @@ var Actions = function Actions() {
   _classCallCheck(this, Actions);
 };
 
+exports.Actions = Actions;
+
 _defineProperty(Actions, "array", arrayAction(null, nativeFunction));
 
 _defineProperty(Actions, "arrayWithArray", arrayAction(validateArray, nativeFunction));
@@ -111,5 +118,3 @@ _defineProperty(Actions, "numberWithNumber", numberAction(validateNumber, functi
       return state[prop] -= action.payload;
   }
 }));
-
-module.exports = Actions;

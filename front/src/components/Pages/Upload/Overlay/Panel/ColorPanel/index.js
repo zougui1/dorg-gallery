@@ -17,21 +17,8 @@ const mapDispatchToProps = mapDynamicDispatch('uploader: canvasData');
 class ColorPanel extends React.Component {
 
   state = {
-    alpha: this.props.canvasData.get.alpha
+    alpha: this.props.canvasData.get().alpha
   };
-
-  /**
-   * update the variable `canvasData` in the store
-   * @param {Object} newData
-   */
-  updateCanvasData = newData => {
-    const { canvasData } = this.props;
-
-    canvasData.set({
-      ...canvasData.get,
-      ...newData
-    });
-  }
 
   /**
    * is called each time the color is changed
@@ -41,21 +28,21 @@ class ColorPanel extends React.Component {
     const { canvasData } = this.props;
     const { alpha } = this.state;
 
+    const _canvasData = canvasData.get();
+
     if (e) {
       // erase isn't a color but the context action
       if (color !== 'erase') {
-        canvasData.get.color = color;
-        canvasData.get.contextAction = 'draw';
+        _canvasData.color = color;
+        _canvasData.contextAction = 'draw';
       } else {
-        canvasData.get.contextAction = 'erase';
+        _canvasData.contextAction = 'erase';
       }
     }
 
     // change the alpha
-    let newColor = canvasData.get.color.replace(/[0-1]+([.][0-9]*)?\)$/, alpha + ')');
-    canvasData.get.color = newColor;
-
-    this.updateCanvasData(canvasData);
+    let newColor = _canvasData.color.replace(/[0-1]+([.][0-9]*)?\)$/, alpha + ')');
+    canvasData.merge({ color: newColor, alpha: alpha });
   }
 
   /**
@@ -63,10 +50,13 @@ class ColorPanel extends React.Component {
    * @param {String} value
    */
   onAlphaChange = (e, value) => {
-    const { canvasData } = this.props;
+    const { alpha } = this.state;
+
+    if (alpha === value) {
+      return;
+    }
 
     this.setState({ alpha: value });
-    canvasData.get.alpha = value;
 
     this.onColorUpdate();
   }
@@ -78,14 +68,15 @@ class ColorPanel extends React.Component {
    */
   getUnifiedColor = color => {
     const { canvasData } = this.props;
+    const _canvasData = canvasData.get();
 
-    if (canvasData.get.contextAction === 'draw') {
+    if (_canvasData.contextAction === 'draw') {
       if (color.indexOf('rgba') >= 0) {
         color = color.replace(/ /g, '').substring(0, color.lastIndexOf(','));
         color += ',1)';
       }
     } else {
-      color = canvasData.get.contextAction;
+      color = _canvasData.contextAction;
     }
 
     return color;
@@ -95,7 +86,7 @@ class ColorPanel extends React.Component {
     const { canvasData } = this.props;
     const { alpha } = this.state;
 
-    const color = this.getUnifiedColor(canvasData.get.color, true);
+    const color = this.getUnifiedColor(canvasData.get().color, true);
 
     return (
       <React.Fragment>

@@ -1,8 +1,13 @@
 "use strict";
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.DynamicState = void 0;
+
 var _lodash = _interopRequireDefault(require("lodash"));
 
-var _Actions = _interopRequireDefault(require("./Actions"));
+var _Actions = require("./Actions");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -84,44 +89,48 @@ function () {
           return;
         }
 
-        switch (action.kind) {
-          case 'set':
-            newState[prop] = action.payload;
-            break;
-
-          case 'push':
-          case 'pop':
-          case 'shift':
-          case 'unshift':
-            _Actions.default.array(newState, action, prop);
-
-            break;
-
-          case 'concat':
-            newState[prop] = _Actions.default.arrayWithArray(newState, action, prop);
-            break;
-
-          case 'filter':
-          case 'map':
-          case 'reduce':
-            newState[prop] = _Actions.default.arrayWithFunction(newState, action, prop);
-            break;
-
-          case 'merge':
-            newState[prop] = _Actions.default.objectWithObject(newState, action, prop);
-            break;
-
-          case 'inc':
-          case 'dec':
-            newState[prop] = _Actions.default.numberWithNumber(newState, action, prop);
-            break;
-
-          default:
-            break;
-        }
+        _this.dispatcher(newState, action, prop);
       });
 
       return newState;
+    });
+
+    _defineProperty(this, "dispatcher", function (state, action, prop) {
+      switch (action.kind) {
+        case 'set':
+          state[prop] = action.payload;
+          break;
+
+        case 'push':
+        case 'pop':
+        case 'shift':
+        case 'unshift':
+          _Actions.Actions.array(state, action, prop);
+
+          break;
+
+        case 'concat':
+          state[prop] = _Actions.Actions.arrayWithArray(state, action, prop);
+          break;
+
+        case 'filter':
+        case 'map':
+        case 'reduce':
+          state[prop] = _Actions.Actions.arrayWithFunction(state, action, prop);
+          break;
+
+        case 'merge':
+          state[prop] = _Actions.Actions.objectWithObject(state, action, prop);
+          break;
+
+        case 'inc':
+        case 'dec':
+          state[prop] = _Actions.Actions.numberWithNumber(state, action, prop);
+          break;
+
+        default:
+          break;
+      }
     });
 
     _defineProperty(this, "createAction", function (action) {
@@ -218,4 +227,4 @@ function () {
   return DynamicState;
 }();
 
-module.exports = DynamicState;
+exports.DynamicState = DynamicState;

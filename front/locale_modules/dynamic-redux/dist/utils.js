@@ -1,5 +1,10 @@
 "use strict";
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.removeSpaces = void 0;
+
 /**
  * remove all useless spaces within an array of strings
  * @param {String[]} array

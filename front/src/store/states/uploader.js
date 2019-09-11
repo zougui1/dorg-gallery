@@ -28,12 +28,12 @@ const uploaderState = new DynamicState('uploader', {
 
 uploaderState.createReducer({
   formView: 'set',
-  imageData: 'set',
-  canvasData: 'set',
+  imageData: ['set', 'merge'],
+  canvasData: ['set', 'merge'],
   imagesToUpload: 'set',
-  inputs: 'set',
-  labels: 'set',
-  //resetReducer: 'reset'
+  inputs: ['set', 'filter', 'map'],
+  labels: ['set', 'filter', 'map'],
+  resetReducer: 'reset'
 });
 
 export default uploaderState;

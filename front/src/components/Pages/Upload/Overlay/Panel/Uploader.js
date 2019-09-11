@@ -40,7 +40,7 @@ class Uploader extends React.Component {
   updateCanvasData = () => {
     const { canvasData } = this.props;
 
-    canvasData.set(canvasData.get);
+    canvasData.set(canvasData.get());
   }
 
   /**
@@ -79,22 +79,22 @@ class Uploader extends React.Component {
 
     // drawingCanvas may not exist
     if (drawingCanvas) {
-      imagesToUpload.get.draw = drawingCanvas.toDataURL();
+      imagesToUpload.get().draw = drawingCanvas.toDataURL();
     } else {
       // we set in the canvasData that there is no drawing
-      canvasData.get.hasDrawingCanvas = false;
+      canvasData.get().hasDrawingCanvas = false;
     }
 
     // textCanvas may not exist
     if (textCanvas) {
-      imagesToUpload.get.text = textCanvas.toDataURL();
+      imagesToUpload.get().text = textCanvas.toDataURL();
     } else {
       // we set in the canvasData that there is no text
-      canvasData.get.hasTextCanvas = false;
+      canvasData.get().hasTextCanvas = false;
     }
 
     this.updateCanvasData();
-    imagesToUpload.set(imagesToUpload.get);
+    imagesToUpload.set(imagesToUpload.get());
   }
 
   /**
@@ -102,15 +102,15 @@ class Uploader extends React.Component {
    */
   getDrawingCanvas = () => {
     const { canvasData } = this.props;
-    const { width, height } = canvasData.get.imageBounds;
+    const { width, height } = canvasData.get().imageBounds;
 
     const pixelBuffer = new Uint32Array(
-      canvasData.get.context.getImageData(0, 0, width, height).data.buffer
+      canvasData.get().context.getImageData(0, 0, width, height).data.buffer
     );
 
 
     if (pixelBuffer.some(color => color !== 0)) {
-      return canvasData.get.canvas;
+      return canvasData.get().canvas;
     }
   }
 
@@ -126,7 +126,7 @@ class Uploader extends React.Component {
       return;
     }
 
-    const { width, height } = canvasData.get.imageBounds;
+    const { width, height } = canvasData.get().imageBounds;
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
 
@@ -165,8 +165,8 @@ class Uploader extends React.Component {
   upload = () => {
     setTimeout(() => {
       const { imagesToUpload , canvasData, user } = this.props;
-      const { hasTextCanvas, hasDrawingCanvas } = canvasData.get;
-      const { draw, text } = imagesToUpload.get;
+      const { hasTextCanvas, hasDrawingCanvas } = canvasData.get();
+      const { draw, text } = imagesToUpload.get();
 
       // 1 image have to be uploaded
       const upload1Image = !draw && !text && !hasTextCanvas && !hasDrawingCanvas;
@@ -182,12 +182,12 @@ class Uploader extends React.Component {
       // 3 images have to be uploaded
       const upload3Images = draw && text && hasTextCanvas;
 
-      console.log(canvasData.get);
-      console.log(imagesToUpload.get);
+      console.log(canvasData.get());
+      console.log(imagesToUpload.get());
       if (upload1Image || upload2Images || upload3Images) {
         console.log('uploading');
         const { imageData } = this.props;
-        const images = { ...imageData, ...imagesToUpload.get, user };
+        const images = { ...imageData, ...imagesToUpload.get(), user };
 
         socket.Emit.uploadImage(images);
         socket.On.imageUploaded(this.imageUploaded);

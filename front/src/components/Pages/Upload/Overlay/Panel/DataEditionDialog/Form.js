@@ -25,7 +25,7 @@ class Form extends React.Component {
   componentDidUpdate(prevProps) {
     const { imageData } = this.props;
 
-    if (!_.isEqual(imageData.get, prevProps.imageData.get)) {
+    if (!_.isEqual(imageData.get(), prevProps.imageData.get())) {
       this.updateState();
     }
   }
@@ -38,14 +38,14 @@ class Form extends React.Component {
     const { imageData } = this.props;
 
     const newState = {
-      ...imageData.get,
+      ...imageData.get(),
       artistName: '',
       artistLink: '',
     };
 
-    if (_.isObject(imageData.get)) {
-      newState.artistName = imageData.get.artist.name;
-      newState.artistLink = imageData.get.artist.link;
+    if (_.isObject(imageData.get())) {
+      newState.artistName = imageData.get().artist.name;
+      newState.artistLink = imageData.get().artist.link;
     }
 
     this.setState(newState);

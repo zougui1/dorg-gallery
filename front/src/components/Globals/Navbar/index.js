@@ -29,7 +29,7 @@ class Navbar extends React.Component {
           <Grid container justify="space-between" alignItems="center">
             <Grid item>
               <Typography variant="h6">
-                <Link className="color-white" to="/">Dorg gallery</Link>
+                <Link className="color-white" to="/">D.Org gallery</Link>
               </Typography>
             </Grid>
 

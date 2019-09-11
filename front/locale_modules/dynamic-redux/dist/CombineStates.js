@@ -1,11 +1,15 @@
 "use strict";
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.CombineStates = void 0;
+
+var _redux = require("redux");
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-var _require = require('redux'),
-    combineReducers = _require.combineReducers;
 
 var CombineStates =
 /**
@@ -47,7 +51,7 @@ function CombineStates(_states) {
   });
 
   this.setStates(_states);
-  this.combinedReducers = combineReducers(this.reducers);
+  this.combinedReducers = (0, _redux.combineReducers)(this.reducers);
 }
 /**
  * @param {Array} states
@@ -55,4 +59,4 @@ function CombineStates(_states) {
  */
 ;
 
-module.exports = CombineStates;
+exports.CombineStates = CombineStates;
