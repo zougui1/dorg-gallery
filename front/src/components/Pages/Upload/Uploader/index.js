@@ -13,7 +13,7 @@ const mapStateToProps = mapDynamicState({
   misc: 'tags',
   auth: 'user',
 });
-const mapDispatchToProps = mapDynamicDispatch('uploader: formView imageData');
+const mapDispatchToProps = mapDynamicDispatch('uploader: setFormView setImageData');
 
 class Uploader extends React.Component {
 
@@ -43,7 +43,7 @@ class Uploader extends React.Component {
    * is called when the user submit the form
    */
   submit = formData => {
-    const { imageData, formView, user } = this.props;
+    const { setImageData, setFormView, user } = this.props;
 
     this.setState({ loader: { loading: true } });
 
@@ -53,8 +53,8 @@ class Uploader extends React.Component {
         // view to draw an overlay
         // other we upload the image
         if (formData.withOverlay) {
-          imageData.set(formData);
-          formView.set('Overlay');
+          setImageData(formData);
+          setFormView('Overlay');
         } else {
 
           socket.Emit.uploadImage({

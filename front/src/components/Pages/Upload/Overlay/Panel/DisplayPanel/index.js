@@ -6,7 +6,7 @@ import { mapDynamicState, mapDynamicDispatch } from 'dynamic-redux';
 import Checkbox from './Checkbox';
 
 const mapStateToProps = mapDynamicState('uploader: canvasData');
-const mapDispatchToProps = mapDynamicDispatch('uploader: canvasData');
+const mapDispatchToProps = mapDynamicDispatch('uploader: mergeCanvasData');
 
 class DisplayPanel extends React.Component {
 
@@ -15,9 +15,9 @@ class DisplayPanel extends React.Component {
    * @param {Object} newData
    */
   updateCanvasData = newData => {
-    const { canvasData } = this.props;
+    const { mergeCanvasData } = this.props;
 
-    canvasData.set(newData);
+    mergeCanvasData(newData);
   }
 
   /**
@@ -28,14 +28,14 @@ class DisplayPanel extends React.Component {
 
     const overlayContainer = document.getElementById('overlay-container');
 
-    if (canvasData.get().displayInputs) { // hide the text
+    if (canvasData.displayInputs) { // hide the text
       overlayContainer.classList.add('hideInputs');
     } else { // show the text
       overlayContainer.classList.remove('hideInputs');
     }
 
     // update the value
-    this.updateCanvasData({ displayInputs: !canvasData.get().displayInputs });
+    this.updateCanvasData({ displayInputs: !canvasData.displayInputs });
   }
 
   /**
@@ -44,20 +44,20 @@ class DisplayPanel extends React.Component {
   displayMainLayer = () => {
     const { canvasData } = this.props;
 
-    if (canvasData.get().displayMainLayer) { // hide the drawing
-      canvasData.get().context.canvas.classList.add('d-none');
+    if (canvasData.displayMainLayer) { // hide the drawing
+      canvasData.context.canvas.classList.add('d-none');
     } else { // show the drawing
-      canvasData.get().context.canvas.classList.remove('d-none');
+      canvasData.context.canvas.classList.remove('d-none');
     }
 
     // update the value
-    this.updateCanvasData({ displayMainLayer: !canvasData.get().displayMainLayer });
+    this.updateCanvasData({ displayMainLayer: !canvasData.displayMainLayer });
   }
 
   // clear the whole canvas
   clearCanvas = () => {
     const { canvasData } = this.props;
-    const { context, imageBounds } = canvasData.get();
+    const { context, imageBounds } = canvasData;
 
     context.clearRect(0, 0, imageBounds.width, imageBounds.height);
   }
@@ -71,14 +71,14 @@ class DisplayPanel extends React.Component {
           <Checkbox
             label="Display text"
             name="displayInputs"
-            checked={canvasData.get().displayInputs}
+            checked={canvasData.displayInputs}
             onChange={this.displayInputs}
           />
 
           <Checkbox
             label="Display drawing"
             name="displayMainLayer"
-            checked={canvasData.get().displayMainLayer}
+            checked={canvasData.displayMainLayer}
             onChange={this.displayMainLayer}
           />
         </div>

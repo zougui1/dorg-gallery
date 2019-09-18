@@ -9,8 +9,6 @@ var _lodash = _interopRequireDefault(require("lodash"));
 
 var _utils = require("./utils");
 
-var _2 = require(".");
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
@@ -21,6 +19,7 @@ function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = 
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
+var reActions = /(push|pop|shift|unshift|concat|set|merge|filter|map|reduce|inc|dec)/;
 /**
  *
  * @param {Object} states
@@ -31,23 +30,18 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
  * @param {Function} dispatch
  * @param {Object} store
  * @param {Function} store.getState
- * @returns {Object}
  */
-var createDispatch = function createDispatch(states, action, dispatch, store) {
-  var actions = states[action.reducer].actions[action.name];
-  var newActions = {};
+
+var createDispatch = function createDispatch(states, action, dispatch, tempActions) {
+  var actions = states[action.reducer].actions[action.propName];
 
   _lodash.default.forIn(actions, function (actionCreator, name) {
-    newActions[name] = function (arg) {
-      return dispatch(actionCreator(arg));
-    };
+    if (name === action.kind) {
+      tempActions[action.name] = function (arg) {
+        return actionCreator(arg, dispatch);
+      };
+    }
   });
-
-  newActions.get = function () {
-    return (0, _2.mapDynamicState)("".concat(action.reducerName, ": ").concat(action.name))(store.getState())[action.name];
-  };
-
-  return newActions;
 };
 /**
  *
@@ -58,7 +52,7 @@ var createDispatch = function createDispatch(states, action, dispatch, store) {
  */
 
 
-var mapString = function mapString(_actions, dispatch, tempActions, states, store) {
+var mapString = function mapString(_actions, dispatch, tempActions, states) {
   var stateParts = (0, _utils.removeSpaces)(_actions.split(':'));
 
   if (stateParts.length < 2) {
@@ -76,26 +70,37 @@ var mapString = function mapString(_actions, dispatch, tempActions, states, stor
       throw new Error("The reducer \"".concat(reducerName, "\" doesn't exists"));
     }
 
-    if (action === 'resetReducer') {
-      console.log(states[reducer].actions[action]);
-
-      tempActions[action] = function () {
-        return dispatch(states[reducer].actions[action].reset());
+    if (action === 'resetState') {
+      tempActions['reset' + _lodash.default.upperFirst(reducerName) + 'State'] = function () {
+        return states[reducer].actions['__STATE__'].reset(null, dispatch);
       };
 
       return;
     }
 
-    if (!states[reducer].actions[action]) {
-      throw new Error("The action \"".concat(action, "\" doesn't exists on the reducer \"").concat(reducerName, "\""));
+    var _action$replace$split = action.replace(reActions, '$1_').split('_'),
+        _action$replace$split2 = _slicedToArray(_action$replace$split, 2),
+        actionKind = _action$replace$split2[0],
+        propName = _action$replace$split2[1];
+
+    if (!propName) {
+      throw new Error("The action must be prefixed by its kind. Got \"".concat(action, "\""));
+    }
+
+    propName = _lodash.default.lowerFirst(propName);
+
+    if (!states[reducer].actions[propName]) {
+      throw new Error("The action \"".concat(propName, "\" doesn't exists on state \"").concat(reducerName, "\""));
     }
 
     var _action = {
       reducer: reducer,
       reducerName: reducerName,
-      name: action
+      name: action,
+      kind: actionKind,
+      propName: propName
     };
-    tempActions[action] = createDispatch(states, _action, dispatch, store);
+    createDispatch(states, _action, dispatch, tempActions);
   });
 };
 /**
@@ -107,7 +112,7 @@ var mapString = function mapString(_actions, dispatch, tempActions, states, stor
  */
 
 
-var mapObject = function mapObject(reducers, dispatch, tempActions, states, store) {
+var mapObject = function mapObject(reducers, dispatch, tempActions, states) {
   _lodash.default.forIn(reducers, function (actions, reducerName) {
     var actionList = reducerName + ': ';
 
@@ -119,15 +124,14 @@ var mapObject = function mapObject(reducers, dispatch, tempActions, states, stor
       throw new Error("The actions must be either an array or a string. Got \"".concat(actions, "\""));
     }
 
-    mapString(actionList, dispatch, tempActions, states, store);
+    mapString(actionList, dispatch, tempActions, states);
   });
 };
 
 function mapDynamicDispatch(actions) {
   return function (dispatch) {
     if (!actions) {
-      console.warn('The wanted actions are not specified');
-      return {};
+      throw new Error('The actions must be specified');
     }
 
     var tempActions = {};
@@ -141,7 +145,7 @@ function mapDynamicDispatch(actions) {
       throw new Error("The actions must be either a string or an object. Got \"".concat(actions, "\""));
     }
 
-    mapper(actions, dispatch, tempActions, mapDynamicDispatch.states, mapDynamicDispatch.store);
+    mapper(actions, dispatch, tempActions, mapDynamicDispatch.states);
     return tempActions;
   };
 }

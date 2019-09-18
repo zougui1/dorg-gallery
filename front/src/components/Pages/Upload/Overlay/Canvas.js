@@ -6,7 +6,7 @@ import { mapDynamicState, mapDynamicDispatch } from 'dynamic-redux';
 import './Canvas.scss';
 
 const mapStateToProps = mapDynamicState('uploader: canvasData inputs labels');
-const mapDispatchToProps = mapDynamicDispatch('uploader: canvasData inputs labels');
+const mapDispatchToProps = mapDynamicDispatch('uploader: mergeCanvasData setInputs filterInputs setLabels filterLabels');
 
 class Canvas extends React.Component {
 
@@ -28,7 +28,7 @@ class Canvas extends React.Component {
    * @param {Number} y
    */
   calculateRelativePosition = (x, y) => {
-    const { top, left } = this.props.canvasData.get().imageBounds;
+    const { top, left } = this.props.canvasData.imageBounds;
 
     return {
       x: x - left + window.pageXOffset,
@@ -54,9 +54,9 @@ class Canvas extends React.Component {
     x1 = pos.x;
     y1 = pos.y;
 
-    if (canvasData.get().contextAction === 'draw') {
+    if (canvasData.contextAction === 'draw') {
       this.drawLine(x0, y0, x1, y1);
-    } else if (canvasData.get().contextAction === 'erase') {
+    } else if (canvasData.contextAction === 'erase') {
       this.eraseArea(x0, y0);
     }
   }
@@ -70,7 +70,7 @@ class Canvas extends React.Component {
    */
   drawLine = (x0, y0, x1, y1) => {
     const { canvasData } = this.props;
-    const { context, lineWidth, color } = canvasData.get();
+    const { context, lineWidth, color } = canvasData;
 
     context.beginPath();
 
@@ -93,7 +93,7 @@ class Canvas extends React.Component {
    */
   eraseArea = (x, y) => {
     const { canvasData } = this.props;
-    const { context, eraseSize } = canvasData.get();
+    const { context, eraseSize } = canvasData;
 
     x -= eraseSize / 2;
     y -= eraseSize / 2;
@@ -106,10 +106,10 @@ class Canvas extends React.Component {
    * and specify in the data that the user is drawing
    */
   mouseDownHandler = e => {
-    const { canvasData } = this.props;
+    const { mergeCanvasData } = this.props;
 
     // update the canvasData
-    canvasData.merge({
+    mergeCanvasData({
       x: e.clientX,
       y: e.clientY,
       drawing: true
@@ -120,38 +120,36 @@ class Canvas extends React.Component {
    * is called when the user release the mouse
    */
   mouseUpHandler = e => {
-    const { canvasData } = this.props;
-    const _canvasData = canvasData.get();
+    const { canvasData, mergeCanvasData } = this.props;
 
     // if the user isn't drawing we don't want to do anything
-    if (!_canvasData.drawing) {
+    if (!canvasData.drawing) {
       return;
     }
 
     // update the canvasData
-    canvasData.merge({ drawing: false });
+    mergeCanvasData({ drawing: false });
 
     // do an action on the canvas
-    this.canvasAction(_canvasData.x, _canvasData.y, e.clientX, e.clientY);
+    this.canvasAction(canvasData.x, canvasData.y, e.clientX, e.clientY);
   }
 
   /**
    * is called when the mouse move
    */
   mouseMoveHandler = e => {
-    const { canvasData } = this.props;
-    const _canvasData = canvasData.get();
+    const { canvasData, mergeCanvasData } = this.props;
 
     // if the user isn't drawing we don't want to do anything
-    if (!_canvasData.drawing) {
+    if (!canvasData.drawing) {
       return;
     }
 
     // do an action on the canvas
-    this.canvasAction(_canvasData.x, _canvasData.y, e.clientX, e.clientY);
+    this.canvasAction(canvasData.x, canvasData.y, e.clientX, e.clientY);
 
     // update the canvasData
-    canvasData.merge({
+    mergeCanvasData({
       x: e.clientX,
       y: e.clientY
     });
@@ -203,11 +201,8 @@ class Canvas extends React.Component {
    * is called when an input is dropped
    */
   dropHandler = e => {
-    let { inputs: _inputs, labels: _labels } = this.props;
+    let { inputs, labels, setInputs, setLabels, filterInputs, filterLabels } = this.props;
     const id = +e.dataTransfer.getData('id');
-
-    let inputs = _inputs.get();
-    let labels = _labels.get();
 
     // if the input is not dragged outside of the canvas
     // we want to change its position
@@ -231,22 +226,22 @@ class Canvas extends React.Component {
         label.style.left = (prevX + (x - prevX)) + 'px';
 
         // update the inputs and labels
-        _inputs.set(inputs);
-        _labels.set(labels);
+        setInputs(inputs);
+        setLabels(labels);
         break;
       }
     } else {
 
-      _inputs.filter(input => input.id !== id);
-      _labels.filter((_, i) => i !== id);
+      filterInputs(input => input.id !== id);
+      filterLabels((_, i) => i !== id);
     }
   }
 
   render() {
     const { canvasData, inputs: _inputs } = this.props;
-    const { width, height } = canvasData.get().imageBounds;
+    const { width, height } = canvasData.imageBounds;
 
-    const inputs = _inputs.get().map(input => input.element);
+    const inputs = _inputs.map(input => input.element);
 
     return (
       <div>

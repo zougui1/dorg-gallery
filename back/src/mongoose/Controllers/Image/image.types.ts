@@ -31,14 +31,9 @@ export namespace SearchOptions {
     relevancy
   }
 
-  export enum Order {
-    ASC,
-    DESC
-  }
-
   export interface Sort {
     criteria: Criteria;
-    order: Order;
+    order: number;
   }
 }
 
@@ -51,11 +46,13 @@ export interface ISearchOptions {
   sort: SearchOptions.Sort;
 }
 
+export type ImageQuery = (tags: TagModel[] | string[], user: UserModel, searchOptions: ISearchOptions) => any;
+
 // methods type
 export type Add = (imageModel: ImageModel) => Promise<Document & ImageModel>;
 export type GetByPage = (tags: TagModel[] | string[], page: number, user: UserModel, searchOptions: ISearchOptions) => ArrayQuery;
 export type GetById = (id: string) => NullableQuery;
-export type GetCount = (user: UserModel, tags: TagModel[] | string[]) => MQuery<number>;
+export type GetCount = (tags: TagModel[] | string[], user: UserModel, searchOptions: ISearchOptions) => Promise<number>;
 
 export interface IImageController {
   add: Add;

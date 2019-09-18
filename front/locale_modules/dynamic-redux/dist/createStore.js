@@ -5,9 +5,13 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.createStore = void 0;
 
+var _lodash = _interopRequireDefault(require("lodash"));
+
 var _redux = require("redux");
 
-var _ = require(".");
+var _2 = require(".");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
 
@@ -17,38 +21,39 @@ function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.
 
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
 
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
 /**
  *
  * @param {Object} reducer
  * @param {Array?} middlewares
  */
 var createStore = function createStore(reducer, middlewares) {
-  if (_typeof(middlewares) === 'object' && !Array.isArray(middlewares)) {
-    var middlewaresArr = [];
-    var i = 0;
-
-    for (var key in middlewares) {
-      middlewaresArr[i++] = middlewares[key];
-    }
-
-    middlewares = middlewaresArr;
+  if (middlewares && !Array.isArray(middlewares)) {
+    throw new Error("Middlewares (if any) must be in an array. Got \"".concat(middlewares, "\""));
   }
 
-  _.mapDynamicDispatch.states = reducer.states;
+  _2.mapDynamicDispatch.states = reducer.states;
   var enhancers;
   var devTools = [];
+  var window = {};
 
-  if (window.devToolsExtension && process.env.NODE_ENV !== 'production') {
+  if (window.__REDUX_DEVTOOLS_EXTENSION__ && process.env.NODE_ENV !== 'production') {
     devTools.push(window.__REDUX_DEVTOOLS_EXTENSION__({
       trace: true
     }));
   }
 
-  if (middlewares) enhancers = _redux.compose.apply(void 0, [_redux.applyMiddleware.apply(void 0, _toConsumableArray(middlewares))].concat(devTools));else enhancers = devTools[0];
+  if (middlewares) {
+    enhancers = _redux.compose.apply(void 0, [_redux.applyMiddleware.apply(void 0, _toConsumableArray(middlewares))].concat(devTools));
+  } else {
+    enhancers = devTools[0];
+  }
+
   var store = (0, _redux.createStore)(reducer.combinedReducers, enhancers);
-  _.mapDynamicDispatch.store = store;
+
+  _lodash.default.forIn(reducer.states, function (state) {
+    state.store = store;
+  });
+
   return store;
 };
 

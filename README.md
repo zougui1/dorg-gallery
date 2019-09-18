@@ -2,10 +2,12 @@
 
 ## user
 
-* tags blacklist
-* tags whitelist
-* edit password
-* edit username
+### stats
+
+* how many images uploaded (reference on User)
+* how many tags used (referenced by Image on User)
+* how many gallery pages viewed (number)
+* how many images viewed (number)
 
 ## login
 
@@ -14,12 +16,4 @@
 ## gallery
 ### search options
 
-* get images if they have or no a drawing overlay
-* get images if they have or no a text overlay
-* order by date (ASC, DESC)
 * order by relevancy (ASC, DESC)
-
-### displaying
-
-* display or no the drawing overlay
-* display or no the text overlay

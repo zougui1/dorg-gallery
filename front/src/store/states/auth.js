@@ -5,7 +5,7 @@ const authState = new DynamicState('auth', {
   deniedPage: {},
 });
 
-authState.createReducer({
+authState.createActions({
   user: 'set',
   deniedPage: 'set',
 });

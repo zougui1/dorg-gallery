@@ -5,22 +5,22 @@ import { mapDynamicState, mapDynamicDispatch } from 'dynamic-redux';
 import PanelSlider from '../PanelSlider';
 
 const mapStateToProps = mapDynamicState('uploader: canvasData');
-const mapDispatchToProps = mapDynamicDispatch('uploader: canvasData');
+const mapDispatchToProps = mapDynamicDispatch('uploader: setCanvasData');
 
 class SizesPanel extends React.Component {
 
   state = {
-    fontSize: this.props.canvasData.get().fontSize,
-    eraseSize: this.props.canvasData.get().eraseSize,
+    fontSize: this.props.canvasData.fontSize,
+    eraseSize: this.props.canvasData.eraseSize,
   }
 
   /**
    * update the variable 'canvasData' in the store
    */
   updateCanvasData = () => {
-    const { canvasData } = this.props;
+    const { setCanvasData, canvasData } = this.props;
 
-    canvasData.set(canvasData.get());
+    setCanvasData(canvasData);
   }
 
   /**
@@ -37,7 +37,7 @@ class SizesPanel extends React.Component {
     this.setState({ [slider]: value });
 
     // we want to update the canvasData
-    canvasData.get()[slider] = value;
+    canvasData[slider] = value;
     this.updateCanvasData();
   }
 
@@ -58,9 +58,9 @@ class SizesPanel extends React.Component {
         />
 
         {
-          canvasData.get().contextAction === 'erase' && (
+          canvasData.contextAction === 'erase' && (
             <PanelSlider
-              show={canvasData.get().contextAction === 'erase'}
+              show={canvasData.contextAction === 'erase'}
               label="Erase size"
               name="eraseSize"
               value={eraseSize}

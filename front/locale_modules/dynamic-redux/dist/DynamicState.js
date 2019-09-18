@@ -9,6 +9,8 @@ var _lodash = _interopRequireDefault(require("lodash"));
 
 var _Actions = require("./Actions");
 
+var _middlewareChainer = require("./middlewareChainer");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -18,6 +20,8 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var stateRef = '__STATE__';
 
 var DynamicState =
 /*#__PURE__*/
@@ -38,6 +42,11 @@ function () {
    */
 
   /**
+   * @property {Object} actionsOrigin
+   * @public
+   */
+
+  /**
    * @property {Array} reducerConditions
    * @private
    */
@@ -50,6 +59,16 @@ function () {
 
   /**
    * @property {String} resetType
+   * @private
+   */
+
+  /**
+   * @property {Object} middlewares
+   * @private
+   */
+
+  /**
+   * @property {Object} store
    * @private
    */
 
@@ -68,11 +87,17 @@ function () {
 
     _defineProperty(this, "actions", {});
 
+    _defineProperty(this, "actionsOrigin", {});
+
     _defineProperty(this, "reducerConditions", []);
 
     _defineProperty(this, "reducer", function () {});
 
     _defineProperty(this, "resetType", '');
+
+    _defineProperty(this, "middlewares", {});
+
+    _defineProperty(this, "store", {});
 
     _defineProperty(this, "dynamicReducer", function (state, action) {
       if (action.type === _this.resetType) {
@@ -128,6 +153,10 @@ function () {
           state[prop] = _Actions.Actions.numberWithNumber(state, action, prop);
           break;
 
+        case 'reset':
+          state[prop] = _this.initialState[prop];
+          break;
+
         default:
           break;
       }
@@ -150,20 +179,53 @@ function () {
     });
 
     _defineProperty(this, "actionCreator", function (action) {
-      var type = action.kind === 'reset' ? _this.resetType : action.kind.toUpperCase() + '_' + _lodash.default.snakeCase(action.name).toUpperCase();
+      var finalName;
+
+      if (action.name === stateRef) {
+        finalName = _this.name.toUpperCase() + '_STATE';
+      } else {
+        finalName = _lodash.default.snakeCase(action.name).toUpperCase();
+      }
+
+      var type = action.kind.toUpperCase() + '_' + finalName;
+
+      var camelType = _lodash.default.camelCase(type);
 
       _this.reducerConditions.push({
         type: type,
         prop: action.prop
       });
 
-      return function (value) {
-        return {
+      return function (value, dispatch) {
+        // get all the middlewares for the current action
+        var middlewares = _this.middlewares[camelType];
+        var actionObject = {
           type: type,
           payload: value,
           kind: action.kind
+        }; // create a function that will dispatch the data of the action
+
+        var dispatcher = function dispatcher() {
+          return dispatch(actionObject);
         };
+
+        if (middlewares) {
+          // create a chain of middlewares and call them
+          (0, _middlewareChainer.chainer)(middlewares, _this.store, dispatcher, actionObject)();
+        } else {
+          dispatcher();
+        }
       };
+    });
+
+    _defineProperty(this, "addMiddleware", function (middleware) {
+      var action = _lodash.default.camelCase(middleware.actionKind + '_' + middleware.actionName);
+
+      if (!_this.middlewares[action]) {
+        _this.middlewares[action] = [middleware];
+      } else {
+        _this.middlewares[action].push(middleware);
+      }
     });
 
     if (!_lodash.default.isString(name)) {
@@ -175,7 +237,7 @@ function () {
     }
 
     this.name = name;
-    this.resetType = 'RESET_' + name.toUpperCase() + '_REDUCER';
+    this.resetType = 'RESET_' + name.toUpperCase() + '_STATE';
     this.initialState = initialState;
 
     this.reducer = function () {
@@ -193,19 +255,23 @@ function () {
 
 
   _createClass(DynamicState, [{
-    key: "createReducer",
+    key: "createActions",
 
     /**
      * @param {Object} _actions
+     * @returns {this}
      * @public
      */
-    value: function createReducer(_actions) {
+    value: function createActions(_actions) {
       var _this2 = this;
 
-      _lodash.default.forIn(_actions, function (action, actionName) {
-        var prop = _lodash.default.camelCase(actionName);
+      this.actionsOrigin = _actions;
 
-        if (prop !== 'resetReducer' && !_lodash.default.hasIn(_this2.initialState, prop)) {
+      _lodash.default.forIn(_actions, function (action, actionName) {
+        var isStateRef = actionName === stateRef;
+        var prop = isStateRef ? actionName : _lodash.default.camelCase(actionName);
+
+        if (!isStateRef && !_lodash.default.hasIn(_this2.initialState, prop)) {
           throw new Error("\"".concat(prop, "\" doesn't exists in the state of \"").concat(_this2.name, "\""));
         }
 
@@ -221,7 +287,50 @@ function () {
           prop: prop
         });
       });
+
+      return this;
     }
+    /**
+     *
+     * @param {Object[]} middlewares
+     * @param {String} middlewares[].actionName
+     * @param {String} middlewares[].actionKind
+     * @param {Function} middlewares[].callbackAction
+     */
+
+  }, {
+    key: "createMiddlewares",
+    value: function createMiddlewares(middlewares) {
+      var _this3 = this;
+
+      middlewares.forEach(function (middleware) {
+        var actionName = middleware.actionName,
+            actionKind = middleware.actionKind;
+        var action = _this3.actionsOrigin[actionName];
+
+        if (!action) {
+          throw new Error("There is no action \"".concat(actionName, "\""));
+        }
+
+        if (_lodash.default.isString(action)) {
+          action = [action];
+        }
+
+        if (!action.includes(actionKind)) {
+          throw new Error("Action \"".concat(actionName, "\" doesn't use the kind \"").concat(actionKind, "\""));
+        }
+
+        _this3.addMiddleware(middleware);
+      });
+    }
+    /**
+     *
+     * @param {Object} middleware
+     * @param {String} middleware.actionName
+     * @param {String} middleware.actionKind
+     * @param {Function} middleware.callbackAction
+     */
+
   }]);
 
   return DynamicState;

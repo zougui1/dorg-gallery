@@ -10,27 +10,24 @@ import OverlayedImage from '../../OverlayedImage';
 import ImageContainer from '../../ImageContainer';
 import Section from '../../Section';
 import './Images.scss';
+import Loader from '../../Loader';
 
-const mapStateToProps = mapDynamicState('gallery: images currentPage currentUser');
-const mapDispatchToProps = mapDynamicDispatch('gallery: currentPage searchOptionsPanel');
+const mapStateToProps = mapDynamicState('gallery: images currentPage currentUser loader maxPage');
+const mapDispatchToProps = mapDynamicDispatch('gallery: setImages setCurrentPage setSearchOptionsPanel');
 
 class Displayer extends React.Component {
-
-  state = {
-    pageCount: 150,
-  }
 
   /**
    * called when the client change of page
    */
   handlePageChange = e => {
-    const { history, currentUser, currentPage, images } = this.props;
+    const { history, currentUser, setCurrentPage, setImages } = this.props;
     // remove all the images
-    images.set([]);
+    setImages([]);
     // update the URL
     history.push(`/gallery/${currentUser}/${e.selected + 1}`);
     // update the current page
-    currentPage.set(e.selected + 1);
+    setCurrentPage(e.selected + 1);
   }
 
   /**
@@ -38,16 +35,13 @@ class Displayer extends React.Component {
    * set `searchOptionsPanel` to true
    */
   openPanel = () => {
-    const { searchOptionsPanel } = this.props;
+    const { setSearchOptionsPanel } = this.props;
 
-    searchOptionsPanel.set(true);
+    setSearchOptionsPanel(true);
   }
 
   render() {
-    const { pageCount } = this.state;
-    let { _images, currentPage } = this.props;
-
-    let images = _images.get()
+    let { images, currentPage, loader, maxPage } = this.props;
 
     if (!_.isArray(images)) {
       images = [];
@@ -57,6 +51,7 @@ class Displayer extends React.Component {
       <Grid container justify="center" className="Images">
         <Section>
           <Grid container alignItems="center" direction="column">
+            <Loader {...loader} color="secondary" />
             <Hidden mdUp>
               <Grid container item justify="flex-end">
                 <Grid item className="px-5 mt-4">
@@ -81,8 +76,8 @@ class Displayer extends React.Component {
             <Grid item>
               <Pagination
                 onPageChange={this.handlePageChange}
-                currentPage={currentPage.get()}
-                pageCount={pageCount}
+                currentPage={currentPage}
+                pageCount={maxPage}
               />
             </Grid>
           </Grid>

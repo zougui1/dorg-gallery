@@ -1,0 +1,1 @@
+{"version":3,"sources":["NotFound.scss"],"names":[],"mappings":"AAAA,2BAEI,2HAA4E,CAA5E,uFAA4E,CAA5E,mHAA4E,CAA5E,wEAA4E,CAC5E,oBAAqB","file":"notFound.f82be283.chunk.css","sourcesContent":[".NotFound {\r\n  .border-gradient {\r\n    border-image: linear-gradient(90deg, transparent, currentcolor, transparent);\r\n    border-image-slice: 1;\r\n  }\r\n}\r\n"]}

@@ -5,14 +5,18 @@ import { functionUpdate } from '../../../../utils';
 
 class SortRow extends React.Component {
 
+  returnData = data => data;
+
+  toNumber = data => +data;
+
   /**
    * is called when a select trigger the event `onChange`
    * @param {String} prop the name of the property to change
    * @returns {Function}
    */
-  handleChange = prop => e => {
+  handleChange = (prop, dataProcess = this.returnData) => e => {
     this.props.setState(functionUpdate({
-      searchOptions: { $merge: { sort: { [prop]: e.target.value } } }
+      searchOptions: { $merge: { sort: { [prop]: dataProcess(e.target.value) } } }
     }));
   }
 
@@ -37,10 +41,10 @@ class SortRow extends React.Component {
         <NativeSelect
           className="field ml-2"
           value={searchOptions.sort.order}
-          onChange={this.handleChange('order')}
+          onChange={this.handleChange('order', this.toNumber)}
         >
-          <option className="color-black" value="ASC">ascending</option>
-          <option className="color-black" value="DESC">descending</option>
+          <option className="color-black" value="1">ascending</option>
+          <option className="color-black" value="-1">descending</option>
         </NativeSelect>
 
         <span>order</span>

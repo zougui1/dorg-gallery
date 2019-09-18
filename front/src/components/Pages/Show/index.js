@@ -5,13 +5,13 @@ import { mapDynamicDispatch } from 'dynamic-redux';
 import Gallery from '../../Partials/Gallery';
 import * as socket from '../../Partials/Gallery/Image/socket';
 
-const mapDispatchToProps = mapDynamicDispatch('gallery: currentImage');
+const mapDispatchToProps = mapDynamicDispatch('gallery: setCurrentImage');
 
 class Show extends React.Component {
 
   componentDidMount() {
-    const { match, currentImage } = this.props;
-    socket.On.sendImage(data => currentImage.set(data.image));
+    const { match, setCurrentImage } = this.props;
+    socket.On.sendImage(data => setCurrentImage(data.image));
 
     if (match.params.id) {
       this.request();

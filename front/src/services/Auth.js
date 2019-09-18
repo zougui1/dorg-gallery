@@ -5,7 +5,7 @@ import { mapDynamicState, mapDynamicDispatch } from 'dynamic-redux';
 import store from '../store';
 import roles from '../data/roles';
 
-const actions = mapDynamicDispatch('auth: user')(store.dispatch);
+const actions = mapDynamicDispatch('auth: setUser')(store.dispatch);
 
 class Auth {
 
@@ -131,7 +131,7 @@ class Auth {
    */
   static logout = () => {
     Cookies.remove(Auth.cookieName);
-    actions.user.set({});
+    actions.setUser({});
     //Auth.forceAppUpdate();
   }
 
@@ -144,7 +144,7 @@ class Auth {
 
     Auth.addRolesValue(user);
 
-    actions.user.set(user);
+    actions.setUser(user);
     Auth.setCookieSession(user);
   }
 

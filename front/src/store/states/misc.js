@@ -4,7 +4,7 @@ const miscState = new DynamicState('misc', {
   tags: []
 });
 
-miscState.createReducer({
+miscState.createActions({
   tags: 'set',
 });
 

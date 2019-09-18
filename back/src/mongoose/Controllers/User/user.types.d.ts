@@ -12,8 +12,10 @@ export type FindByName = (name: string) => NullableQuery;
 export type FindBySlug = (slug: string) => NullableQuery;
 export type Login = (user: UserModel | any) => Promise<UserModel>;
 export type GetById = (id: string) => NullableQuery;
+export type EditById = (id: string, user: UserModel) => Promise<Document | null>;
+export type EditPasswordById = (id: string, newPassword: string) => Promise<Document | null>;
 export type GetCount = () => MQuery<number>;
-export type Slugify = (username: string) => Promise<string>;
+export type Slugify = (username: string, id?: string) => Promise<string>;
 
 export interface IUserController {
   signup: Signup;
@@ -21,6 +23,8 @@ export interface IUserController {
   findBySlug: FindBySlug;
   login: Login;
   getById: GetById;
+  editById: EditById;
+  editPasswordById: EditPasswordById;
   getCount: GetCount;
   slugify: Slugify;
 }

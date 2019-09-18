@@ -9,7 +9,6 @@ class ImageContainer extends React.Component {
   loadHandler = e => {
     const { onLoad } = this.props;
 
-    console.log('loadHandler')
     const self = e.target;
 
     self.offsetParent.style.height = self.naturalHeight + 'px';

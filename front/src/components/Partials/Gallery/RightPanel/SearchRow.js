@@ -5,7 +5,7 @@ import { mapDynamicDispatch } from 'dynamic-redux';
 
 import Field from '../../Field';
 
-const mapDispatchToProps = mapDynamicDispatch('gallery: searchOptions');
+const mapDispatchToProps = mapDynamicDispatch('gallery: mergeSearchOptions');
 
 class SearchRow extends React.Component {
 
@@ -13,10 +13,10 @@ class SearchRow extends React.Component {
    * is called when the form is submit
    */
   submit = e => {
-    const { search, searchOptions } = this.props;
+    const { search, searchOptions, mergeSearchOptions } = this.props;
     e.preventDefault();
 
-    searchOptions.set({ ...searchOptions.get, search });
+    mergeSearchOptions({ ...searchOptions, search });
   }
 
   /**
@@ -41,7 +41,7 @@ class SearchRow extends React.Component {
             type="text"
             onChange={this.handleChange}
           />
-          <Button className="color-white bold-nested">Search</Button>
+          <Button type="submit" className="color-white bold-nested">Search</Button>
         </form>
       </div>
     );

@@ -1,10 +1,47 @@
 import _ from 'lodash';
 import { debug } from '../../../config';
 import { Image } from '../../Models/Image';
-import { IImageController, Add, GetByPage, SearchOptions, GetById, GetCount } from './image.types';
+import { IImageController, Add, GetByPage, SearchOptions, GetById, GetCount, ImageQuery } from './image.types';
 import { QueryParser } from '../../../services/QueryParser';
 
 const imagePerPage = 30;
+
+const imageQuery: ImageQuery = function imageQuery (tags, user, searchOptions) {
+  debug.mongoose('%o has been called', 'ImageController.getByPage');
+
+  const getCanvas = () => {
+    const { haveOverlays } = searchOptions;
+    let canvasQuery: any = {};
+
+    // query on the text canvas
+    if (!haveOverlays.includes(SearchOptions.HaveOverlays.text)) {
+      canvasQuery['canvas.text'] = '';
+    } else {
+      canvasQuery['canvas.text'] = { $exists: true, $ne: '' };
+    }
+
+    // query on the drawing canvas
+    if (!haveOverlays.includes(SearchOptions.HaveOverlays.draw)) {
+      canvasQuery['canvas.draw'] = '';
+    } else {
+      canvasQuery['canvas.draw'] = { $exists: true, $ne: '' };
+    }
+
+    // general query
+    if (haveOverlays.includes(SearchOptions.HaveOverlays['*'])) {
+      canvasQuery = {}; // reset the data it contains
+    }
+
+    return canvasQuery;
+  }
+
+  return {
+    rate: { $in: searchOptions.rating },
+    user: searchOptions.match.userData._id,
+    tags: { $all: tags },
+    ...getCanvas(),
+  };
+}
 
 export const ImageController: IImageController = class ImageController {
 
@@ -53,8 +90,6 @@ export const ImageController: IImageController = class ImageController {
   }
 
   /**
-   * TODO make a function to get the query used in this method. to make a method that'll get
-   * TODO the count of the images it can returns
    * get images in a page depending of the tags, the page and the rate
    * @api public
    * @param {TagModel[]} tags tags to search in the images
@@ -75,83 +110,12 @@ export const ImageController: IImageController = class ImageController {
   public static getByPage: GetByPage = (tags, page, user, searchOptions) => {
     debug.mongoose('%o has been called', 'ImageController.getByPage');
 
-    //tags = tags.length > 0 ? tags : ['*'];
-    //tags[tags.length] = '*';
-    const inTags = { $in: tags };
-    const allTags = {  name: { $in: tags } };
-    let query;
-    console.log(tags);
-
-    const getCanvas = () => {
-      const { haveOverlays } = searchOptions;
-      let canvasQuery: any = {};
-
-      // query on the text canvas
-      if (!haveOverlays.includes(SearchOptions.HaveOverlays.text)) {
-        canvasQuery['canvas.text'] = '';
-      } else {
-        canvasQuery['canvas.text'] = { $exists: true, $ne: '' };
-      }
-
-      // query on the drawing canvas
-      if (!haveOverlays.includes(SearchOptions.HaveOverlays.draw)) {
-        canvasQuery['canvas.draw'] = '';
-      } else {
-        canvasQuery['canvas.draw'] = { $exists: true, $ne: '' };
-      }
-
-      // general query
-      if (haveOverlays.includes(SearchOptions.HaveOverlays['*'])) {
-        canvasQuery = {}; // reset the data it contains
-      }
-
-      return canvasQuery;
-    }
-
-    // improve the request
-    // if the user send a request with "test" in the search input
-    // all the images matching the '$and' command are returned
-    return Image.find({
-      rate: { $in: searchOptions.rating },
-      /**
-       *  perform a query using the tags for
-       *  - the name of all tags linked to the imagça fait un backtracking
-       *  - the name of the user who posted it
-       *  - the name of the artist who made the image
-       *  - the link to the artist who made the image
-       *  - the character's name who is represented in the image
-       */
-      //tags: { $all: tags },
-      user: searchOptions.match.userData._id,
-      tags: { $all: tags },
-      //'tags.name': { $ne: '*' }
-      ...getCanvas(),
-      /*$and: [
-        { $or: [
-          { 'artist.name': { $in: searchOptions.tags } },
-          { 'artist.link': { $in: searchOptions.tags } },
-          { 'characterName': { $in: searchOptions.tags } },
-          { _id: { $exists: true } }, // used to make the operator optional
-        ]},
-        { $or: [
-          { 'artist.name': { $in: searchOptions.tags } },
-          { 'artist.link': { $in: searchOptions.tags } },
-          { 'characterName': { $in: searchOptions.tags } },
-          { _id: { $exists: true } }, // used to make the operator optional
-        ]},
-        { $or: [
-          { 'artist.link': { $in: searchOptions.tags } },
-          { 'characterName': { $in: searchOptions.tags } },
-          { 'artist.name': { $in: searchOptions.tags } },
-          { _id: { $exists: true } }, // used to make the operator optional
-        ]},
-      ]*/
-    })
-      .skip((page - 1) * imagePerPage) // start to get the images depending of the given page
-      .limit(imagePerPage) // limit the number of image to get
+    return Image.find(imageQuery(tags, user, searchOptions))
       .populate('user', '-password') // get only the name of the user who posted the image
       .populate('tags') // populate tags
-      .sort({ _id: -1 }); // order by date by DESC
+      .skip((page - 1) * imagePerPage) // start to get the images depending of the given page
+      .limit(imagePerPage) // limit the number of image to get
+      .sort({ _id: searchOptions.sort.order }); // order by date by DESC
   }
 
   /**
@@ -167,15 +131,37 @@ export const ImageController: IImageController = class ImageController {
   }
 
   /**
-   * TODO improve this method to use all the parameters the 'getByPage' can use
    * get the amount of images
+   * @api public
+   * @param {TagModel[]} tags tags to search in the images
+   * @param {Number} page define the range of images to get
+   * @param {UserModel} user the user who is querying
+   * @param {ISearchOptions} searchOptions the options of the query to make more complex query
+   * @param {String[]} searchOptions.search the tags name, used to improve the relevancy of the images
+   * @param {SearchOptions.Match} searchOptions.match contains more data to condition for a more complex and relevant query
+   * @param {SearchOptions.User} searchOptions.match.user data to match with the poster's user data
+   * @param {String} searchOptions.match.user.slug slug to test with the slug of the poster
+   * @param {SearchOptions.HaveOverlays} searchOptions.haveOverlays data used to get the images that have overlays
+   * @param {SearchOptions.Rating} searchOptions.rating rating of the image
+   * @param {SearchOptions.Sort} searchOptions.sort contains data to define the sorting
+   * @param {SearchOptions.Criteria} searchOptions.criteria criteria of the sorting
+   * @param {SearchOptions.Order} searchOptions.order the order of the sorting
+   * @returns {Promise<Number>}
    */
-  public static getCount: GetCount = (user, tags) => {
+  public static getCount: GetCount = async (tags, user, searchOptions) => {
     debug.mongoose('%o has been called', 'ImageController.getCount');
 
-    tags = tags.length > 0 ? tags : ['*'];
+    let pageCount: number;
 
-    return Image.countDocuments({ 'user.name': user.name, 'tags.$[].name': { $in: tags } });
+    try {
+      const documentsCount = await Image.countDocuments(imageQuery(tags, user, searchOptions));
+
+      pageCount = Math.ceil(documentsCount / imagePerPage);
+    } catch (error) {
+      throw new Error('The count of pages couldn\'t be found');
+    }
+
+    return pageCount;
   }
 
 }

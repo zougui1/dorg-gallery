@@ -4,28 +4,26 @@ import { Route, Switch } from 'react-router-dom';
 import roles from './data/roles';
 import ProtectedRoute from './components/Partials/ProtectedRoute';
 
-import Home from './components/Pages/Home';
-import Upload from './components/Pages/Upload';
-import Signup from './components/Pages/Signup';
-import Login from './components/Pages/Login';
-import Gallery from './components/Pages/Gallery';
-import Show from './components/Pages/Show';
-import Profile from './components/Pages/Profile';
-//import Image from './components/Pages/Image';
 import NotFound from './components/Pages/NotFound';
+import { asynchronify } from './utils';
 
+const home = () => import(/* webpackChunkName: "home" */ './components/Pages/Home');
+const signup = () => import(/* webpackChunkName: "signup" */ './components/Pages/Signup');
+const login = () => import(/* webpackChunkName: "login" */ './components/Pages/Login');
+const gallery = () => import(/* webpackChunkName: "gallery" */ './components/Pages/Gallery');
+const upload = () => import(/* webpackChunkName: "upload" */ './components/Pages/Upload');
+const show = () => import(/* webpackChunkName: "show" */ './components/Pages/Show');
+const profile = () => import(/* webpackChunkName: "profile" */ './components/Pages/Profile');
 
 const Router = () => (
   <Switch>
-    <Route exact path={['/', '/home']} component={Home} />
-    <ProtectedRoute exact path="/upload" role={roles.user} component={Upload} />
-    <Route exact path="/signup" component={Signup} />
-    <Route exact path="/login" component={Login} />
-    <Route exact path="/gallery/:user_slug/:page?" component={Gallery} />
-    <Route exact path="/image/:id" component={Show} />
-    <Route exact path="/profile" component={Profile} />
-    {/*<Route exact path="/user/:username" component={User} />
-    <Route exact path="/user/:username/:page" component={User} />*/}
+    <Route exact path={['/', '/home']} component={asynchronify('home', home)} />
+    <ProtectedRoute exact path="/upload" role={roles.user} component={asynchronify('upload', upload)} />
+    <Route exact path="/signup" component={asynchronify('signup', signup)} />
+    <Route exact path="/login" component={asynchronify('login', login)} />
+    <Route exact path="/gallery/:user_slug/:page?" component={asynchronify('gallery', gallery)} />
+    <Route exact path="/image/:id" component={asynchronify('show', show)} />
+    <Route exact path="/profile" component={asynchronify('profile', profile)} />
     <Route exact component={NotFound} />
   </Switch>
 );

@@ -6,7 +6,7 @@ import { mapDynamicState, mapDynamicDispatch } from 'dynamic-redux';
 import EditableForm from '../../../Uploader/Forms/EditableFields';
 
 const mapStateToProps = mapDynamicState('uploader: imageData');
-const mapDispatchToProps = mapDynamicDispatch('uploader: imageData');
+const mapDispatchToProps = mapDynamicDispatch('uploader: setImageData');
 
 class Form extends React.Component {
 
@@ -25,7 +25,7 @@ class Form extends React.Component {
   componentDidUpdate(prevProps) {
     const { imageData } = this.props;
 
-    if (!_.isEqual(imageData.get(), prevProps.imageData.get())) {
+    if (!_.isEqual(imageData, prevProps.imageData)) {
       this.updateState();
     }
   }
@@ -38,14 +38,14 @@ class Form extends React.Component {
     const { imageData } = this.props;
 
     const newState = {
-      ...imageData.get(),
+      ...imageData,
       artistName: '',
       artistLink: '',
     };
 
-    if (_.isObject(imageData.get())) {
-      newState.artistName = imageData.get().artist.name;
-      newState.artistLink = imageData.get().artist.link;
+    if (_.isObject(imageData)) {
+      newState.artistName = imageData.artist.name;
+      newState.artistLink = imageData.artist.link;
     }
 
     this.setState(newState);
@@ -55,11 +55,11 @@ class Form extends React.Component {
    * is called when the form has been submited and validated
    */
   submit = e => {
-    const { imageData, onSubmit } = this.props;
+    const { setImageData, onSubmit } = this.props;
 
     const formData = this.transformFormData(this.state);
 
-    imageData.set(formData);
+    setImageData(formData);
     onSubmit(e)
   }
 

@@ -36,6 +36,13 @@ const userSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: () => new Date()
+  },
+  blacklist: {
+    type: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Tag'
+    }],
+    default: []
   }
 });
 

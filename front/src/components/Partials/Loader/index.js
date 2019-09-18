@@ -41,7 +41,7 @@ class Loader extends React.Component {
     if (loading && !success && !error) {
       return (
         <div>
-          <CircularProgress color={color || 'primary'} size={size || 40} thickness={thickness || 5} />
+          <CircularProgress color={color || 'secondary'} size={size || 40} thickness={thickness || 5} />
         </div>
       );
     } else if (success && !empty) {

@@ -2,12 +2,13 @@ import { debug } from '../../config';
 import { controllers } from '../../mongoose';
 import { SocketListener, SocketErrorListener, SocketSendDocument } from '../socket.types';
 import { EmitLogged, EmitUserObject } from './user.types';
+import { createErrorEmitter } from '../../utils';
 
 export class On {
 
   /**
    * is called when a client wants to sign up
-   * @api public
+   * @public
    * @param {SocketIO.Socket} socket
    */
   public static signup: SocketListener = function signup(socket) {
@@ -38,7 +39,7 @@ export class On {
 
   /**
    * is called when a user wants to log in
-   * @api public
+   * @public
    * @param {SocketIO.Socket} socket
    */
   public static login: SocketListener = function login(socket) {
@@ -62,12 +63,44 @@ export class On {
       }
     });
   }
+
+  /**
+   * is called when a user wants to change their account settings
+   * @public
+   * @param {SocketIO.Socket} socket
+   */
+  public static editUserData: SocketListener = function editUserData(socket) {
+    socket.on('editUserData', async data => {
+      debug.socket.on('editUserData');
+
+      const password: string | undefined = data.password;
+
+      try {
+        data.user.blacklist = (await controllers.Tag.getMultipleByName(data.blacklist.split(' '))).documents.map(t => t._id);
+
+        await controllers.User.editById(data.id, data.user);
+
+        if (password) {
+          await controllers.User.editPasswordById(data.id, password);
+        }
+      } catch (error) {
+        Emit.editUserDataFail(socket, error.message);
+
+        throw error;
+      }
+
+      const user: any = await controllers.User.getById(data.id);
+
+      debug.socket.on(debug.chalk.green('editUserData success'));
+      Emit.editUserDataSuccess(socket, user);
+    });
+  }
 };
 
 export class Emit {
   /**
    * is called if the sign up succeed
-   * @api public
+   * @public
    * @param {SocketIO.Socket} socket
    */
   public static signupSuccess: EmitUserObject = function signupSuccess(socket, user) {
@@ -78,18 +111,13 @@ export class Emit {
 
   /**
    * is called if the sign up failed
-   * @api public
-   * @param {SocketIO.Socket} socket
+   * @public
    */
-  public static signupFailed: SocketErrorListener = function signupFailed(socket, error) {
-    debug.socket.emit('signupFailed');
-
-    socket.emit('signupFailed', { success: false, error: error });
-  }
+  public static signupFailed = createErrorEmitter('signupFailed');
 
   /**
    * is called if the log in succeed
-   * @api public
+   * @public
    * @param {SocketIO.Socket} socket
    */
   public static loginSuccess: EmitLogged = function loginSuccess(socket, user) {
@@ -100,12 +128,24 @@ export class Emit {
 
   /**
    * is called if the log in failed
-   * @api public
+   * @public
+   */
+  public static loginFailed = createErrorEmitter('loginFailed');
+
+  /**
+   * is called if the edition of the user data succeeded
+   * @public
    * @param {SocketIO.Socket} socket
    */
-  public static loginFailed: SocketErrorListener = function loginFailed(socket, error) {
-    debug.socket.emit('loginFailed');
+  public static editUserDataSuccess: EmitLogged = function editUserDataSuccess(socket, user) {
+    debug.socket.emit('editUserDataSuccess');
 
-    socket.emit('loginFailed', { success: false, error: error });
+    socket.emit('editUserDataSuccess', { success: true, user: user });
   }
+
+  /**
+   * is called if the edition of the user data failed
+   * @public
+   */
+  public static editUserDataFail = createErrorEmitter('editUserDataFail');
 }

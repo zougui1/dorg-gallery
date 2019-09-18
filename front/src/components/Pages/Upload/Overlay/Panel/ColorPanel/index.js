@@ -12,12 +12,12 @@ import show from '../../../../../../containers/show';
 const FaEraser = show(_FaEraser);
 
 const mapStateToProps = mapDynamicState('uploader: canvasData');
-const mapDispatchToProps = mapDynamicDispatch('uploader: canvasData');
+const mapDispatchToProps = mapDynamicDispatch('uploader: mergeCanvasData');
 
 class ColorPanel extends React.Component {
 
   state = {
-    alpha: this.props.canvasData.get().alpha
+    alpha: this.props.canvasData.alpha
   };
 
   /**
@@ -25,24 +25,22 @@ class ColorPanel extends React.Component {
    * @param {String} color
    */
   onColorUpdate = (e, color) => {
-    const { canvasData } = this.props;
+    const { canvasData, mergeCanvasData } = this.props;
     const { alpha } = this.state;
-
-    const _canvasData = canvasData.get();
 
     if (e) {
       // erase isn't a color but the context action
       if (color !== 'erase') {
-        _canvasData.color = color;
-        _canvasData.contextAction = 'draw';
+        canvasData.color = color;
+        canvasData.contextAction = 'draw';
       } else {
-        _canvasData.contextAction = 'erase';
+        canvasData.contextAction = 'erase';
       }
     }
 
     // change the alpha
-    let newColor = _canvasData.color.replace(/[0-1]+([.][0-9]*)?\)$/, alpha + ')');
-    canvasData.merge({ color: newColor, alpha: alpha });
+    let newColor = canvasData.color.replace(/[0-1]+([.][0-9]*)?\)$/, alpha + ')');
+    mergeCanvasData({ color: newColor, alpha: alpha });
   }
 
   /**
@@ -68,15 +66,14 @@ class ColorPanel extends React.Component {
    */
   getUnifiedColor = color => {
     const { canvasData } = this.props;
-    const _canvasData = canvasData.get();
 
-    if (_canvasData.contextAction === 'draw') {
+    if (canvasData.contextAction === 'draw') {
       if (color.indexOf('rgba') >= 0) {
         color = color.replace(/ /g, '').substring(0, color.lastIndexOf(','));
         color += ',1)';
       }
     } else {
-      color = _canvasData.contextAction;
+      color = canvasData.contextAction;
     }
 
     return color;
@@ -86,7 +83,7 @@ class ColorPanel extends React.Component {
     const { canvasData } = this.props;
     const { alpha } = this.state;
 
-    const color = this.getUnifiedColor(canvasData.get().color, true);
+    const color = this.getUnifiedColor(canvasData.color, true);
 
     return (
       <React.Fragment>

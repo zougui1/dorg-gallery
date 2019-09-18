@@ -37,13 +37,11 @@ try {
 
 
 var getMap = function getMap(map, mapper) {
-  if (_lodash.default.isFunction(map)) {
-    return map;
-  } else if (_lodash.default.isString(map) || _lodash.default.isObject(map)) {
+  if (_lodash.default.isString(map) || _lodash.default.isObject(map)) {
     return mapper(map);
   }
 
-  return null;
+  return map;
 };
 /**
  * use direct string and object to transform them with the dynamic mappers and make them consumable for the for the `connect` function of *react-redux*

@@ -1,9 +1,9 @@
 import React from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogContentText, Grid, Tooltip, IconButton } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { mapDynamicState } from 'dynamic-redux';
 
 import './Alert.scss';
+import Dialog from '../../Partials/Dialog';
 
 const mapStateToProps = mapDynamicState('auth: deniedPage');
 
@@ -38,23 +38,15 @@ class Alert extends React.Component {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle className="py-2" id="alert-dialog-title">
-          <Grid container justify="space-between" alignItems="center">
-            <span>Access denied!</span>
-            <Tooltip title="Close" aria-label="close">
-              <IconButton onClick={onClose} className="pointer bg-color-transparent-and-hover">
-                <i className="fas fa-times square-icon"></i>
-              </IconButton>
-            </Tooltip>
-          </Grid>
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            You do not have access to <span className="bb-1">{deniedPage.path}</span>
-            <br />
-            {this.supplementText()}
-          </DialogContentText>
-        </DialogContent>
+        <Dialog.Title closer id="alert-dialog-title">
+          Access denied!
+        </Dialog.Title>
+
+        <Dialog.ContentText textProps={{ id: 'alert-dialog-description' }}>
+          You do not have access to <span className="bb-1">{deniedPage.path}</span>
+          <br />
+          {this.supplementText()}
+        </Dialog.ContentText>
       </Dialog>
     );
   }

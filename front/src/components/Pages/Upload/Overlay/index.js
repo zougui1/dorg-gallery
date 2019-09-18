@@ -6,7 +6,7 @@ import Canvas from './Canvas';
 import Panel from './Panel';
 
 const mapStateToProps = mapDynamicState('uploader: imageData canvasData');
-const mapDispatchToProps = mapDynamicDispatch('uploader: imageData canvasData');
+const mapDispatchToProps = mapDynamicDispatch('uploader: mergeImageData mergeCanvasData');
 
 class Overlay extends React.Component {
 
@@ -26,18 +26,18 @@ class Overlay extends React.Component {
   }
 
   setImageSize = () => {
-    const { imageData, canvasData } = this.props;
+    const { mergeImageData, mergeCanvasData } = this.props;
 
     this.img.addEventListener('load', () => {
       const imageBounds = this.img.getBoundingClientRect();
       this.setState({ imageBounds });
 
-      imageData.merge({
+      mergeImageData({
         width: imageBounds.width,
         height: imageBounds.height,
       });
 
-      canvasData.merge({
+      mergeCanvasData({
         context: this.canvas.getContext('2d'),
         imageBounds: imageBounds,
         canvas: this.canvas,
@@ -64,7 +64,7 @@ class Overlay extends React.Component {
 
     return (
       <div id="overlay-container">
-        <img className="draw-on" src={imageData.get().imageBase64} ref={e => this.img = e} alt="" />
+        <img className="draw-on" src={imageData.imageBase64} ref={e => this.img = e} alt="" />
         <Canvas />
 
         <Panel modalOpen={this.modalOpen} />

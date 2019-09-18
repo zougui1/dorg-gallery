@@ -1,5 +1,4 @@
 import React from 'react';
-import { Grid, Typography } from '@material-ui/core';
 
 import Input from '../../Partials/Input';
 import Section from '../../Partials/Section';

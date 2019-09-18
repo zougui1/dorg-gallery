@@ -49,7 +49,7 @@ class RightPanel extends React.Component {
     const { children, size, searchOptionsPanel: openPanel } = this.props;
 
     return (
-      <div className={classNames('RightPanel color-white h-100', size, { open: openPanel })}>
+      <div className={classNames('RightPanel color-white w-100 h-100', size, { open: openPanel })}>
         <OverrideReactElement
           setState={this._setState}
           searchOptions={searchOptions}

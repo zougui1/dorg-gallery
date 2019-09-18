@@ -6,7 +6,7 @@ import { mapDynamicState, mapDynamicDispatch } from 'dynamic-redux';
 import Checkbox from '../../Checkbox';
 
 const mapStateToProps = mapDynamicState('gallery: showOverlay');
-const mapDispatchToProps = mapDynamicDispatch('gallery: showOverlay');
+const mapDispatchToProps = mapDynamicDispatch('gallery: setShowOverlay');
 
 class DisplayRow extends React.Component {
 
@@ -15,8 +15,8 @@ class DisplayRow extends React.Component {
    * @param {String[]} value
    */
   handleChange = value => {
-    const { showOverlay } = this.props;
-    showOverlay.set(value);
+    const { setShowOverlay } = this.props;
+    setShowOverlay(value);
   }
 
   render() {
@@ -28,7 +28,7 @@ class DisplayRow extends React.Component {
 
         <Checkbox.Multiple
             name="display"
-            value={showOverlay.get()}
+            value={showOverlay}
             data={[
               { label: 'Drawing', name: 'draw' },
               { label: 'Text', name: 'text' }

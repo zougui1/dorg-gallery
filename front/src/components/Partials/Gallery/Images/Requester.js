@@ -6,24 +6,23 @@ import { mapDynamicState, mapDynamicDispatch } from 'dynamic-redux';
 import * as socket from './socket';
 
 const mapStateToProps = mapDynamicState({
-  gallery: 'searchOptions currentPage currentUser',
+  gallery: 'searchOptions currentPage currentUser images loader',
   auth: 'user'
 });
-const mapDispatchToProps = mapDynamicDispatch('gallery: images');
+const mapDispatchToProps = mapDynamicDispatch('gallery: setImages mergeLoader setMaxPage');
 
 class Requester extends React.Component {
 
-  state = {
-    pageCount: 150,
-  }
-
   componentDidMount() {
+    const { setMaxPage } = this.props;
+
     socket.On.sendImage(data => this.setImages(data.images));
+    socket.On.sendImagesCount(data => setMaxPage(data.count));
     this.request();
   }
 
   componentDidUpdate(prevProps) {
-    const { user, searchOptions, currentPage, currentUser } = this.props;
+    const { user, searchOptions, currentPage, currentUser, loader } = this.props;
 
     // we want to do a request only if
     // the user object has changed
@@ -35,7 +34,12 @@ class Requester extends React.Component {
     // or if the currentUser has changed
     canRequest = canRequest || currentUser !== prevProps.currentUser;
 
+    if (loader.loading) {
+      canRequest = false;
+    }
+
     if (canRequest) {
+      this.resetImages();
       this.request();
     }
   }
@@ -44,9 +48,10 @@ class Requester extends React.Component {
     socket.Remove.sendImage(data => this.setImages(data.images));
   }
 
-
   request = () => {
-    let { user, currentPage, searchOptions, currentUser } = this.props;
+    let { user, currentPage, searchOptions, currentUser, mergeLoader } = this.props;
+
+    mergeLoader({ loading: true, success: false, empty: false, error: false });
 
     if (typeof searchOptions.search === 'string') {
       // avoid spaces
@@ -72,11 +77,26 @@ class Requester extends React.Component {
   }
 
   /**
+   * reset the images if any
+   */
+  resetImages = () => {
+    const { images, setImages } = this.props;
+
+    if (images.length) {
+      // remove all the images
+      setImages([]);
+    }
+  }
+
+  /**
    * @param {Object[]} images
    */
-  setImages = _images => {
-    const { images } = this.props;
-    images.set(_images);
+  setImages = images => {
+    const { setImages, mergeLoader } = this.props;
+    images = images || [];
+
+    setImages(images);
+    mergeLoader({ loading: false, success: true, empty: !images.length });
   }
 
   render() {

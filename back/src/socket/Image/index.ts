@@ -3,11 +3,12 @@ import { controllers } from '../../mongoose';
 import { Upload } from '../../services/Cloudinary';
 import { SocketListener, SocketErrorListener } from '../socket.types';
 import { SocketAndNumber, SendImage } from './image.types';
+import { createErrorEmitter } from '../../utils';
 
 export class On {
   /**
    * is called when a user upload an image
-   * @api public
+   * @public
    * @param {SocketIO.Socket} socket
    */
   public static uploadImage: SocketListener = function uploadImage(socket) {
@@ -65,7 +66,7 @@ export class On {
 
   /**
    * is called when a user want to see images
-   * @api public
+   * @public
    * @param {SocketIO.Socket} socket
    */
   public static getImagesPage: SocketListener = function getImagesPage(socket) {
@@ -98,10 +99,15 @@ export class On {
         data.searchOptions.match.userData = user;
         data.searchOptions.tags = data.tags;
 
+        const tagsId = documents.map(t => t._id);
+
+        const count = await controllers.Image.getCount(tagsId, data.user, data.searchOptions);
         // get the images
-        const images = await controllers.Image.getByPage(documents.map(t => t._id), data.page, data.user, data.searchOptions);
+        const images = await controllers.Image.getByPage(tagsId, data.page, data.user, data.searchOptions);
 
         debug.socket.on(debug.chalk.green('getImagesPage success'));
+
+        Emit.sendImagesCount(socket, count);
         Emit.sendImage(socket, images);
       } catch (err) {
         Emit.getImageFailed(socket, 'An error occured and no image couldn\'t be retrieved');
@@ -113,7 +119,7 @@ export class On {
 
   /**
    * is called when a user is in the page of a single image
-   * @api public
+   * @public
    * @param {SocketIO.Socket} socket
    */
   public static getImageById: SocketListener = function getImageById(socket) {
@@ -132,35 +138,12 @@ export class On {
       }
     });
   }
-
-  /**
-   * is called when a user is querying a gallery
-   * @api public
-   * @param {SocketIO.Socket} socket
-   */
-  public static getImagesCount: SocketListener = function getImagesCount(socket) {
-    socket.on('getImagesCount', async (data: any) => {
-      debug.socket.on('getImagesCount');
-
-      try {
-        const count = await controllers.Image.getCount(data.user, data.tags);
-
-        debug.socket.on(debug.chalk.green('getImagesCount success'));
-
-        Emit.sendImagesCount(socket, count);
-      } catch (err) {
-        Emit.getImagesCountFailed(socket, 'An error occured and the amount of images couldn\'t be retrieved');
-
-        throw new Error(err);
-      }
-    });
-  }
 }
 
 export class Emit {
   /**
    * is called when an image has been successfully uploaded
-   * @api public
+   * @public
    * @param {SocketIO.Socket} socket
    */
   public static imageUploaded: SocketListener = function imageUploaded(socket) {
@@ -171,18 +154,13 @@ export class Emit {
 
   /**
    * is called when an error occured while uploading an image
-   * @api public
-   * @param {SocketIO.Socket} socket
+   * @public
    */
-  public static imageUploadFailed: SocketErrorListener = function imageUploadFailed(socket, error) {
-    debug.socket.emit('imageUploadFailed');
-
-    socket.emit('imageUploadFailed', { success: false, error: error });
-  }
+  public static imageUploadFailed = createErrorEmitter('imageUploadFailed');
 
   /**
    * is called to send one or more images to the client
-   * @api public
+   * @public
    * @param {SocketIO.Socket} socket
    */
   public static sendImage: SendImage = function sendImage(socket, image) {
@@ -197,18 +175,13 @@ export class Emit {
 
   /**
    * is called when an error occured while searching one or more image
-   * @api public
-   * @param {SocketIO.Socket} socket
+   * @public
    */
-  public static getImageFailed: SocketErrorListener = function getImageFailed(socket, error) {
-    debug.socket.emit('getImageFailed');
-
-    socket.emit('getImageFailed', { success: false, error: error });
-  }
+  public static getImageFailed = createErrorEmitter('getImageFailed');
 
   /**
    * send the amount of images found by the query of the user
-   * @api public
+   * @public
    * @param {SocketIO.Socket} socket
    */
   public static sendImagesCount: SocketAndNumber = function sendImagesCount(socket, count) {
@@ -220,12 +193,7 @@ export class Emit {
   /**
    * is called when an error occured while searching for the amount of images
    * that could be found by the query of the user
-   * @api public
-   * @param {SocketIO.Socket} socket
+   * @public
    */
-  public static getImagesCountFailed: SocketErrorListener = function getImagesCountFailed(socket, error) {
-    debug.socket.emit('getImagesCountFailed');
-
-    socket.emit('getImagesCountFailed', { success: false, error: error });
-  }
+  public static getImagesCountFailed = createErrorEmitter('getImagesCountFailed');
 }

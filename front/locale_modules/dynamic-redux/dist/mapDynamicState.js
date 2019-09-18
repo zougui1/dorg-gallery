@@ -75,8 +75,7 @@ var mapObject = function mapObject(reducers, state, newState) {
 function mapDynamicState(props) {
   return function (state) {
     if (!props) {
-      console.warn('The wanted props are not specified');
-      return {};
+      throw new Error('The props must be specified');
     }
 
     var newState = {};

@@ -7,7 +7,7 @@ import { mapDynamicState, mapDynamicDispatch } from 'dynamic-redux';
 import Auth from '../../../services/Auth';
 
 const mapStateToProps = mapDynamicState('auth: user');
-const mapDispatchToProps = mapDynamicDispatch('auth: deniedPage');
+const mapDispatchToProps = mapDynamicDispatch('auth: setDeniedPage');
 
 class ProtectedRoute extends React.Component {
 
@@ -23,13 +23,13 @@ class ProtectedRoute extends React.Component {
    * set denied page data if the client doesn't have access to the page
    */
   setDeniedPageIfAccessDenied = () => {
-    const { deniedPage, role } = this.props;
+    const { setDeniedPage, role } = this.props;
 
     if (Auth.hasRole(role)) {
       return;
     }
 
-    deniedPage.set({
+    setDeniedPage({
       path: window.location.href,
       require: role,
     });

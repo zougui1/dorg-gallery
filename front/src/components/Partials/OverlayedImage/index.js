@@ -20,6 +20,7 @@ class OverlayedImage extends React.Component {
     if(image.canvas) {
       const { canvas } = image;
 
+      // eslint-disable-next-line
       for (const key in canvas) {
         if (!showOverlay.includes(key) || !canvas[key]) {
           continue;
@@ -52,8 +53,6 @@ class OverlayedImage extends React.Component {
     if (!image) {
       return null;
     }
-
-    console.log(this.renderOverlays(image))
 
     return (
       <React.Fragment>

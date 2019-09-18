@@ -1,12 +1,14 @@
 import React from 'react';
 import _ from 'lodash';
-import { Grid } from '@material-ui/core';
+import { Grid, Hidden } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { mapDynamicState } from 'dynamic-redux';
 
 import Description from './Description/index';
 import OverlayedImage from '../../../OverlayedImage';
 import ImageContainer from '../../../ImageContainer';
+import RightPanelContainer from '../../RightPanel';
+import RightPanel from '../RightPanel';
 import './Image.scss';
 
 const mapStateToProps = mapDynamicState('gallery: currentImage showOverlay');
@@ -73,6 +75,13 @@ class Displayer extends React.Component {
         <Grid container item justify="center" className="bg-color-grey-darken-3 p-2">
           <Description />
         </Grid>
+        <Hidden mdUp>
+          <Grid container item justify="center" className="bg-color-grey-darken-3 p-2">
+            <RightPanelContainer>
+              <RightPanel />
+            </RightPanelContainer>
+          </Grid>
+        </Hidden>
       </Grid>
     );
   }

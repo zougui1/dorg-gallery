@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { mapDynamicState, mapDynamicDispatch } from 'dynamic-redux';
 
 const mapStateToProps = mapDynamicState('uploader: canvasData inputs labels');
-const mapDispatchToProps = mapDynamicDispatch('uploader: labels inputs');
+const mapDispatchToProps = mapDynamicDispatch('uploader: setLabels setInputs');
 
 class CanvasField extends React.Component {
 
@@ -12,27 +12,27 @@ class CanvasField extends React.Component {
   }
 
   componentDidMount() {
-    let { inputs, labels, currentCanvasData } = this.props;
+    let { inputs, labels, currentCanvasData, setLabels, setInputs } = this.props;
 
     this.setState({
       currentCanvasData
     });
 
     // set the label element in the array
-    const updatedLabels = labels.get().map((label, i) => {
+    const updatedLabels = labels.map((label, i) => {
       if (i === this.props.id) label = document.getElementById('label-' + this.props.id);
       return label;
     });
 
     // set the label element in the array
-    const updatedFields = inputs.get().map((field, i) => {
+    const updatedFields = inputs.map((field, i) => {
       if (i === this.props.id) field.label = document.getElementById('label-' + this.props.id);
       return field;
     });
 
     // update the labels and inputs
-    labels.set(updatedLabels);
-    inputs.set(updatedFields);
+    setLabels(updatedLabels);
+    setInputs(updatedFields);
 
     this.inputChangeHandler();
   }
@@ -59,10 +59,8 @@ class CanvasField extends React.Component {
    * is used to change the input's style with the style saved in the canvasData
    */
   onInputClick = e => {
-    const { inputs: _inputs, canvasData } = this.props;
+    const { inputs, canvasData, setInputs } = this.props;
     const id = +e.target.getAttribute('data-id');
-
-    const inputs = _inputs.get();
 
     for (let i = 0; i < inputs.length; i++) {
       if (inputs[i].id !== id) {
@@ -76,7 +74,7 @@ class CanvasField extends React.Component {
       input.currentCanvasData.height = this.getHeight(canvasData.fontSize) + 'px';
 
       // update the fields
-      _inputs.set(inputs);
+      setInputs(inputs);
       break;
     }
   }
@@ -85,9 +83,7 @@ class CanvasField extends React.Component {
    * is called when the value of an input change
    */
   inputChangeHandler = e => {
-    const { inputs: _inputs, id } = this.props;
-
-    const inputs = _inputs.get();
+    const { inputs, id, setInputs } = this.props;
 
     for (let i = 0; i < inputs.length; i++) {
       if (inputs[i].id !== id) {
@@ -111,7 +107,7 @@ class CanvasField extends React.Component {
       }
     }
 
-    _inputs.set(inputs);
+    setInputs(inputs);
   }
 
   /**
@@ -124,7 +120,7 @@ class CanvasField extends React.Component {
 
   render() {
     const { id, client, inputs } = this.props;
-    const { currentCanvasData, value } = inputs.get().find(i => i.id === id);
+    const { currentCanvasData, value } = inputs.find(i => i.id === id);
 
     return (
       <label

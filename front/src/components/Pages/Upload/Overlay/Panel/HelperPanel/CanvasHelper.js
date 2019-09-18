@@ -13,7 +13,7 @@ const CanvasHelper = ({ onClose, open }) => (
       className: 'bg-color-grey-darken-3 color-grey-lighten-4'
     }}
   >
-    <Dialog.Title closer>Tutorial</Dialog.Title>
+    <Dialog.Title closer id="simple-dialog-title">Tutorial</Dialog.Title>
     <Dialog.ContentText textProps={{ component: 'div' }}>
       <div className="text-content color-grey-lighten-1">
         <span className="subtitle">You can:</span>

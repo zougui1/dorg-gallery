@@ -6,7 +6,7 @@ import { mapDynamicState, mapDynamicDispatch } from 'dynamic-redux';
 import CanvasField from '../../CanvasField';
 
 const mapStateToProps = mapDynamicState('uploader: canvasData inputs labels');
-const mapDispatchToProps = mapDynamicDispatch('uploader: inputs labels');
+const mapDispatchToProps = mapDynamicDispatch('uploader: setInputs setLabels');
 
 class InputCreator extends React.Component {
 
@@ -19,17 +19,16 @@ class InputCreator extends React.Component {
    */
   createInput = () => {
     const { inputId } = this.state;
-    let { inputs, canvasData, labels } = this.props;
+    let { inputs, canvasData, labels, setInputs, setLabels } = this.props;
     const { x, y } = canvasData.imageBounds;
     const client = { x: x + 10, y: y + 10 };
 
     // avoid to use the references to their source (the store)
-    const newInputs = inputs.get().slice();
-    const newLabels = labels.get().slice();
+    inputs = inputs.slice();
+    labels = labels.slice();
 
     labels[inputId] = React.createRef();
-    console.log(newLabels);
-    labels.set(newLabels);
+    setLabels(labels);
 
     const field = (
       <CanvasField
@@ -43,14 +42,14 @@ class InputCreator extends React.Component {
     const input = {
       element: field,
       id: inputId,
-      label: newLabels[inputId],
+      label: labels[inputId],
       currentCanvasData: canvasData,
       value: ''
     };
 
-    newInputs[inputId] = input;
+    inputs[inputId] = input;
 
-    inputs.set(newInputs);
+    setInputs(inputs);
     this.setState({ inputId: inputId + 1, lastInput: input })
   }
 

@@ -2,14 +2,14 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { mapDynamicDispatch } from 'dynamic-redux';
 
-const mapDispatchToProps = mapDynamicDispatch('gallery: searchOptionsPanel');
+const mapDispatchToProps = mapDynamicDispatch('gallery: setSearchOptionsPanel');
 
 class CloseRow extends React.Component {
 
   handleClose = () => {
-    const { searchOptionsPanel } = this.props;
+    const { setSearchOptionsPanel } = this.props;
 
-    searchOptionsPanel.set(false);
+    setSearchOptionsPanel(false);
   }
 
   render() {

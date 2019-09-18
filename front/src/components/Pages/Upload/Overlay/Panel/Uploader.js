@@ -13,7 +13,7 @@ const mapStateToProps = mapDynamicState({
   uploader: 'canvasData imageData inputs labels imagesToUpload',
   auth: 'user'
 });
-const mapDispatchToProps = mapDynamicDispatch('uploader: canvasData imagesToUpload');
+const mapDispatchToProps = mapDynamicDispatch('uploader: setCanvasData setImagesToUpload');
 
 class Uploader extends React.Component {
 
@@ -38,9 +38,9 @@ class Uploader extends React.Component {
    * update the variable 'canvasData' in the store
    */
   updateCanvasData = () => {
-    const { canvasData } = this.props;
+    const { canvasData, setCanvasData } = this.props;
 
-    canvasData.set(canvasData.get());
+    setCanvasData(canvasData);
   }
 
   /**
@@ -72,29 +72,29 @@ class Uploader extends React.Component {
    * is used to set the existing layers into na object as image to upload
    */
   setImagesToUpload = () => {
-    let { imagesToUpload, canvasData } = this.props;
+    let { setImagesToUpload, canvasData, imagesToUpload } = this.props;
 
     const textCanvas = this.createTextCanvas();
     const drawingCanvas = this.getDrawingCanvas();
 
     // drawingCanvas may not exist
     if (drawingCanvas) {
-      imagesToUpload.get().draw = drawingCanvas.toDataURL();
+      imagesToUpload.draw = drawingCanvas.toDataURL();
     } else {
       // we set in the canvasData that there is no drawing
-      canvasData.get().hasDrawingCanvas = false;
+      canvasData.hasDrawingCanvas = false;
     }
 
     // textCanvas may not exist
     if (textCanvas) {
-      imagesToUpload.get().text = textCanvas.toDataURL();
+      imagesToUpload.text = textCanvas.toDataURL();
     } else {
       // we set in the canvasData that there is no text
-      canvasData.get().hasTextCanvas = false;
+      canvasData.hasTextCanvas = false;
     }
 
     this.updateCanvasData();
-    imagesToUpload.set(imagesToUpload.get());
+    setImagesToUpload(imagesToUpload);
   }
 
   /**
@@ -102,15 +102,15 @@ class Uploader extends React.Component {
    */
   getDrawingCanvas = () => {
     const { canvasData } = this.props;
-    const { width, height } = canvasData.get().imageBounds;
+    const { width, height } = canvasData.imageBounds;
 
     const pixelBuffer = new Uint32Array(
-      canvasData.get().context.getImageData(0, 0, width, height).data.buffer
+      canvasData.context.getImageData(0, 0, width, height).data.buffer
     );
 
 
     if (pixelBuffer.some(color => color !== 0)) {
-      return canvasData.get().canvas;
+      return canvasData.canvas;
     }
   }
 
@@ -126,7 +126,7 @@ class Uploader extends React.Component {
       return;
     }
 
-    const { width, height } = canvasData.get().imageBounds;
+    const { width, height } = canvasData.imageBounds;
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
 
@@ -165,8 +165,8 @@ class Uploader extends React.Component {
   upload = () => {
     setTimeout(() => {
       const { imagesToUpload , canvasData, user } = this.props;
-      const { hasTextCanvas, hasDrawingCanvas } = canvasData.get();
-      const { draw, text } = imagesToUpload.get();
+      const { hasTextCanvas, hasDrawingCanvas } = canvasData;
+      const { draw, text } = imagesToUpload;
 
       // 1 image have to be uploaded
       const upload1Image = !draw && !text && !hasTextCanvas && !hasDrawingCanvas;
@@ -182,12 +182,12 @@ class Uploader extends React.Component {
       // 3 images have to be uploaded
       const upload3Images = draw && text && hasTextCanvas;
 
-      console.log(canvasData.get());
-      console.log(imagesToUpload.get());
+      console.log(canvasData);
+      console.log(imagesToUpload);
       if (upload1Image || upload2Images || upload3Images) {
         console.log('uploading');
         const { imageData } = this.props;
-        const images = { ...imageData, ...imagesToUpload.get(), user };
+        const images = { ...imageData, ...imagesToUpload, user };
 
         socket.Emit.uploadImage(images);
         socket.On.imageUploaded(this.imageUploaded);

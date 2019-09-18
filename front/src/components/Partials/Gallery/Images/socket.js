@@ -22,10 +22,6 @@ export class Emit {
   static getImagesPage = data => {
     return socket.emit('getImagesPage', data);
   }
-
-  static getImagesCount = data => {
-    return socket.emit('getImagesCount', data);
-  }
 }
 
 export class Remove {

@@ -13,7 +13,7 @@ import * as socket from './socket';
 import Alert from './Alert';
 
 const mapStateToProps = mapDynamicState('auth: deniedPage');
-const mapDispatchToProps = mapDynamicDispatch('auth: deniedPage');
+const mapDispatchToProps = mapDynamicDispatch('auth: setDeniedPage');
 
 class Login extends React.Component {
 
@@ -34,7 +34,7 @@ class Login extends React.Component {
 
     // if true this means the user got redirected from a page they don't have access to
     // so we want deniedAlert to be true
-    if (deniedPage.get.require) {
+    if (deniedPage.require) {
       this.setState({ deniedAlert: true });
     }
   }
@@ -93,10 +93,10 @@ class Login extends React.Component {
    * called when the user close the dialog
    */
   handleClose = () => {
-    const { deniedPage } = this.props;
+    const { setDeniedPage } = this.props;
 
     this.setState({ deniedAlert: false });
-    deniedPage.set({});
+    setDeniedPage({});
   }
 
   render() {

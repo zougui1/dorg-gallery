@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormGroup, Select, MenuItem, InputLabel, FormControl } from '@material-ui/core';
+import { FormGroup, Select, MenuItem } from '@material-ui/core';
 
 import Input from '../../../../../Partials/Input';
 import { fields } from './fields';
