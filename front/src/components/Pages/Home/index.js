@@ -18,7 +18,9 @@ class Home extends LoaderComponent {
     timeout(() => this.setLoader.success());
     timeout(() => this.setLoader.error('an error'));
     timeout(() => this.setLoader.info('there is nothing'));
-    timeout(() => this.setLoader.loading('load again'));
+    timeout(() => this.setLoader.loading('load again', 500));
+    time += 1000;
+    timeout(() => this.setLoader.reset());
   }
 
   render() {

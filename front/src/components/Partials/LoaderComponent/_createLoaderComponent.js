@@ -1,20 +1,12 @@
 import React from 'react';
 
 import Loader from '../Loader';
-import { createSetLoader, initSetLoader } from './_setLoader';
+import { createSetLoader, initSetLoader, defaultLoader } from './_setLoader';
 
 export const createLoaderComponent = (Superclass, updater) => class LoaderComponent extends Superclass {
 
-  loader = {
-    success: false,
-    loading: false,
-    error: false,
-    info: false,
-    successMessage: '',
-    loadingMessage: '',
-    errorMessage: '',
-    infoMessage: ''
-  };
+  // we don't want to get a reference to the `defaultLoader`
+  loader = {...defaultLoader};
 
   constructor(props) {
     super(props);

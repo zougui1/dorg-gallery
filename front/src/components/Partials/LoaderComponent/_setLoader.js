@@ -1,3 +1,17 @@
+import _ from 'lodash';
+
+// default `loader`'s state
+export const defaultLoader = {
+  success: false,
+  loading: false,
+  error: false,
+  info: false,
+  successMessage: '',
+  loadingMessage: '',
+  errorMessage: '',
+  infoMessage: ''
+};
+
 // all the status of the loader
 const loaderProperties = ['success', 'loading', 'error', 'info'];
 
@@ -28,13 +42,17 @@ const getLoader = type => {
 const createLoaderChanger = thisArg => type => {
   const loader = getLoader(type);
 
-  return message => {
+  return (message, timeout) => {
+    let messageType = type + 'Message';
 
     if (message !== undefined) {
-      loader[type + 'Message'] = message;
+      loader[messageType] = message;
     }
 
     thisArg.setLoader(loader);
+
+    // if the function has a timeout then we clear the message of the current type
+    timeout && setTimeout(() => thisArg.setLoader({ [messageType]: '' }), timeout);
   }
 }
 
@@ -50,6 +68,7 @@ export const initSetLoader = thisArg => {
   thisArg.setLoader.loading = loaderChanger('loading');
   thisArg.setLoader.error = loaderChanger('error');
   thisArg.setLoader.info = loaderChanger('info');
+  thisArg.setLoader.reset = () => thisArg.setLoader(defaultLoader);
 }
 
 // loader setter
