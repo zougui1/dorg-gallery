@@ -11,43 +11,42 @@ const mapDispatchToProps = mapDynamicDispatch('auth: setDeniedPage');
 
 class ProtectedRoute extends React.Component {
 
-  state = {
-    redirect: false,
-  }
-
   componentDidMount() {
-    this.setDeniedPageIfAccessDenied();
-  }
-
-  /**
-   * set denied page data if the client doesn't have access to the page
-   */
-  setDeniedPageIfAccessDenied = () => {
-    const { setDeniedPage, role } = this.props;
-
-    if (Auth.hasRole(role)) {
-      return;
-    }
-
-    setDeniedPage({
-      path: window.location.href,
-      require: role,
-    });
-
-    this.setState({ redirect: true });
+    this.accessDenied();
   }
 
   componentDidUpdate(prevProps) {
     const { user } = this.props;
 
     if (!_.isEqual(prevProps.user, user)) {
-      this.setDeniedPageIfAccessDenied();
+      this.accessDenied();
     }
   }
 
+  /**
+   * set denied page data if the client doesn't have access to the page
+   */
+  setDeniedPage = () => {
+    const { setDeniedPage, role } = this.props;
+
+    setDeniedPage({
+      path: window.location.href,
+      require: role,
+    });
+  }
+
+  /**
+   * set denied page data if the access is denied to the user
+   */
+  accessDenied = () => {
+    const { role } = this.props;
+
+    if (!Auth.hasRole(role)) {
+      this.setDeniedPage();
+    }
+  }
 
   render() {
-    const { redirect } = this.state;
     const { role, ...rest } = this.props;
 
     // if the client have the required role, they can access the route
@@ -55,7 +54,7 @@ class ProtectedRoute extends React.Component {
     if (Auth.hasRole(role)) {
       return <Route {...rest} />;
     } else {
-      return redirect && <Redirect to="/login" />;
+      return <Redirect to="/login" />;
     }
   }
 }

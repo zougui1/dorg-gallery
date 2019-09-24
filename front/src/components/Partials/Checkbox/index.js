@@ -4,13 +4,11 @@ import MuiCheckbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 import Multiple from './Multiple';
-import YesNo from './YesNo';
 import './Checkbox.scss';
 
 class Checkbox extends React.Component {
 
   static Multiple = Multiple;
-  static YesNo = YesNo;
 
   render() {
     const { value, label, checked, name, onChange, className } = this.props;

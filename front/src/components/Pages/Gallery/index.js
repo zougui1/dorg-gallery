@@ -4,24 +4,19 @@ import { mapDynamicDispatch } from 'dynamic-redux';
 
 import PGallery from '../../Partials/Gallery';
 
-const mapDispatchToProps = mapDynamicDispatch({
-  gallery: 'setCurrentPage setCurrentUser resetState',
-  component: 'setComponentState'
-});
+const mapDispatchToProps = mapDynamicDispatch('gallery: setCurrentPage setCurrentUser resetState');
 
 class Gallery extends React.Component {
 
   componentDidMount() {
     const { resetGalleryState } = this.props;
 
-    console.log('gallery CDM called!');
     resetGalleryState();
     this.initGallery();
   }
 
   componentDidUpdate(prevProps) {
     const { match, setCurrentUser } = this.props;
-    console.log('gallery CDU called!')
 
     if (match.params.user_slug !== prevProps.match.params.user_slug) {
       setCurrentUser(match.params.user_slug);

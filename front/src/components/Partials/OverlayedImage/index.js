@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { mapDynamicState } from 'dynamic-redux';
 
 const mapStateToProps = mapDynamicState('gallery: currentImage showOverlay');
+
 class OverlayedImage extends React.Component {
 
   /**
@@ -37,7 +38,7 @@ class OverlayedImage extends React.Component {
   }
 
   /**
-   *
+   * is called when the image has loaded and call the `onLoad` function props (if any)
    */
   loadHandler = e => {
     const { onLoad } = this.props;

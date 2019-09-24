@@ -27,9 +27,10 @@ class Loader extends React.Component {
       color,
       size,
       thickness,
-      successMessage,
       success,
+      successMessage,
       loading,
+      loadingMessage,
       redirection,
       error,
       errorMessage,
@@ -38,10 +39,13 @@ class Loader extends React.Component {
     } = this.props;
     const { canRedirect } = this.state;
 
-    if (loading && !success && !error) {
+    if (loading && !success && !error && !empty) {
       return (
         <div>
           <CircularProgress color={color || 'secondary'} size={size || 40} thickness={thickness || 5} />
+          <span className="ml-2 loading">
+            {loadingMessage}
+          </span>
         </div>
       );
     } else if (success && !empty) {
@@ -57,7 +61,7 @@ class Loader extends React.Component {
           { errorMessage }
         </p>
       );
-    } else if (empty && success) {
+    } else if (empty) {
       return (
         <p>
           { emptyMessage }

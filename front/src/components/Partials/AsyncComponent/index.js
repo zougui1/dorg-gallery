@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'dynamic-redux';
 
-import Loading from '../Loading';
+import Loading from '../../Pages/Loading';
 
 const mapStateToProps = 'router: cachedComponents';
 const mapDispatchToProps = 'router: mergeCachedComponents';
@@ -25,10 +25,8 @@ class AsyncComponent extends React.PureComponent  {
     if (cachedComponent) {
       this.setPreviousComponent(cachedComponent);
       this.setState({ Component: cachedComponent });
-    } else {
-      if (!Component) {
-        moduleProvider().then(this.componentSetter);
-      }
+    } else if (!Component) {
+      moduleProvider().then(this.componentSetter);
     }
   }
 
