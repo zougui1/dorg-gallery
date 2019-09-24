@@ -1,5 +1,5 @@
 // all the status of the loader
-const loaderProperties = ['success', 'loading', 'error', 'empty'];
+const loaderProperties = ['success', 'loading', 'error', 'info'];
 
 /**
  * get a loader object with all its state properties set to `false` except the
@@ -49,7 +49,7 @@ export const initSetLoader = thisArg => {
   thisArg.setLoader.success = loaderChanger('success');
   thisArg.setLoader.loading = loaderChanger('loading');
   thisArg.setLoader.error = loaderChanger('error');
-  thisArg.setLoader.empty = loaderChanger('empty');
+  thisArg.setLoader.info = loaderChanger('info');
 }
 
 // loader setter

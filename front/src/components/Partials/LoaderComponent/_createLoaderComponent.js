@@ -9,11 +9,11 @@ export const createLoaderComponent = (Superclass, updater) => class LoaderCompon
     success: false,
     loading: false,
     error: false,
-    empty: false,
+    info: false,
     successMessage: '',
     loadingMessage: '',
     errorMessage: '',
-    emptyMessage: ''
+    infoMessage: ''
   };
 
   constructor(props) {
