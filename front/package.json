@@ -12,7 +12,7 @@
     "dynamic-redux": "file:locale_modules/dynamic-redux",
     "immutability-helper": "^3.0.1",
     "js-cookie": "^2.2.1",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.21",
     "node-sass": "^4.12.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
