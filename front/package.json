@@ -22,7 +22,7 @@
     "react-ripples": "^2.2.1",
     "react-router": "^5.0.1",
     "react-router-dom": "^5.0.1",
-    "react-scripts": "3.1.1",
+    "react-scripts": "5.0.1",
     "react-select": "^3.0.4",
     "react-spaces": "^0.1.13",
     "redux": "^4.0.4",
